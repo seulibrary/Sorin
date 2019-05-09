@@ -1,0 +1,275 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:100,200,300,400,500,600,700,800,900);
+
+html,body,h1,h2,h3,h4,h5,h6,a,em,strong,cite,q,dfn,abbr,data,time,code,var,samp,kbd,mark,ruby,rb,rt,rp,rtc,bdi,bdo,span,br,wbr,small,i,b,u,s,sub,sup,form,input,textarea,select,option,optgroup,datalist,label,fieldset,legend,button,output,progress,meter,keygen,p,ol,ul,li,do,dt,dd,nav,blockquote,pre {
+	font-family: 'Source Sans Pro', sans-serif;
+	color: #444;
+}
+
+// Header //
+header {
+	height: $headerHeight;
+	background-color: $topBlue;
+	border-bottom: 6px solid rgb(152, 133, 81);
+
+	@media only screen and (max-width: $medMaxWidth) {
+		height: 70px;
+	}
+}
+
+// tabs //
+.tabs {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	.tab {
+		width: 50%;
+		display: inline-block;
+
+		a {
+			color: #F4F4F4;
+			font-size: 1.75em;
+			background-color: #9B9B9B;
+			font-weight: 700;
+			text-transform: capitalize;
+			text-align: center;
+			padding: 0.5em 0;
+			cursor: pointer;
+			display: block;
+			text-decoration: none;
+
+			&.active {
+				cursor: default;
+				color: #9B9B9B;
+				background-color: #F4F4F4;
+			}
+
+			@media (max-width: $tablet-width) {
+				font-size: 1.25em;
+
+			}
+		}
+	}
+}
+
+#welcome {
+	padding: 60px 0;
+	margin: 0 auto;
+	text-align: center;
+
+	h1 {
+		font-size: 4em;
+		font-weight: 300;
+		margin-bottom: 0;
+		margin-top: 1em;
+	}
+
+	p {
+		max-width: 500px;
+		margin: .5em auto;
+	}
+
+	#sign-gmail {
+		background-color: #5B9A16;
+		border-radius: 6px;
+		display: block;
+		font-size: 1.75em;
+		color: white;
+		font-weight: 300;
+		padding: 1em;
+		max-width: 500px;
+		margin: 0 auto;
+		text-align: left;
+		text-decoration: none;
+		width: 100%;
+		margin-bottom: 1em;
+
+		span {
+			color: white;
+			display: inline-block;
+			width: 75%;
+			vertical-align: middle;
+		}
+
+		img {
+			width: 20%;
+			display: inline-block;
+			vertical-align: middle;
+		}
+	}
+
+	@media (max-width: $tablet-width) {
+		padding: 20px 1em;
+
+		h1 {
+			font-size: 2.5em;
+		}
+
+		#sign-gmail {
+			width: 80%;
+			font-size: 1em;
+			margin: 0 auto;
+		}
+	}
+}
+
+#about {
+
+	padding-bottom: 100px;
+	
+	.about-section{
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 0 1em;
+		margin-bottom: 60px;
+		h1 {
+			font-size: 4em;
+			font-weight: 300;
+			text-align: center;
+			@media (max-width: $tablet-width) {
+				font-size: 2.5em;
+				
+			}
+		}
+		
+		h2{
+			text-align: center;
+		}
+	
+		p {
+			text-align: left;
+			margin: .5em auto;
+		}
+		
+		.accordion{
+			text-align: left;
+			padding-bottom: 1.5em;
+			display: block;
+			
+			label{
+				text-align: left;
+				color: $teal;
+				margin-top: 1em;
+				font-weight: 600;
+				
+			}
+		}
+		
+		img{
+			width: 100%;
+		}
+
+	}
+
+	@media (max-width: $tablet-width) {
+		padding: 20px 1em;
+
+		
+	}
+
+	.accordion {
+		label {
+			font-size: 120%;
+		}
+	}
+
+	#youtube-sorin {
+		position: relative;
+		padding-bottom: 55%; // Aspect ratio of height/width
+		padding-top: 25px;
+		height: 0;
+		max-width: 1920px;
+		margin: 0 auto;
+
+		iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			max-height: 1056px;
+		}
+	}
+}
+
+
+.accordion {
+	label {
+		cursor: pointer;
+
+		span {
+			display: inline;
+		}
+	}
+
+	div {
+		transition: max-height .5s ease-in-out;
+		overflow: hidden;
+
+		&.open {
+			max-height: 9999px; //some big number that is bigger than the accordion will ever be in the modal. 
+			height: 100%;
+		}
+
+		&.closed {
+			height: 0;
+			max-height: 0;
+		}
+
+		.accordionTools {
+			padding: 0 .5em;
+		}
+	}
+}
+
+.icon {
+	vertical-align: top;
+	background: url(../images/icon-web.svg) center center no-repeat;
+	background-size: 20px;
+	border: 0;
+	height: 20px;
+	text-indent: -999999px;
+	width: 20px;
+	margin-right: 8px;
+	opacity: 0.6;
+
+	&.book, &.pbook {
+		background: url(../images/book2.svg) center center no-repeat;
+		background-size: 20px;
+		height: 24px;
+	}
+
+	&.article {
+		background: url(../images/article.svg) center center no-repeat;
+		background-size: 20px;
+		height: 20px;
+	}
+
+	&.ebook {
+		background: url(../images/ebook.svg) center center no-repeat;
+		background-size: 20px;
+		height: 24px;
+	}
+
+	&.link {
+		background: url(../images/icon-web.svg) center center no-repeat;
+		background-size: 18px;
+		width: 18px;
+		height: 18px;
+	}
+
+	&.video {
+		background: url(../images/youtube.svg) center center no-repeat;
+		background-size: 18px;
+		width: 18px;
+		height: 18px;
+	}
+
+	&.reference_entry {
+		background-image: url(../images/icon-web.svg);
+	}
+
+	&.wiki,  &.preresearch{
+		background-image: url(../images/wiki.svg);
+	}
+}

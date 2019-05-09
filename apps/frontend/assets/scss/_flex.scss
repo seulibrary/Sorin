@@ -1,0 +1,73 @@
+// Learn more about flex here https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+
+html,
+body {
+    height: 100%;
+    min-width: 300px; // fixes a weird scaling issue at really small screen sizes.
+}
+
+// #root is the main div. Children inside of root are here to have all display flex in one area.
+// Flex //
+#root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+
+        header {
+            display: flex;
+            justify-content: space-between;
+
+            .logo {
+                display: flex;
+            }
+
+            .navigation {
+                display: flex;
+            }
+        }
+
+        #welcome,
+        #about {
+            flex-direction: column;
+            display: flex;
+            flex: 1;
+            overflow: auto;
+            width: 100%;
+        }
+
+        .panels {
+            flex-direction: column;
+            display: flex;
+            flex: 1;
+
+            .tabs {
+                display: flex;
+                flex-direction: row;
+
+                .tab {
+                    flex-grow: 1;
+                }
+            }
+
+            #collections {
+                // display: flex;
+                display: inline-flex;
+
+                &>div {
+                    display: flex;
+                }
+
+                .column {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+        }
+
+    }
+}

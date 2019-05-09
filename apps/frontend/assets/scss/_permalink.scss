@@ -1,0 +1,226 @@
+#perma-link {
+	height: 100%;
+
+	.info {
+		width: $fullContentWidth;
+		margin: 40px auto;
+		padding: 1em;
+		background-color: $white;
+
+		h3 {
+			font-size: 2em;
+			color: $teal;
+		}
+
+		.more-info {
+			color: $teal;
+			cursor: pointer;
+
+			&:hover {
+				color: $goGreen;
+			}
+		}
+
+		.full-width {
+			width: 100%;
+		}
+
+		.btn {
+			@include button()
+		}
+
+		input {
+			padding: .5em;
+		}
+
+		.citations {
+			background: $medGrey;
+			padding: 1em;
+			font-size: .75em;
+
+			.citation-type {
+				margin: .25em;
+				display: block;
+
+				label {
+					display: inline;
+					margin-right: .5em;
+				}
+			}
+
+			.citation-output {
+				#cite-copy {
+					background-color: $white;
+					padding: 1em;
+					margin-bottom: 1em;
+					font-size: 1.25em;
+					overflow: auto;
+					height: 150px;
+
+					.csl-entry {
+						margin-bottom: 20px;
+					}
+				}
+			}
+		}
+
+		.resource-group {
+			padding: 0;
+			margin-top: 20px;
+
+			.resource-form {
+				border-bottom: solid 1px $lightGrey;
+
+				.container {
+					display: flex;
+
+					@media (max-width: $tablet-width) {
+						flex-wrap: wrap;
+					}
+				}
+
+				label {
+					text-transform: uppercase;
+					color: $teal;
+					font-size: 12px;
+					font-weight: 700;
+					margin: 1em 0;
+					display: block;
+				}
+
+				.resource-title {
+					color: $teal;
+					font-size: 1.5em;
+					margin-bottom: .5em;
+					font-weight: 700;
+
+					@media (max-width: $tablet-width) {
+						font-size: 1em;
+					}
+				}
+
+				.resource-column-left {
+					width: 80px;
+					vertical-align: top;
+					text-align: center;
+					flex-shrink: 0;
+
+					.resource-box-icon {
+						margin: 32px auto 0;
+						background-size: 32px;
+						width: 40px;
+						height: 40px;
+						display: block;
+					}
+
+					.resource-box-link {
+						display: inline-block;
+						background-color: #4E8496;
+						color: white;
+						padding: .25em 1em;
+						margin-top: 1em;
+						font-weight: 700;
+						text-decoration: none;
+						border-radius: 4px;
+					}
+
+					@media (max-width: $tablet-width) {
+						display: none;
+					}
+				}
+
+				.resource-column-middle {
+					flex: 4;
+					vertical-align: top;
+					padding: 1em;
+					min-height: 240px;
+
+					.resource-box-title {
+						color: $teal;
+					}
+
+					@media (max-width: $tablet-width) {
+						flex: none;
+						width: 100%;
+						border: none;
+						padding-bottom: 0;
+
+						label {
+							vertical-align: middle;
+
+							.resource-box-icon {
+								display: inline-block;
+							}
+
+							.resource-box-link {
+								display: inline-block;
+								background-color: #4E8496;
+								color: white;
+								padding: .25em;
+								margin-left: 8px;
+								text-decoration: none;
+								border-radius: 4px;
+							}
+						}
+
+						.resource-box-title {
+							font-size: 1em;
+						}
+					}
+				}
+
+				.resource-column-right {
+					vertical-align: top;
+					padding: 1em;
+
+					@media (max-width: $tablet-width) {
+						flex: none;
+						width: 100%;
+						padding: 1em;
+						padding-top: 0;
+					}
+
+					.file-drop {
+						border: dashed 1px $darkGrey;
+						border-radius: 5px;
+
+						p {
+							padding: 25%;
+							text-align: center;
+							font-size: 75%;
+							color: $darkGrey;
+						}
+					}
+
+					.file-list {
+						margin: 0;
+						padding: 0;
+
+						li {
+							display: flex;
+							list-style: none;
+
+							span {
+								cursor: pointer;
+							}
+
+							.delete {
+								border-radius: 100%;
+								display: inline-block;
+								float: none;
+								font-weight: bold;
+								height: 1.75em;
+								padding: 4.2px 7.5px;
+
+								&:hover {
+									background: red;
+									color: $white;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

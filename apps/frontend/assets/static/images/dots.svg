@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="6px" viewBox="0 0 20 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>dots-three-horizontal</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="dots-three-horizontal" fill="#236585" fill-rule="nonzero">
+            <path d="M10.001,0.8 C8.786,0.8 7.8,1.785 7.8,3 C7.8,4.215 8.786,5.2 10.001,5.2 C11.216,5.2 12.2,4.215 12.2,3 C12.2,1.785 11.216,0.8 10.001,0.8 Z M3.001,0.8 C1.786,0.8 0.8,1.785 0.8,3 C0.8,4.215 1.786,5.2 3.001,5.2 C4.216,5.2 5.2,4.214 5.2,3 C5.2,1.786 4.216,0.8 3.001,0.8 Z M17.001,0.8 C15.786,0.8 14.8,1.785 14.8,3 C14.8,4.215 15.786,5.2 17.001,5.2 C18.216,5.2 19.2,4.215 19.2,3 C19.2,1.785 18.216,0.8 17.001,0.8 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

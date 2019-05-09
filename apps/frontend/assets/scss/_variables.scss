@@ -1,0 +1,38 @@
+// Colors
+$topBlue: #1D4474;
+$lightGrey: #F4F4F4;
+$medGrey: #D8D8D8;
+$darkGrey: #9B9B9B;
+$textGrey: #9B9B9B;
+$lightBlue: #EDF2F4;
+$teal: #4E8496;
+$white: #ffffff;
+$seu-blue: #002566;
+$seu-gold: #bfab6c;
+$alert: #F70E0E;
+$saveGreen: #4F953B;
+$goGreen: #117E03;
+
+// Site Settings
+$headerHeight: 100px;
+$fullContentWidth: 80%;
+$boxShadowColor: $medGrey;
+$topMargin: 16.5px 0;
+$border-radius: 4px;
+$iconSize: 75px;
+$tl: 0.6s; // transition length
+$ftl: $tl/3; // fast transition
+
+$base-width: 1140px;
+$tablet-width: 968px;
+$mobile-portrait-width: 300px;
+$mobile-landscape-width: 420px;
+
+$num-columns: 12;
+$margin: 10px;
+
+$topMaxWidth: 1139px;
+$topMinWidth: 768px;
+$medMaxWidth: $topMinWidth - 1;
+$botMaxWidth: $medMaxWidth;
+$botMinWidth: 480px;

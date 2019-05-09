@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="26px" viewBox="0 0 26 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Stacks-Desktop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="My-Collection" transform="translate(-408.000000, -571.000000)" fill-rule="nonzero" fill="#4E8496">
+            <g id="Custom-Item-Popup-Menu-Extra" transform="translate(384.000000, 315.000000)">
+                <g id="price-tags" transform="translate(24.000000, 256.000000)">
+                    <path d="M24.0554141,0 L14.4483276,0 C13.7878404,0 12.8653599,0.382081836 12.3982154,0.849226417 L0.486628987,12.7608128 C0.0194844058,13.2279574 0.0194844058,13.992121 0.486628987,14.4590655 L10.7972344,24.7696709 C11.264379,25.2368155 12.0285427,25.2368155 12.4954871,24.7696709 L24.4072736,12.8578844 C24.8742181,12.39094 25.2565,11.4682594 25.2565,10.8079723 L25.2565,1.20088581 C25.2565,0.540398615 24.7161014,0 24.0556142,0 L24.0554141,0 Z M18.050985,9.6070865 C16.7246066,9.6070865 15.6492134,8.53169325 15.6492134,7.20531487 C15.6492134,5.87893649 16.7246066,4.80354325 18.050985,4.80354325 C19.3773634,4.80354325 20.4527566,5.87873635 20.4527566,7.20531487 C20.4527566,8.5318934 19.3773634,9.6070865 18.050985,9.6070865 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

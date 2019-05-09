@@ -1,0 +1,185 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= @data["title"] %></title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+</head>
+
+<body>
+
+
+  <h1><a href="<%= Application.get_env(:frontend, :settings)[:url] %>/c/<%= @data["permalink"] %>"><%= @data["title"] %></a></h1>
+  
+  <%= if (@data["write_users"] && List.first(@data["write_users"])) do %>
+  <p><strong>Creator(s):</strong> <%= for author <- @data["write_users"] do %>
+    <%= author %>
+    <%= if author != List.last(@data["write_users"]) do %>
+    , 
+    <% end %>
+    <% end %></p>
+  <% end %>
+
+  <p><strong>Published:</strong> <%= if @data["published"], do: "Yes", else: "No" %></p>
+  <p><strong>Clone Count:</strong> <%= @data["clones_count"] %></p>
+  <p><strong>Permalink:</strong> <%= Application.get_env(:frontend, :settings)[:url] %><%= @data["permalink"] %></p>
+
+  <%= if @data["provenance"] do %>
+    <p><strong>Provenance:</strong> <%= @data["provenance"] %></p>
+  <% end %>
+
+  <%= if @data["tags"] && List.first(@data["tags"]) do %>
+    <p>
+      <strong>Tags:</strong> 
+      <%= for tag <- @data["tags"] do %>
+      <%= String.capitalize(tag) %>
+      <%= if tag != List.last(@data["tags"]) do %>
+      , 
+      <% end %>
+      <% end %>
+    </p>
+  <% end %>
+
+  <%= if @data["notes"] do %>
+  <div>
+    <h3>Notes:</h3>
+    <%= raw @data["notes"]["body"] %>
+  </div>
+  <% end %>
+  
+  <%= if @data["resources"] do %>
+    <h2>Resources:</h2>
+
+    <%= for resc <- @data["resources"] do %>
+      <hr />
+      <%= if resc["catalog_url"] do %>
+      <h4><a href="<%= resc["catalog_url"] %>"><%= resc["title"] %></a> 
+      <%= if resc["date"] do %>(<%= resc["date"] %>)<% end %></h4>
+      <% else %>
+      <h4><%= resc["title"] %> <% if resc["date"] do %>(<%= resc["date"] %>)<% end %></h4>
+      <% end %>
+
+      <%= if resc["creator"] && List.first(resc["creator"]) do %>
+      <p><strong>Creator:</strong> <%= for creator <- resc["creator"] do %>
+        <%= creator %>
+        <%= if creator != List.last(resc["creator"]) do %>
+        , 
+        <% end %>
+        <% end %></p>
+      <% end %>
+      
+      <%= if resc["call_number"] do %>
+      <p><strong>Call Number:</strong> <%= resc["call_number"] %></p>
+      <% end %>
+
+      <%= if resc["coverage"] do %>
+      <p><strong>Coverage:</strong> <%= resc["coverage"] %></p>
+      <% end %>
+
+      <%= if resc["type"] do %>
+      <p><strong>Type:</strong> <%= resc["type"] %></p>
+      <% end %>
+
+      <%= if resc["format"] do %>
+      <p><strong>Format:</strong> <%= resc["format"] %></p>
+      <% end %>
+
+      <%= if resc["contributor"] do %>
+      <p><strong>Contributor:</strong> <%= resc["contributor"] %></p>
+      <% end %>
+
+      <%= if resc["publisher"] do %>
+      <p><strong>Publisher:</strong> <%= resc["publisher"] %></p>
+      <% end %>
+
+      <%= if resc["ext_collection"] do %>
+      <p><strong>Collection:</strong> <%= resc["ext_collection"] %></p>
+      <% end %>
+
+      <%= if resc["is_part_of"] do %>
+      <p><strong>Is Part Of:</strong> <%= resc["is_part_of"] %></p>
+      <% end %>
+    
+      <%= if resc["issue"] do %>
+      <p><strong>Issue:</strong> <%= resc["issue"] %></p>
+      <% end %>
+
+      <%= if resc["journal"] do %>
+      <p><strong>Journal:</strong> <%= resc["journal"] %></p>
+      <% end %>
+
+      <%= if resc["volume"] do %>
+      <p><strong>Volume:</strong> <%= resc["volume"] %></p>
+      <% end %>
+
+      <%= if resc["series"] do %>
+      <p><strong>Series:</strong> <%= resc["series"] %></p>
+      <% end %>
+
+      <%= if resc["rights"] do %>
+      <p><strong>Rights:</strong> <%= resc["rights"] %></p>
+      <% end %>
+
+      <%= if resc["relation"] do %>
+      <p><strong>Relation:</strong> <%= resc["relation"] %></p>
+      <% end %>
+
+      <%= if resc["language"] do %>
+      <!-- <p><strong>Language:</strong> <%= resc["language"] %></p>-->
+      <% end %>
+
+      <%= if resc["doi"] do %>
+      <p><strong>DOI:</strong> <%= resc["doi"] %></p>
+      <% end %>
+
+      <%= if resc["identifier"] do %>
+      <!-- <p><strong>Identifier:</strong> <%= resc["identifier"] %></p> -->
+      <% end %>
+
+      <%= if resc["subject"] do %>
+      <!-- <p><strong>Subject:</strong> <%= resc["subject"] %></p> -->
+      <% end %>
+
+      <%= if resc["source"] do %>
+      <!-- <p><strong>Source:</strong> <%= resc["source"] %></p> -->
+      <% end %>
+
+      <%= if resc["pages"] do %>
+      <p><strong>Pages:</strong> <%= resc["pages"] %></p>
+      <% end %>
+
+      <%= if !resc["pages"] do %>
+        <%= if resc["page_start"] do %>
+        <p><strong>Page Start:</strong> <%= resc["page_start"] %></p>
+        <% end %>
+
+        <%= if resc["page_end"] do %>
+        <p><strong>Page End:</strong> <%= resc["page_end"] %></p>
+        <% end %>
+      <% end %>
+
+      <%= if resc["description"] do %>
+        <p><strong>Description:</strong> <%= resc["description"] %></p>
+      <% end %>
+      
+      <%= if resc["tags"] && List.first(resc["tags"]) do %>
+      <p><strong>Tags:</strong> <%= for tag <- resc["tags"] do %>
+        <%= String.capitalize(tag) %>
+        <%= if tag != List.last(resc["tags"]) do %>
+        , 
+        <% end %>
+        <% end %></p>
+      <% end %>
+
+      <%= if resc["notes"] do %>
+      <div>
+        <h4>Notes:</h4>
+        <%= raw resc["notes"]["body"] %>
+      </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</body>
+</html>

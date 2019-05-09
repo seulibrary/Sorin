@@ -1,0 +1,32 @@
+.window {
+    .citations {
+        background: $medGrey;
+        padding: 1em;
+        font-size: .75em;
+        
+        .citation-type {
+            margin: .25em;
+            display: block;
+
+            label {
+                display: inline;
+                margin-right: .5em;
+            }
+        }
+
+        .citation-output {
+            #cite-copy {
+                background-color: white;
+                padding: 1em;
+                margin-bottom: 1em;
+                font-size: 1.25em;
+                overflow: auto;
+                height: 150px;
+        
+                .csl-entry {
+                    margin-bottom: 20px;
+                }
+            }
+        }
+    }
+}

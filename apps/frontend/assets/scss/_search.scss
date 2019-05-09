@@ -1,0 +1,725 @@
+// Search //
+#search {
+	width: 100%;
+	padding: 10%;
+	overflow-y: auto;
+
+	@media (max-width: $tablet-width) {
+		padding: 10%;
+	}
+
+	@media (max-width: $mobile-landscape-width) {
+		padding: 4%;
+	}
+
+	form {
+		position: relative;
+
+		#search-main {
+			background-color: $lightBlue;
+			border: none;
+			display: block;
+			font-size: 1.5em;
+			margin: 0 auto;
+			padding: 2% 48px 2% 2%;
+			width: 100%;
+			padding-right: 300px;
+
+			@media (min-width: $mobile-landscape-width) and (max-width: $tablet-width) {
+				font-size: 1em;
+				background-size: 20px;
+				padding-right: 220px;
+			}
+
+			@media (max-width: $mobile-landscape-width) {
+				padding-right: 60px;
+				font-size: 1em;
+				background-size: 20px;
+			}
+		}
+
+		#search-submit-btn {
+			background-color: transparent;
+			background: url(../images/icon-mag.svg) 50% center no-repeat;
+			-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/img/magnifying-glass.svg', sizingMethod='scale')";
+			border: 0;
+			font-size: 1.5em;
+			text-indent: -999999px;
+			width: 65px;
+			position: absolute;
+			right: 0;
+			top: 0;
+			margin: 0;
+			padding: 2%;
+			z-index: 5;
+
+			@media (max-width: $mobile-landscape-width) {
+				background-size: 40%;
+				padding: 1%;
+			}
+
+			@media (min-width: $mobile-landscape-width) and (max-width: $tablet-width) {
+				background-size: 40%;
+				padding: 1.5%;
+			}
+		}
+
+		#search-dropdown {
+			position: absolute;
+			top: 0px;
+			right: 80px;
+			background-color: transparent;
+			border: none;
+			font-size: 1.5em;
+			padding: 2% 25px 2% 2%;
+			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			background: url(../images/down-arrow.png) right center no-repeat;
+
+			@media (min-width: $topMinWidth)and (max-width: $tablet-width) {
+				font-size: 1em;
+				right: 60px;
+			}
+
+			@media (min-width: $mobile-landscape-width)and (max-width: $topMinWidth) {
+				font-size: 1em;
+				right: 60px;
+				background-size: 18px;
+			}
+
+			@media (max-width: $mobile-landscape-width) {
+				position: relative;
+				top: 12px;
+				right: 0px;
+				background-color: $medGrey;
+				border: $darkGrey;
+				font-size: 1em;
+				background-size: 18px;
+				background-position-x: 95%;
+			}
+		}
+
+		@media only screen and (max-width: $medMaxWidth) {
+			margin-top: 75px;
+			width: 100%;
+		}
+	}
+
+	.results {
+		padding-top: 20px;
+
+		#load-more {
+			color: $goGreen;
+			text-align: center;
+			display: block;
+			margin: 1em auto;
+			font-size: 1.5em;
+			border: 1px solid;
+			padding: 1em;
+			max-width: 500px;
+			cursor: pointer;
+			opacity: 1;
+			transition: all 0.5s;
+
+			&:hover {
+				color: $saveGreen;
+			}
+
+			&.dis {
+				opacity: 0;
+			}
+		}
+
+
+		a.tag-result {
+			display: block;
+			background-color: white;
+			border: 1px solid $lightGrey;
+			padding: 12px;
+			color: $teal;
+			font-weight: 600;
+			margin-bottom: 12px;
+			font-size: 1.25em;
+			cursor: pointer;
+		}
+
+		a:hover {
+			background-color: $lightBlue;
+		}
+
+		.result {
+			transition: all 0.3s;
+			opacity: 0;
+			background-color: $lightGrey;
+			padding: 1em;
+			margin-top: 1em;
+			margin-bottom: 1em;
+			min-height: 160px;
+
+			.count {
+				display: inline-block;
+				vertical-align: top;
+				width: 2%;
+
+				@media (max-width: $tablet-width) {
+					width: 6%;
+					font-size: .75em;
+				}
+			}
+
+			.contrib {
+				.accordion {
+					margin-left: 0%;
+
+					@media (max-width: $tablet-width) {
+						margin-left: 0%;
+					}
+				}
+			}
+
+			.callNumber {
+				color: $goGreen;
+			}
+
+			.accordion {
+				margin-left: 2%;
+
+				@media (max-width: $tablet-width) {
+					margin-left: 6%;
+				}
+
+				label {
+					span {
+						display: inline;
+					}
+				}
+			}
+
+			.more-info {
+				color: $teal;
+				cursor: pointer;
+			}
+
+			.icon {
+				display: inline-block;
+				vertical-align: top;
+				width: 70px;
+				background-image: url(../images/article.svg);
+				background-size: 48px;
+				border: 0;
+				height: 70px;
+				text-indent: -999999px;
+				margin-right: 12px;
+				opacity: 0.8;
+				background-size: 48px;
+				background-repeat: no-repeat;
+				background-position: center center;
+
+				&.book,
+				&.pbook {
+					background-image: url(../images/book2.svg);
+				}
+
+				&.ebook {
+					background-image: url(../images/ebook.svg);
+				}
+
+				&.link,
+				&.web {
+					background-image: url(../images/icon-web.svg);
+				}
+
+				&.video {
+					background-image: url(../images/youtube.svg);
+				}
+
+				&.reference_entry {
+					background-image: url(../images/icon-web.svg);
+				}
+
+				&.wiki,
+				&.preresearch {
+					background-image: url(../images/wiki.svg);
+				}
+
+				@media (max-width: $tablet-width) {
+					background-size: 24px;
+					width: 24px;
+					height: 30px;
+				}
+			}
+
+			.item {
+				display: inline-block;
+				vertical-align: top;
+				width: 70px;
+				margin-right: 1em;
+
+				img {
+					padding: 6px;
+					border: 1px solid #eee;
+					background-color: white;
+					width: 100%;
+				}
+			}
+
+			.info {
+				display: inline-block;
+				vertical-align: top;
+				width: 70%;
+
+				@media (max-width: 321px) {
+					width: 43%;
+				}
+
+				@media (min-width: 322px) and (max-width: $mobile-landscape-width) {
+					width: 50%;
+				}
+
+				@media (min-width: $mobile-landscape-width) and (max-width: $tablet-width) {
+					width: 65%;
+				}
+
+				@media (min-width: $tablet-width) and (max-width: $base-width) {
+					width: 65%;
+				}
+
+				h5 {
+					font-size: .75em;
+					text-transform: uppercase;
+					margin-top: 0.5em;
+					margin-bottom: 0;
+					font-weight: 500;
+					letter-spacing: 1px;
+					color: $darkGrey;
+
+					.is-reviewed {
+						color: $goGreen;
+					}
+				}
+
+				h4 {
+					margin: 0;
+
+					a {
+						color: $teal;
+						margin-top: 0em;
+						font-size: 1.5em;
+						margin-bottom: 0em;
+						font-weight: 600;
+						text-decoration: none;
+						cursor: pointer;
+
+						@media (max-width: $tablet-width) {
+							font-size: 1em;
+						}
+					}
+
+					a:hover {
+						color: $goGreen;
+					}
+				}
+
+				p {
+					margin: 0.25em 0;
+
+					span {
+						display: block;
+					}
+
+					a.more-info {
+						color: $teal;
+						text-transform: uppercase;
+					}
+
+					.book-available {
+						color: $goGreen;
+						text-transform: uppercase;
+					}
+				}
+			}
+
+			.des {
+				display: none;
+			}
+
+			.partOf {
+				display: block;
+			}
+
+			.contrib {
+				span {
+					display: block;
+				}
+			}
+
+			.actions {
+				vertical-align: top;
+				min-width: 150px;
+				width: 15%;
+				text-align: right;
+				float: right;
+
+				.save {
+					cursor: pointer;
+					color: white;
+					border: 0;
+					height: 36px;
+					width: 140px;
+					text-align: center;
+					margin-left: 12px;
+					display: block;
+					font-size: .875em;
+					color: white;
+					padding: .5em;
+					background-color: $saveGreen;
+					border-radius: 3px;
+					display: inline-block;
+					transition: all 0.3s;
+					text-transform: uppercase;
+					border: 1px solid $saveGreen;
+					margin: .25em 0;
+					text-decoration: none;
+
+					span {
+						color: white;
+					}
+
+					&:hover {
+						background-color: $goGreen;
+					}
+				}
+
+				.cite,
+				.url,
+				.import {
+					background-color: transparent;
+					border-color: $teal;
+					color: $teal;
+
+					span {
+						color: $teal;
+					}
+
+					&:hover {
+						background-color: $teal;
+
+						span {
+							color: white;
+						}
+					}
+				}
+
+				@media (max-width: $tablet-width) {
+					min-width: 90px;
+
+					.save {
+						width: 100px;
+						font-size: .75em;
+						height: 30px;
+					}
+				}
+			}
+
+			.user-image {
+				width: 100px;
+				height: 100px;
+				background-color: $topBlue;
+				display: inline-block;
+				vertical-align: top;
+				margin-right: 16px;
+				border-radius: 50%;
+			}
+
+			.user-info {
+				display: inline-block;
+				vertical-align: top;
+				min-width: 50%;
+				padding-top: 12px;
+
+				h5 {
+					font-size: .75em;
+					text-transform: uppercase;
+					margin-top: 0.5em;
+					margin-bottom: 0;
+					font-weight: 500;
+					letter-spacing: 1px;
+					color: $darkGrey;
+				}
+
+				h4 {
+					color: $teal;
+					margin-top: 0em;
+					font-size: 1.5em;
+					margin-bottom: 0em;
+					font-weight: 600;
+				}
+
+				.pub {
+					color: $goGreen;
+				}
+
+				.stack-view {
+					text-transform: uppercase;
+					color: $teal;
+					font-weight: 600;
+					margin: 10px 0;
+					display: block;
+					cursor: pointer;
+
+					&:hover {
+						color: $seu-blue;
+					}
+				}
+
+				ul {
+					display: block;
+					margin: 5px;
+					padding: 0;
+
+					li {
+						display: block;
+						margin: 0;
+						padding: 0;
+						margin-bottom: 16px;
+
+						a {
+							cursor: pointer;
+							padding: 12px;
+							background-color: white;
+							display: block;
+							font-weight: 600;
+							color: $teal;
+							border-radius: 6px;
+
+							&:hover {
+								background-color: $lightBlue;
+							}
+						}
+					}
+
+					&.close {
+						display: none;
+					}
+				}
+			}
+
+			&.show {
+				opacity: 1;
+				margin-top: 0;
+			}
+
+			&.half {
+				width: 49%;
+				margin-right: 1.5%;
+				display: inline-block;
+
+				&:nth-child(even) {
+					margin-right: 0;
+				}
+			}
+
+			.resource-group {
+				padding: 1em;
+				background-color: white;
+				border-radius: 6px;
+				display: flex;
+				flex-direction: column;
+				width: 100%;
+				margin-bottom: 1em;
+
+				div {
+					display: flex;
+
+					&:hover {
+						background-color: $lightBlue;
+					}
+				}
+
+				a {
+					display: flex;
+					width: 100%;
+					cursor: pointer;
+					padding: .5em 0;
+					position: relative;
+
+					h4 {
+						display: inline-block;
+						vertical-align: top;
+						margin-top: 0;
+						cursor: pointer;
+
+						@media (max-width: $tablet-width) {
+							width: 70%;
+						}
+					}
+
+					.icon {
+						width: 30px;
+						height: 30px;
+						background-size: 25px;
+						margin-right: .5em;
+						vertical-align: top;
+					}
+
+					.attach {
+						display: inline-block;
+						background: url(../images/paperclip.svg) center center no-repeat;
+						background-size: 18px;
+						width: 18px;
+						height: 18px;
+						float: right;
+						margin-top: 10px;
+						position: absolute;
+						right: 10px;
+						opacity: .5;
+					}
+
+					button {
+						float: right;
+						background-color: transparent;
+						border: none;
+						color: $teal;
+
+						&:hover {
+							color: $goGreen;
+						}
+					}
+				}
+			}
+		}
+
+		@media only screen and (max-width: $medMaxWidth) {
+			#user-results .result {
+				.user-image {
+					width: 40px;
+					height: 40px;
+				}
+
+				.user-info {
+					padding-top: 0px;
+
+					h4 {
+						font-size: 1em;
+					}
+				}
+			}
+		}
+	}
+
+	#reset-search {
+		margin-top: 0.5em;
+		cursor: pointer;
+		text-align: right;
+		font-size: 12px;
+
+		span {
+			color: $medGrey;
+		}
+
+		@media (max-width: $mobile-landscape-width) {
+			margin-top: -1em;
+		}
+	}
+
+	#reset-search:hover {
+		span {
+			color: $darkGrey;
+		}
+	}
+
+	.results-tab {
+		margin-top: 0.5em;
+
+		.results-tab {
+			border-bottom: 3px solid #eee;
+			display: inline-block;
+			margin-right: 1em;
+			padding-bottom: .5em;
+			cursor: pointer;
+		}
+
+		.results-tab.selected {
+			border-bottom: 3px solid $teal;
+			font-weight: 700;
+		}
+
+		.results-tab:hover {
+			border-bottom: 3px solid $teal;
+		}
+
+		@media (max-width: $tablet-width) {
+			margin-top: 1.5em;
+		}
+	}
+
+	// I don't think this is used anymore
+	// stack view for results
+	#stack {
+		.stack-title {
+			font-size: 3em;
+			margin-bottom: 0;
+			color: $teal;
+		}
+
+		.stack-by {
+			margin-top: 0px;
+			font-style: italic;
+			font-weight: 300;
+		}
+
+		.notes-tag {
+			border-bottom: 1px solid $lightGrey;
+			padding-bottom: .5em;
+		}
+
+		.stack-items {
+			background-color: $medGrey;
+			padding: 1em;
+			border-radius: .5em;
+			margin-top: 1em;
+
+			ul {
+				margin: 0;
+				padding: 0;
+
+				li {
+					display: block;
+					background-color: white;
+					padding: 1em;
+					margin-bottom: 1em;
+					border-radius: .25em;
+
+					h4 {
+						margin: 0;
+						color: $teal;
+					}
+
+					.stack-item-link {
+						float: right;
+						cursor: pointer;
+						background: url(../images/icon-link.svg) center center no-repeat;
+						-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/img/magnifying-glass.svg', sizingMethod='scale')";
+						border: 0;
+						height: 36px;
+						width: 36px;
+						text-align: center;
+						background-size: 24px;
+						margin-top: -12px;
+						opacity: .6;
+
+						&:hover {
+							opacity: 1;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+input:-webkit-autofill {
+	background: #edf2f4 url(../images/icon-mag.svg) 98% no-repeat !important;
+	background-color: #edf2f4 !important;
+}

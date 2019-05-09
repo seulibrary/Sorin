@@ -1,0 +1,115 @@
+.navigation {
+	margin-left: auto;
+	
+	.navigation-wrapper {
+		@include black-out;
+		z-index: 6;
+		
+		.navigation-menu {
+			background-color: $white;
+			width: 260px;
+			position: absolute;
+			right: 0;
+			top: $headerHeight;
+			@include transition(all $ftl ease-in-out);
+			@include box-shadow(0, 0);
+
+			h4 {
+				background-color: $teal;
+				color: $white;
+				margin: 0;
+				padding: 5px 15px;
+			}
+
+			ul {
+				padding: 0;
+
+				li {
+					display: block;
+					margin: 0;
+					padding: 5px 15px;
+					
+					a {
+						padding: 0;
+						margin: 0;
+
+						&:hover {
+							background: none;
+							color: $seu-gold;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.hamburger-wrapper {
+		background: $teal;
+		border: solid 2px $white;
+		border-radius: 50%;
+		height: 48px;
+		position: relative;
+		width: 48px;
+		z-index: 11;
+		float: right;
+		margin: 1.75em;
+		margin-bottom: 0em;
+		
+		@media (max-width: $mobile-landscape-width) {
+			margin: 0.75em;
+			
+		}
+
+		@media only screen and (max-width: $medMaxWidth) {
+			margin-top: .5em;
+		}
+
+		&.open-hamburger {
+			background-color: $white;
+			border-color: $teal;
+			@include transform(rotate(180deg));
+			@include transition(all $ftl ease-in-out);
+
+			.hamburger {
+				background-color: $teal;
+				
+				&.top-bar, &.bottom-bar {
+					@include transform(scale(0));
+				}
+			
+				&.mid-bar {
+					@include transform(rotate(45deg) perspective(1px));
+				}
+			
+				&.mid-bar2 {
+					@include transform(rotate(135deg) perspective(1px));
+				}
+			}
+		}
+
+		.hamburger {
+			background-color: $white;
+			height: 3px;
+			padding: 0;
+			left: 12px;
+			position: absolute;
+			width: 19px;
+			@include transition(all $ftl ease-in-out);
+		
+			&.top-bar {
+				top: 12px;
+			}
+			&.mid-bar, &.mid-bar2 {
+				top: 20px;
+			}
+			&.bottom-bar {
+				top: 28px;
+			}
+		}
+
+		&:hover {
+			border-color: $teal;
+			cursor: pointer;
+		}
+	}	
+}

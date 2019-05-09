@@ -1,0 +1,91 @@
+.window-wrapper {
+	@include black-out;
+	height: 100%; // overwrite height set from black-out
+	position: fixed;
+	z-index: 100;
+
+	&.confirmation {
+		.window {
+			top: 40%;
+			text-align: center;
+			padding: 1em;
+
+			.text {
+				padding: .5em;
+			}
+
+			button {
+				margin-top: .5em;
+				margin-right: .5em;
+			}
+		}
+	}
+
+	.window {
+		background-color: $lightGrey;
+		max-height: 100%;
+		overflow-y: auto;
+		position: absolute;
+		width: 75%;
+		z-index: 20;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		top: 0;
+
+		@include box-shadow(0, 0, 10px, 0, $boxShadowColor);
+
+		@media (min-height: 600px) {
+			top: 5%;
+		}
+
+		@media (max-width: $tablet-width) {
+			width: 90%;
+		}
+
+		.window-close {
+			position: absolute;
+			top: 15px;
+			right: 15px;
+			cursor: pointer;
+			background: url(../images/CLOSEX.svg) center center no-repeat;
+			-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/img/magnifying-glass.svg', sizingMethod='scale')";
+			background-size: 20px;
+			border: 0;
+			height: 20px;
+			text-indent: -999999px;
+			width: 20px;
+		}
+
+		label {
+			text-transform: uppercase;
+			color: $teal;
+			font-size: 12px;
+			font-weight: 700;
+			margin: 1em 0;
+			display: block;
+		}
+
+		input {
+			display: block;
+			padding: .5em;
+		}
+
+		textarea {
+			height: 100px;
+			border: 1px solid $lightGrey;
+			margin-bottom: 0.5em;
+			padding: 0.5em;
+			border: 1px solid $teal;
+		}
+
+		.full-width {
+			display: block;
+			width: 100%;
+		}
+
+		.btn {
+			@include button()
+		}
+	}
+}

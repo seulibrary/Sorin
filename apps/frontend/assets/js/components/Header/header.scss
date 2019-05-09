@@ -1,0 +1,69 @@
+$topMinWidth: 768px;
+$medMaxWidth: $topMinWidth - 1;
+
+.navigation {
+    margin-left: 0;
+}
+
+.chatLink {
+    display: flex;
+}
+
+.logoTree img, .logoText img {
+    color: transparent;
+}
+
+.logoText{
+    margin: 2em 1em;
+    
+    .logoSorin{
+        @media only screen and (max-width: $medMaxWidth) {
+                margin: 1em 0;
+
+            img {
+                width: 100px;
+                margin-left: 0;
+            }
+        }
+    }
+    
+    .logoBy {
+        margin-left: 1em;
+
+        @media only screen and (max-width: $medMaxWidth) {
+            display: none;
+        }
+    }
+    
+    .logoBy-sm {
+        display: none;
+
+        @media only screen and (max-width: $medMaxWidth) {
+            display: inline-block;
+        }
+    }
+    
+    @media only screen and (max-width: $medMaxWidth) {
+        margin: .75em;	
+        width: 100px;
+    }
+}
+    
+.logoTree{
+    margin-top: 5px;
+    margin-left: .5em;
+
+    img{
+        height: 88px;
+    }
+    
+    @media only screen and (max-width: $medMaxWidth) {
+        margin-top: 6px;
+        margin-left: .5em;
+
+        img {
+            width: 90px;
+            height: 58px;
+        }
+    }
+}

@@ -1,0 +1,81 @@
+.hide {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+.required {
+	color: red;
+}
+
+.mobile-only {
+	display: none;
+
+	@media (max-width: $tablet-width) {
+		display: block;
+	}
+}
+
+@mixin black-out {
+	background-color: #ffffff;
+	background-color: rgba(255, 255, 255, .75);
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	left: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 100vw;
+}
+
+@mixin button {
+	padding: 1em;
+	background-color: $teal;
+	color: white;
+	border-radius: 3px;
+	display: inline-block;
+	cursor: pointer;
+	text-transform: uppercase;
+	font-weight: 500;
+
+	&:hover {
+		background-color: tint($teal, 20%);
+	}
+}
+
+@function tint($color, $percentage) {
+	@return mix(white, $color, $percentage);
+}
+
+@mixin border-radius($radius) {
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+	-ms-border-radius: $radius;
+	border-radius: $radius;
+}
+
+@mixin transition($radius) {
+	-webkit-transition: $radius;
+	-moz-transition: $radius;
+	-ms-transition: $radius;
+	transition: $radius;
+}
+
+@mixin transform($radius) {
+	-webkit-transform: $radius;
+	-moz-transform: $radius;
+	-ms-transform: $radius;
+	transform: $radius;
+}
+
+@mixin background-sprite($x, $y) {
+	background: url(../img/sprite.png) no-repeat center center;
+	background-position: $x $y;
+}
+
+@mixin box-shadow($x, $y, $blur: 1px, $spread: 1px, $color: $boxShadowColor) {
+	-webkit-box-shadow: $x $y $blur $spread $color;
+	-moz-box-shadow: $x $y $blur $spread $color;
+	box-shadow: $x $y $blur $spread $color;
+}

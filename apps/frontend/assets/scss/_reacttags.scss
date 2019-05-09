@@ -1,0 +1,53 @@
+.react-tagsinput {
+    .react-tagsinput-input {
+        background: url(../images/tags.svg) 5px center no-repeat;
+        background-size: 20px;
+        background-color: white;
+        border: 1px solid $lightGrey;
+        display: inline-block;
+        margin-bottom: .25em;
+        padding: .25em 2em;
+        vertical-align: middle;
+        width: 100%;
+        font-size: 20px;
+    }
+
+    .react-tagsinput-tag {
+        background-color: $medGrey;
+        border-radius: 3px;
+        color: $darkGrey;
+        display: inline-block;
+        font-weight: 700;
+        font-size: .5em;
+        margin-right: .5em;
+        margin-bottom: .25em;
+        padding: .5em;
+        text-transform: uppercase;
+        vertical-align: middle;
+
+        .react-tagsinput-remove {
+            background: url(../images/CLOSEX.svg) 5px center no-repeat;
+            background-size: 70%;
+            cursor: pointer;
+            display: inline-block;
+            height: 10px;
+            margin-left: .25em;
+            width: 15px;
+        }
+    }
+}
+
+// Duplicate style to overwrite input padding
+.window-wrapper {
+    .window {
+        .react-tagsinput-input {
+            padding: .25em 2em;
+        }
+    }
+}
+
+.accordion {
+    .react-tagsinput {
+        padding: 1em 0;
+    }
+}
