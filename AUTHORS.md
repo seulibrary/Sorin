@@ -20,7 +20,7 @@ Sorin was originally written and is maintained by the staff of St. Edward's Univ
 ## Emeritus
 
 * Brittney Johnson
-* Megan Blair
+* Megan Firestone
 * Miiya Holmes
 
 # Patches, contributions, suggestions, and testing
