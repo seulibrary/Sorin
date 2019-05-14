@@ -29,3 +29,5 @@ Sorin was originally written and is maintained by the staff of St. Edward's Univ
 * Lisa Longenecker
 * Mando Garcia
 * Susan Eason
+
+# Additional Contributors
