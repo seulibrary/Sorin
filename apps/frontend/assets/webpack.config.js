@@ -3,9 +3,13 @@ const webpack = require("webpack")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const { lstatSync, readdirSync } = require('fs')
 
-const fs = require("fs")
-let extension_list = fs.readdirSync(path.join(__dirname, "./js/extensions/"))
+const isDirectory = source => lstatSync(source).isDirectory()
+const getDirectories = source =>
+  readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
+
+let extension_list = getDirectories(path.join(__dirname, "./js/extensions/"))
 
 let config = {
     entry: [
