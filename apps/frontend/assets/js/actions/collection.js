@@ -7,18 +7,8 @@ export const getCollection = (port, url) => (dispatch) => {
         type: Constants.GETTING_COLLECTION_BY_URL
     })
 
-    const body = {
-        url: url
-    }
-
-    fetch(hostUrl + ":" + port + "/api/collection", {
-        method: "POST",
-        headers: {
-            "x-csrf-token": window.csrfToken,
-            Accept: "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
+    fetch(hostUrl + ":" + port + "/api/collection/" + url, {
+        method: "GET",
     }).then(parseJson)
         .then((json) => {
             dispatch({

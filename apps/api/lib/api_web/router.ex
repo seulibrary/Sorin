@@ -11,7 +11,9 @@ defmodule ApiWeb.Router do
   scope "/api", ApiWeb do
     pipe_through [:api]
 
-    post "/collection", CollectionController, :get_collection
+    resources "/collection", CollectionController, only: [:show]
+
+    # post "/collection", CollectionController, :get_collection
     post "/file/:id", FileController, :get_file
   end
 end
