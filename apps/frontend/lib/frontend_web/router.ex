@@ -23,8 +23,7 @@ defmodule FrontendWeb.Router do
     get "/signout", AuthController, :delete
     post "/signout", AuthController, :delete
     get "/:provider", AuthController, :request
-    get "/:provider/callback", AuthController, :callback
-    post "/identity/callback", AuthController, :identity_callback
+    get "/:provider/callback", AuthController, :new
   end
 
   # Frontend Routes
