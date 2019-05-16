@@ -50,23 +50,4 @@ defmodule ApiWeb.AuthController do
           {:ok, user}
       end
     end
-
-    def identity_callback(%{assigns: %{ueberauth_auth: _auth}} = conn, _params) do
-      if Mix.env === :demo do
-        case Repo.get_by(User, id: 1) do
-          nil ->
-            conn
-            |> redirect(to: "/")
-          user ->
-            user_id_token = Phoenix.Token.sign(conn, "user_id", user.id)
-
-            conn
-            |> put_session(:user_id, user_id_token)
-            |> redirect(to:  "/")
-        end
-      else
-        conn
-        |> redirect(to: "/")
-      end
-    end
   end
