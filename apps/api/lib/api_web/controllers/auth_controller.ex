@@ -64,5 +64,5 @@ defmodule ApiWeb.AuthController do
         user ->
           {:ok, user}
       end
-    end 
+    end
   end
