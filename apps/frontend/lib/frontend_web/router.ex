@@ -24,12 +24,11 @@ defmodule FrontendWeb.Router do
     post "/signout", AuthController, :delete
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :new
+    post "/identity/callback", AuthController, :identity_callback
   end
 
   # Frontend Routes
-  # * Routes are defined here instead of being defined by React.
-  # * This is so there is more control in the back end. And, let's us
-  # * Set up routes for API too if needed.
+  # * Routes are defined here as a wildcard so React and do it
   scope "/", FrontendWeb do
     pipe_through [:browser, :auth]
 
