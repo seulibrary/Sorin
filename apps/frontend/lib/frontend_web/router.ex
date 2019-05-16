@@ -34,10 +34,6 @@ defmodule FrontendWeb.Router do
   scope "/", FrontendWeb do
     pipe_through [:browser, :auth]
 
-    get "/", PageController, :index
-    get "/about", PageController, :index
-    get "/c/*collection_url", PageController, :index
-    get "/search", PageController, :index
-    get "/collections", PageController, :index
+    get "/*path", PageController, :index
   end
 end
