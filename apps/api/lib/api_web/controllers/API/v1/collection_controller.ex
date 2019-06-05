@@ -5,7 +5,7 @@ defmodule ApiWeb.V1.CollectionController do
   alias Core.Collections
   alias ApiWeb.CollectionView
 
-  action_fallback ApiWeb.FallbackController
+ # action_fallback ApiWeb.FallbackController
 
   def show(conn, %{"id" => id} = _params) do
     case List.first(Core.Collections.get_permalink_view(id)) do
@@ -26,26 +26,26 @@ defmodule ApiWeb.V1.CollectionController do
     |> render(ApiWeb.ErrorView, "404.json")
   end
 
-  # def create(conn, %{"title" => title}) do
-  #   case Core.Dashboard.Collections.new_collection(Guardian.Plug.current_resource(conn).id, title) do
-  #     {:ok, collection} ->
-  #       conn
-  #       |> render(CollectionView, "dashboardCollection.json", collection: collection)
-  #     _ ->
-  #       conn
-  #       |> put_status(400)
-  #       |> render(ApiWeb.ErrorView, "400.json")    
-  #   end
-  # end
-
   def create(conn, %{"title" => title}) do
-    with {:ok, %Collections.Collection{} = collection} <- 
-      Dashboard.Collections.new_collection(Guardian.Plug.current_resource(conn).id, title) do
+    case Core.Dashboard.Collections.new_collection(Guardian.Plug.current_resource(conn).id, title) do
+      {:ok, collection} ->
         conn
-        |> put_status(:created)
         |> render(CollectionView, "dashboardCollection.json", collection: collection)
-      end
+      _ ->
+        conn
+        |> put_status(400)
+        |> render(ApiWeb.ErrorView, "400.json")    
+    end
   end
+
+  # def create(conn, %{"title" => title}) do
+  #   with {:ok, %Collections.Collection{} = collection} <- Dashboard.Collections.new_collection(Guardian.Plug.current_resource(conn).id, title) do
+
+  #       conn
+  #       |> put_status(:created)
+  #       |> render(CollectionView, "dashboardCollection.json", collection: collection)
+  #     end
+  # end
 end
 
 
