@@ -39,9 +39,9 @@ export function setCurrentUser() {
                     socket: socket,
                     channel: userChannel,
                 })
-
+                
                 dispatch(joinSearchChannel())
-                dispatch(getDashboard(payload.data.id, socket))
+                dispatch(getDashboard(window.userToken, socket))
             })
 
             userChannel.on("logged_out", () => {
