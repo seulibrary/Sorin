@@ -40,7 +40,6 @@ export function setCurrentUser() {
                     socket: socket,
                     channel: userChannel,
                 })
-
                 dispatch(getDashboard(payload.data.id, socket))
                 getAuthTokens(userChannel)
             })
