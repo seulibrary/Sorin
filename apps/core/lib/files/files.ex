@@ -3,7 +3,11 @@ defmodule Core.Files do
   The Files context.
   """
   import Ecto.Query, warn: false
-  alias Core.Repo
+  alias Core.{
+    Accounts,
+    Files.File,
+    Repo,
+  }
 
   #################################
   # CUSTOM FUNCTIONS
