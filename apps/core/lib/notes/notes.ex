@@ -55,46 +55,30 @@ defmodule Core.Notes do
 
   @doc """
   Gets a note by its id and creates a new note with the same body content
-  on the specified collection.
+  on the specified collection or resource.
 
-  Takes a valid note id as an integer and a valid collection id as an integer.
+  Takes a valid note id as an integer, either :collection or :resource, and
+  a valid collection/resource id as an integer.
 
   Returns a tagged tuple with either the created note struct or a changeset.
 
   ## Examples
 
-      iex> import_note_to_collection(note_id, collection_id)
+      iex> import_note_by_id(note_id, :collection, collection_id)
       {:ok, %Note{}}
 
-      iex> import_note_to_collection([one or more bad values])
+      iex> import_note_by_id([one or more bad values])
       {:error, %Ecto.Changeset{}}
 
   """
-  def import_note_to_collection(note_id, collection_id) do
+  def import_note_by_id(note_id, :collection, collection_id) do
     note =
       get_note!(note_id)
 
     create_note(%{collection_id: collection_id, body: note.body})
   end
 
-  @doc """
-  Gets a note by its id and creates a new note with the same body content
-  on the specified resource.
-
-  Takes a valid note id as an integer and a valid resource id as an integer.
-
-  Returns a tagged tuple with either the created note struct or a changeset.
-
-  ## Examples
-
-      iex> import_note_to_resource(note_id, resource_id)
-      {:ok, %Note{}}
-
-      iex> import_note_to_resource([one or more bad values])
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def import_note_to_resource(note_id, resource_id) do
+  def import_note_by_id(note_id, :resource, resource_id) do
     note =
       get_note!(note_id)
 
