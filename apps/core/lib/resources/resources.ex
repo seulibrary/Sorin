@@ -141,6 +141,50 @@ defmodule Core.Resources do
   end
 
   @doc """
+  High-level function for moving a resource from one place in a specified
+  user's dashboard to another, reindexing the source and target collections.
+
+  Takes a valid resource id as an integer, a valid collection id as an
+  integer, and a target index (i.e., zero-indexed position in the target
+  collection).
+
+  ## Examples
+
+      iex> move_resource_by_id(resource_id, target_collection_id, target_index)
+      %Resource{}
+
+  """
+  def move_resource_by_id(
+    resource_id,
+    target_collection_id,
+    target_index) do
+
+    resource = get_resource!(resource_id)
+
+    Repo.transaction(fn ->
+      # Reindex source collection's resources
+      from(r in Resource,
+	where: r.collection_id == ^resource.collection_id
+	and r.collection_index > ^resource.collection_index)
+      |> Repo.update_all(inc: [collection_index: -1])
+
+      # Reindex target collection's resources
+      from(r in Resource,
+	where: r.collection_id == ^target_collection_id
+	and r.collection_index >= ^target_index)
+      |> Repo.update_all(inc: [collection_index: 1])
+
+      # Move resource
+      resource
+      |> update_resource(
+	%{collection_id: target_collection_id,
+	  collection_index: target_index})
+    end)
+
+    get_resource!(resource_id)
+  end
+
+  @doc """
   Returns the list of resources.
 
   ## Examples
