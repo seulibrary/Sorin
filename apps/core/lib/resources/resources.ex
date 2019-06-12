@@ -113,6 +113,34 @@ defmodule Core.Resources do
   end
 
   @doc """
+  High-level function for creating an indexed resource. Calculates and adds
+  the correct collection_index value for the specified collection.
+
+  Takes a map of values, and a valid collection id as an integer.
+
+  Returns a tagged tuple with either the new resource struct or
+  a changeset.
+
+  ## Examples
+
+      iex> create_indexed_resource(%{}, collection_id)
+      {:ok, %Resource{}}
+
+      iex> create_indexed_resource([one or more bad values])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_indexed_resource(resource_map, collection_id) do
+    index =
+      Collections.get_highest_resources_index(collection_id) + 1
+
+    resource_map
+    |> Map.put(:collection_id, collection_id)
+    |> Map.put(:collection_index, index)
+    |> create_resource()
+  end
+
+  @doc """
   Returns the list of resources.
 
   ## Examples
