@@ -6,10 +6,6 @@ defmodule Core.Collections do
   alias Core.Repo
   alias Core.Collections.Collection
 
-  #####################################
-  # CUSTOM FUNCTIONS
-  ########
-
   @doc """
   Creates a record in the collections_users join table.
 
@@ -151,10 +147,6 @@ defmodule Core.Collections do
       _ -> index
     end
   end
-
-  #####################################
-  # GENERATED FUNCTIONS
-  ###########
 
   @doc """
   Returns the list of collections.
