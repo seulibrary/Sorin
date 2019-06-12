@@ -343,6 +343,70 @@ defmodule Core.Collections do
   end
 
   @doc """
+  High-level function for "cloning" a collection, where cloning means that
+  a new collections_users record is created for the specified collection and
+  user, with write_access set to false. The collection will appear on the new
+  user's dashboard, and they will get all updates to it, but they will not be
+  able to edit it themselves.
+
+  The original collection's "clones_count" field is incremented, and the
+  "cloned_from" field on the new collections_users record is populated with
+  the fullname of the original collection's creator.
+
+  Takes a valid collection id as an integer and a valid user id as an integer.
+
+  Returns the new CollectionUser struct with all content preloaded.
+
+  ## Example
+
+      iex> clone_collection_by_id(collection_id, user_id)
+      %Core.CollectionsUsers.CollectionUser{}
+
+  """
+  def clone_collection_by_id(collection_id, user_id) do
+    new_index = Accounts.get_highest_col_user_index(user_id) + 1
+
+    # Get the creator's fullname to write it into the clone
+    creator_name =
+      from(c in Collection,
+        left_join: u in Accounts.User,
+        on: c.creator_id == u.id,
+        where: c.id == ^collection_id,
+        select: u.fullname
+      )
+      |> Repo.one()
+
+    # Create the CollectionUser record
+    {:ok, clone} =
+      CollectionsUsers.create_collection_user(%{
+        collection_id: collection_id,
+        user_id: user_id,
+        index: new_index,
+        write_access: false,
+        cloned_from: creator_name
+      })
+
+    # Increment the collection's clones_count
+    from(c in Collection,
+      where: c.id == ^collection_id
+    )
+    |> Core.Repo.update_all(inc: [clones_count: 1])
+
+    # Return the clone with associations preloaded
+    resources_query =
+      from r in Resource,
+        preload: [:files, :notes],
+        order_by: r.collection_index
+
+    from(cu in CollectionsUsers.CollectionUser,
+      where: cu.user_id == ^user_id,
+      where: cu.id == ^clone.id,
+      preload: [collection: [:files, :notes, resources: ^resources_query]]
+    )
+    |> Repo.one()
+  end
+
+  @doc """
   Returns the list of collections.
 
   ## Examples
