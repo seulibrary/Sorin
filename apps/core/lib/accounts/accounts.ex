@@ -4,7 +4,16 @@ defmodule Core.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Core.{Collections, Repo, Resources, Accounts.User}
+  alias Core.{
+    Accounts.User,
+    Collections,
+    Collections.Collection,
+    CollectionsUsers,
+    CollectionsUsers.CollectionUser,
+    Files,
+    Repo,
+    Resources.Resource,
+  }
 
   ###############################
   # CUSTOM FUNCTIONS
