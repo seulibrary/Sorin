@@ -13,87 +13,85 @@ defmodule Core.Files do
   High-level function for uploading a file to a specified resource or
   collection.
 
-  Takes a file path as a string or map, a valid user id as an integer,
-  a :resource or :collection atom, and the id of the collection or
-  resource as an integer.
+  Takes (1) a map containing values for the keys filename and binary,
+  where the value of the binary key is the file as a binary; (2) a
+  valid user id as an integer, (3) a :resource or :collection atom,
+  and (4) the id of the collection or resource as an integer.
 
-  Gets the file size and checks whether the upload would not put the 
-  specified user over their storage quota; if so, returns an error. If 
-  not, passes the relevant arguments to upload_file_to_s3(), which generates
-  or gets several values for the file, uploads it to S3, creates a database
-  record for it, and returns the struct.
+  Gets the file size and checks whether the upload would put the
+  specified user over their storage quota; if so, returns an error. If
+  not, uploads the file to remote storage, creates a database record
+  for it, and returns the new file struct.
 
   ## Examples
 
-      iex> upload_file("/home/rgibbs/a_file", user_id, :resource, resource_id)
+      iex> upload_file(%{}, user_id, :resource, resource_id)
       {:ok, %File{}}
 
+      iex> upload_file(too_large_file, user_id, :resource, resource_id)
+      {:error, "This upload would exceed your disk usage quota. You are
+           currently using approximately 999 MB of your allotted
+           1000 MB, and this file is 2 MB."
+
   """
-  def upload_file(path, user_id, resource_or_collection_atom, target_id) when is_map(path) do
-    file_size = byte_size(path.binary)
-    if Core.Accounts.get_disk_usage(user_id) + file_size <= Application.get_env(:ex_aws, :disk_quota) do
-      upload_file_to_s3(path.binary, path.filename, file_size, user_id, resource_or_collection_atom, target_id)
-    else
-      {:error, "This upload would exceed your disk usage quota. You are currently using approximately #{Float.round(Core.Accounts.get_disk_usage(user_id)/1000/1000, 4)} MB of your allotted 1000 MB."}
-    end
-  end
-
-  def upload_file(path, user_id, resource_or_collection_atom, target_id) do
-    file_size = file_size(path)
-
-    if Core.Accounts.get_disk_usage(user_id) + file_size <= Application.get_env(:ex_aws, :disk_quota) do
-      upload_file_to_s3(path, Path.basename(path), file_size, user_id, resource_or_collection_atom, target_id)
-    else
-      {:error, "This upload would exceed your disk usage quota. You are currently using approximately #{Float.round(Core.Accounts.get_disk_usage(user_id)/1000/1000, 4)} MB of your allotted 1000 MB."}
-    end
-  end
-
-  defp upload_file_to_s3(path, file_name, file_size, user_id, resource_or_collection_atom, target_id) do
+  def upload_file(file_map, user_id, :resource, resource_id) do
     uuid = Ecto.UUID.generate()
+    upload_target = Application.get_env(:ex_aws, :bucket)
+    file_size = byte_size(file_map.binary)
 
-    binary = cond do
-      is_binary(path) -> path
-      true -> File.read!(path)
-    end
+    with true <- under_quota?(file_size, user_id) do
+      ExAws.S3.put_object(upload_target, uuid, file_map.binary)
+      |> ExAws.request()
 
-    ExAws.S3.put_object(Application.get_env(:ex_aws, :bucket), uuid, binary)
-    |> ExAws.request()
-
-    case resource_or_collection_atom do
-      :resource ->
-        create_file(
-          %{title: file_name,
-            uuid: uuid,
-            file_url: "#{Application.get_env(:ex_aws, :link_root)}#{uuid}",
-            size: file_size,
-            uploader_id: user_id,
-            resource_id: target_id})
-      :collection ->
-        create_file(
-          %{title: file_name,
-            uuid: uuid,
-            file_url: "#{Application.get_env(:ex_aws, :link_root)}#{uuid}",
-            size: file_size,
-            uploader_id: user_id,
-            collection_id: target_id})
+      create_file(%{
+        title: file_map.filename,
+        uuid: uuid,
+        file_url: "#{Application.get_env(:ex_aws, :link_root)}#{uuid}",
+        size: byte_size(file_map.binary),
+        user_id: user_id,
+        resource_id: resource_id
+      })
     end
   end
 
-  @doc """
-  Gets a file's size in bytes, using Elixir's File module.
+  def upload_file(file_map, user_id, :collection, collection_id) do
+    uuid = Ecto.UUID.generate()
+    upload_target = Application.get_env(:ex_aws, :bucket)
+    file_size = byte_size(file_map.binary)
 
-  Takes a file path as a string.
+    with true <- under_quota?(file_size, user_id) do
+      ExAws.S3.put_object(upload_target, uuid, file_map.binary)
+      |> ExAws.request()
 
-  ## Examples
+      create_file(%{
+        title: file_map.filename,
+        uuid: uuid,
+        file_url: "#{Application.get_env(:ex_aws, :link_root)}#{uuid}",
+        size: byte_size(file_map.binary),
+        user_id: user_id,
+        collection_id: collection_id
+      })
+    end
+  end
 
-      iex> file_size("/home/rgibbs/a_file")
-      1612
+  defp under_quota?(file_size, user_id) do
+    current_disk_usage = Accounts.get_disk_usage(user_id)
+    human_friendly_current = Float.round(current_disk_usage / 1_000_000, 4)
+    proposed_disk_usage = current_disk_usage + file_size
+    quota = Application.get_env(:ex_aws, :disk_quota)
+    human_friendly_quota = quota / 1_000_000
 
-  """
-  def file_size(path) do
-    File.stat("#{path}")
-    |> elem(1)
-    |> Map.get(:size)
+    case proposed_disk_usage <= quota do
+      true ->
+        true
+
+      false ->
+        {:error,
+         "This upload would exceed your disk usage quota. You are " <>
+           "currently using approximately #{human_friendly_current} MB " <>
+           "of your allotted #{human_friendly_quota} MB, and this file " <>
+           "is #{file_size} MB."}
+    end
   end
 
   @doc """
