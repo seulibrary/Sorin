@@ -3,8 +3,13 @@ defmodule Core.Resources do
   The Resources context.
   """
   import Ecto.Query, warn: false
-  alias Core.Repo
-  alias Core.Resources.Resource
+  alias Core.{
+    Collections,
+    Files,
+    Repo,
+    Resources.Resource,
+  }
+
 
   ####################################
   # CUSTOM FUNCTIONS
