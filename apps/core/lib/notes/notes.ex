@@ -21,7 +21,7 @@ defmodule Core.Notes do
       iex> update_note_by_id(note_id, string)
       {:ok, %Note{}}
 
-      iex> update_note([one or more bad values])
+      iex> update_note_by_id([one or more bad values])
       {:error, %Ecto.Changeset{}}
 
   """
