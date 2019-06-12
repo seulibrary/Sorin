@@ -153,29 +153,6 @@ defmodule Core.Files do
   end
 
   @doc """
-  Downloads a file, specified by its id, to the local directory. Intended to
-  be called from iex.
-
-  Takes a valid file id as an integer.
-
-  ## Examples
-
-      iex> download_file(123)
-      :ok
-
-  """
-  def download_file(file_id) do
-    file = get_file!(file_id)
-
-    {:ok, %{body: body}} =
-      ExAws.S3.get_object(Application.get_env(:ex_aws, :bucket), file.uuid)
-      |> ExAws.request()
-
-
-    File.write(file.title, body)
-  end
-
-  @doc """
   Calls delete_file_by_id() on every file that has no collection_id or
   resource_id.
 
