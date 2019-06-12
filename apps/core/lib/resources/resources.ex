@@ -185,6 +185,37 @@ defmodule Core.Resources do
   end
 
   @doc """
+  High-level function for removing a resource; reindexes the collection it
+  was in and correctly removes any file attachments.
+
+  Takes a valid resource id as an integer.
+
+  ## Examples
+
+      iex> remove_resource_by_id(resource_id)
+      :ok
+
+  """
+  def remove_resource_by_id(resource_id) do
+    resource = get_resource!(resource_id)
+
+    Repo.transaction(fn ->
+      resource
+      |> delete_resource()
+
+      # Reindex remaining resources
+      from(r in Resource,
+	where: r.collection_id == ^resource.collection_id
+	and r.collection_index > ^resource.collection_index)
+      |> Repo.update_all(inc: [collection_index: -1])
+    end)
+
+    Files.remove_orphaned_files()
+
+    :ok
+  end
+
+  @doc """
   Returns the list of resources.
 
   ## Examples
