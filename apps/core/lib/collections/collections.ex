@@ -14,6 +14,56 @@ defmodule Core.Collections do
   }
 
   @doc """
+  High-level function for creating a collection. Creates a new
+  collection with the specified title and creates a CollectionsUsers
+  record for it, joining it with the user account specified by the
+  supplied user_id.
+
+  Takes a valid user_id as an integer and a collection title
+  as a string.
+
+  Computes and assigns the correct collections_users index value based
+  on the supplied user's existing collections.
+
+  Returns the new CollectionsUsers struct with the new Collection
+  struct preloaded.
+
+  ## Examples
+
+      iex> new_collection(user_id, title)
+      %Core.CollectionsUsers.CollectionUser{}
+
+  """
+  def new_collection(user_id, title) do
+    index = Accounts.get_highest_col_user_index(user_id) + 1
+    user = Accounts.get_user!(user_id)
+
+    date =
+      DateTime.utc_now()
+      |> DateTime.truncate(:second)
+      |> DateTime.to_naive()
+
+    with {:ok, collection} <-
+           create_collection(%{
+             chain_of_cust: ["Created by #{user.fullname} on #{date}"],
+             creator_id: user.id,
+             permalink: Ecto.UUID.generate(),
+             title: title,
+             write_users: [user.fullname]
+           }),
+         {:ok, col_user} <-
+           CollectionsUsers.create_collection_user(%{
+             user_id: user.id,
+             collection_id: collection.id,
+             index: index,
+             write_access: true
+           }) do
+      CollectionsUsers.get_collection_user!(col_user.id)
+      |> Repo.preload(:collection)
+    end
+  end
+
+  @doc """
   Gets a specific set of fields intended for the 
   permalink view of a collection.
 
