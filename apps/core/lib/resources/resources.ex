@@ -58,8 +58,9 @@ defmodule Core.Resources do
   @doc """
   High-level function for copying a resource and its associated note
   from one collection to another. Requires the specification of a target
-  collection index; thus, intended to be used for copying by a user from
-  one of their collections to another.
+  collection index; thus, intended to be used by end users for copying
+  a resource from one of their collections to another. Does not copy
+  file attachments.
 
   Takes a valid resource id as an integer, a valid collection id as an
   integer, and a target index as an integer (i.e., a zero-indexed position
@@ -80,8 +81,10 @@ defmodule Core.Resources do
 
     # Reindex target collection's resources
     from(r in Resource,
-      where: r.collection_id == ^target_collection_id
-      and r.collection_index >= ^target_index)
+      where:
+        r.collection_id == ^target_collection_id and
+          r.collection_index >= ^target_index
+    )
     |> Repo.update_all(inc: [collection_index: 1])
 
     {:ok, new_resource} =
@@ -94,9 +97,15 @@ defmodule Core.Resources do
 
     # If a note exists, migrate the association
     cond do
-      source_resource.notes == nil -> nil
+      source_resource.notes == nil ->
+        nil
+
       true ->
-	Core.Notes.import_note_to_resource(source_resource.notes.id, new_resource.id)
+        Core.Notes.import_note_by_id(
+          source_resource.notes.id,
+          :resource,
+          new_resource.id
+        )
     end
 
     # Return the new resource
