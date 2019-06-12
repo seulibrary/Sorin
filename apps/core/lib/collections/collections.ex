@@ -93,8 +93,9 @@ defmodule Core.Collections do
   end
 
   @doc """
-  Adds the fullname of the specified user to the write_users 
-  field of a collection.
+  Adds the fullname of the specified user to the write_users field of a
+  collection, and appends to its chain_of_custody a string recording
+  that the new user was granted write access on [timestamp].
 
   Takes valid collection_id and user_id as integers.
 
@@ -103,15 +104,14 @@ defmodule Core.Collections do
   ## Examples
 
       iex> add_write_user(collection_id, user_id)
-      [%Collection{}, ...]
+      {:ok, %Core.Collections.Collection{}}
 
   """
   def add_write_user(collection_id, user_id) do
-    collection =
-    get_collection!(collection_id)
+    collection = get_collection!(collection_id)
 
     new_writer_fullname =
-      Core.Accounts.get_user!(user_id)
+      Accounts.get_user!(user_id)
       |> Map.get(:fullname)
 
     new_list_of_authors =
@@ -119,8 +119,21 @@ defmodule Core.Collections do
       |> Map.get(:write_users)
       |> List.insert_at(-1, new_writer_fullname)
 
+    date =
+      DateTime.utc_now()
+      |> DateTime.truncate(:second)
+      |> DateTime.to_naive()
+
+    new_chain_of_cust =
+      collection
+      |> Map.get(:chain_of_cust)
+      |> List.insert_at(
+        -1,
+        "#{new_writer_fullname} granted write access on #{date}"
+      )
+
     collection
-    |> update_collection(%{write_users: new_list_of_authors})
+    |> update_collection(%{chain_of_cust: new_chain_of_cust, write_users: new_list_of_authors})
   end
 
   @doc """
