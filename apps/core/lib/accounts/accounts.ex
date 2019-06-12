@@ -120,6 +120,31 @@ defmodule Core.Accounts do
     {Enum.count(added_users), added_users}
   end
 
+  def remove_by_csv(file_path) do
+    current_users =
+      from(u in User, select: u.email)
+      |> Repo.all()
+
+    csv_list =
+      File.stream!(file_path)
+      |> CSV.decode!()
+      |> Enum.to_list()
+
+    csv_emails = for [a, _] <- csv_list, do: a
+
+    removed_users =
+    for a <- current_users,
+      a in csv_emails,
+      do: delete_by_email(a)
+
+    {Enum.count(removed_users), removed_users}
+  end
+
+  defp delete_by_email(email) do
+    Repo.get_by!(User, email: email)
+    |> remove_user()
+  end
+
   @doc """
   High-level function for syncing a list of user accounts in a file with 
   the database.
