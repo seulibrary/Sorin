@@ -113,6 +113,50 @@ defmodule Core.CollectionsUsers do
   end
 
   @doc """
+  High-level function for deleting a collection from the database and cleaning
+  up all associated database records and files.
+
+  Calls remove_one_collections_users() for each collections_users record
+  for a given collection (which reindexes each user's remaining collections),
+  deletes the collection from the database, and calls
+  Files.remove_orphaned_files().
+
+  When a collection is deleted from the database, its notes and resources are
+  automatically deleted from the db and its files are nullified in the db. When
+  a resource is deleted from the db, its notes are automatically deleted from
+  the db and its files are nullified in the db.
+
+  Thus, for a given collection, this function removes all related
+  collections_users records (reindexing as it goes) and all related resources,
+  notes, and files; then removes the files from external storage.
+
+  Takes a valid collection struct.
+
+  ## Examples
+
+      iex> remove_all_col_users(%Collection{})
+      :ok
+
+  """
+  def remove_all_col_users(collection) do
+    from(
+      cu in CollectionUser,
+      where: cu.collection_id == ^collection.id,
+      select: cu.user_id
+    )
+    # Returns list of user_ids that have collection
+    |> Repo.all()
+    |> Enum.each(fn user_id ->
+      remove_one_col_user(collection.id, user_id)
+    end)
+
+    Repo.delete(collection)
+    Files.remove_orphaned_files()
+
+    :ok
+  end
+
+  @doc """
   Returns the list of collections_users.
 
   ## Examples
