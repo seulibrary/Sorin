@@ -259,6 +259,119 @@ defmodule Core.Accounts do
   end
 
   @doc """
+  Removes a user: removes their files, deletes their Inbox, unpublishes
+  collections they're the creator and sole write_user of, removes
+  them from all write_users fields they're currently in, updates
+  the chain_of_cust on all collections they're leaving, decrements
+  the clones_count of all clones that will be deleted, and deletes
+  them from the database, which also deletes all of their
+  CollectionsUsers records and nilifies all of the creator_id fields.
+
+  ## Examples
+
+      iex> remove_user(user)
+      {:ok, %User{}}
+
+      iex> delete_user(user)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def remove_user(%User{} = user) do
+    #
+    # Q. WHY IS THIS FUNCTION SO CRAZY?
+    #
+    # A. I'm glad you asked. The main reason why this function is so long,
+    #    complicated, and obtuse is that its general purpose is to remove
+    #    most (but not all!) traces of the user from the database, while
+    #    still leaving their collections available at their permalinks.
+    #
+    #    To facilitate this, remove_user/1 does six things:
+    #
+    #    - Removes the supplied user's files from both the database and remote
+    #      storage;
+    #    - Deletes their Inbox, access to which it is not assumed will be
+    #      needed at its permalink;
+    #    - Unpublishes collections where the supplied user is the creator
+    #      and sole write_user, to prevent ancient collections from clogging
+    #      up search results for perpetuity;
+    #    - Removes the user's fullname from the write_users field of all
+    #      collections they have write_access to at the time of account
+    #      removal (after all, they no longer have write_access, right?), which
+    #      also updates the collections' chain_of_cust fields to note the date
+    #      on which the user's write_access was revoked;
+    #    - Decrements the clones_count field on all clones before they are
+    #      removed;
+    #    - Finally, deletes the user record from the database, which causes the
+    #      database to automatically delete all associated collections_users
+    #      rows and nilify all creator_id fields on the user's remaining
+    #      collections.
+
+    # Delete files. delete_file_by_id() removes them from the database and
+    # remote storage.
+    from(f in Files.File,
+      where: f.user_id == ^user.id,
+      select: f.id)
+    |> Repo.all
+    |> Enum.each(&Files.delete_file_by_id(&1))
+
+    # Delete the Inbox. Joins on CollectionUser to identify the inbox by its
+    # position on the dashboard, which cannot be superceded by the user (vs,
+    # e.g., matching on the title "Inbox," which the user could apply to
+    # any other collections).
+    from(cu in CollectionUser,
+      left_join: c in Collection,
+      on: cu.collection_id == c.id,
+      where: cu.user_id == ^user.id,
+      where: cu.index == 0,
+      select: c
+    )
+    |> Core.Repo.one
+    |> Collections.delete_collection()
+
+    # Unpublish collections where user is creator and sole write_user.
+    # This can be removed if you want a user's published collections to still
+    # appear in search results after their account is removed, but bear in
+    # mind that there will be no way to remove them except via API or iex.
+    solo_filter = [write_users: ["#{user.fullname}"]]
+    from(c in Collection,
+      where: c.creator_id == ^user.id,
+      where: ^solo_filter)
+      |> Repo.all
+      |> Enum.map(&Collections.update_collection(&1, %{published: false}))
+
+    # Remove the user's fullname from the write_users field of all collections
+    # where it is currently found. remove_write_user() updates both the
+    # write_users and chain_of_cust fields on the supplied collection.
+    from(cu in CollectionUser,
+      where: cu.user_id == ^user.id,
+      where: cu.write_access == true,
+      select: cu.collection_id)
+      |> Repo.all
+      |> Enum.map(&Collections.remove_write_user(&1, user.id))
+
+    # Decrement the clones_count field on all cloned collections before they
+    # are removed.
+    clones =
+      from(cu in CollectionUser,
+	left_join: c in Collection,
+	on: cu.collection_id == c.id,
+	where: cu.user_id == ^user.id,
+	where: cu.write_access == false,
+	select: c
+      )
+      |> Repo.all
+
+    case clones do
+      [] -> :ok
+      _ -> Repo.update_all(clones, inc: [clones_count: -1])
+    end
+
+    # Delete user account, which deletes all CollectionsUsers records for it
+    # and nilifies all creator_id fields for it.
+    Repo.delete(user)
+  end
+
+  @doc """
   Returns the list of users.
 
   ## Examples
