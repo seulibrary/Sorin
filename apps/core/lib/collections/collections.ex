@@ -3,8 +3,15 @@ defmodule Core.Collections do
   The Collections context.
   """
   import Ecto.Query, warn: false
-  alias Core.Repo
-  alias Core.Collections.Collection
+  alias Core.{
+    Accounts,
+    Collections.Collection,
+    CollectionsUsers,
+    Notes,
+    Repo,
+    Resources,
+    Resources.Resource,
+  }
 
   @doc """
   Creates a record in the collections_users join table.
