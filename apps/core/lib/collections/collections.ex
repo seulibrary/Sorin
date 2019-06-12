@@ -211,6 +211,34 @@ defmodule Core.Collections do
   end
 
   @doc """
+  High-level command for removing a specified collection from a specified
+  user's account and, if the user is the creator of the collection, deleting
+  it out of the universe.
+
+  Takes a valid user id as an integer and a valid collection id as
+  an integer.
+
+  If the user is the creator of the collection, calls
+  Core.CollectionsUsers.remove_all_col_users() for that collection id.
+  Otherwise calls Core.CollectionsUsers.remove_one_col_user().
+
+  ## Examples
+
+      iex> remove_collection(collection_id, user_id)
+      :ok
+
+  """
+  def remove_collection(collection_id, user_id) do
+    collection = get_collection!(collection_id)
+
+    if user_id == collection.creator_id do
+      CollectionsUsers.remove_all_col_users(collection)
+    else
+      CollectionsUsers.remove_one_col_user(collection_id, user_id)
+    end
+  end
+
+  @doc """
   Returns the list of collections.
 
   ## Examples
