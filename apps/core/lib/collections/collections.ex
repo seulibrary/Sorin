@@ -299,6 +299,50 @@ defmodule Core.Collections do
   end
 
   @doc """
+  Creates a collections_users record for a specified collection id and
+  user id, with the new record's collection_index value set correctly
+  and its pending_approval set to true.
+
+  Takes a valid collection id as an integer and a valid user id, to whom
+  the collection is being shared, as an integer.
+
+  Will fail if the user already has that collection (i.e., if s/he has
+  already cloned it).
+
+  Returns an end-user-friendly string indicating the status of the request.
+
+  ## Examples
+
+      iex> share_collection(collection_id, user_id)
+      "Collection shared and is now pending user's approval."
+
+      iex> share_collection(collection_id, user_id_who_has_clone)
+      "Error: User has cloned this collection and must remove the clone
+      to become an author."
+
+  """
+  def share_collection(collection_id, target_user_id) do
+    index = Accounts.get_highest_col_user_index(target_user_id) + 1
+
+    new_col_user =
+      CollectionsUsers.create_collection_user(%{
+        collection_id: collection_id,
+        user_id: target_user_id,
+        index: index,
+        pending_approval: true
+      })
+
+    case new_col_user do
+      {:ok, _} ->
+        "Collection shared and is now pending user's approval."
+
+      _ ->
+        "Error: User has cloned this collection and must remove the clone to " <>
+          "become an author."
+    end
+  end
+
+  @doc """
   Returns the list of collections.
 
   ## Examples
