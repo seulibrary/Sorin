@@ -102,6 +102,24 @@ defmodule Core.Accounts do
     end
   end
 
+  def add_by_csv(file_path) do
+    current_users =
+      from(u in User, select: u.email)
+      |> Repo.all()
+
+    csv_list =
+      File.stream!(file_path)
+      |> CSV.decode!()
+      |> Enum.to_list()
+
+    added_users =
+    for [a, b] <- csv_list,
+      a not in current_users,
+      do: make_user(a, b)
+
+    {Enum.count(added_users), added_users}
+  end
+
   @doc """
   High-level function for syncing a list of user accounts in a file with 
   the database.
