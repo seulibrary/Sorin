@@ -66,6 +66,53 @@ defmodule Core.CollectionsUsers do
   end
 
   @doc """
+  High-level function for removing a given collection from a given user's
+  collections and re-indexing their remaining collections.
+
+  Removes the collections_users row for a specified user id and collection id.
+
+  Takes valid collection_id and user_id as integers.
+
+  Either removes the user's fullname from the collection's write_users field
+  or decrements the collection's clones_count.
+
+  Reindexes remaining collections_users records as appropriate.
+
+  ## Examples
+
+      iex> remove_one_col_user(collection_id, user_id)
+      :ok
+
+  """
+  def remove_one_col_user(collection_id, user_id) do
+    collection_user =
+      CollectionUser
+      |> Repo.get_by!(collection_id: collection_id, user_id: user_id)
+
+    case collection_user.write_access do
+      true ->
+        Collections.remove_write_user(collection_id, user_id)
+
+      false ->
+        from(c in Collections.Collection,
+          where: c.id == ^collection_id
+        )
+        |> Core.Repo.update_all(inc: [clones_count: -1])
+    end
+
+    Repo.transaction(fn ->
+      Repo.delete(collection_user)
+      # Corrects the remaining collections_users indexes
+      from(cu in CollectionUser,
+        where:
+          cu.user_id == ^user_id and
+            cu.index > ^collection_user.index
+      )
+      |> Repo.update_all(inc: [index: -1])
+    end)
+  end
+
+  @doc """
   Returns the list of collections_users.
 
   ## Examples
