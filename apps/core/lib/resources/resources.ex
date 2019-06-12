@@ -245,6 +245,36 @@ defmodule Core.Resources do
   end
 
   @doc """
+  Removes the specified string from the tags field of the specified
+  resource.
+
+  Takes a tag as a string and a valid resource id as an integer.
+
+  Returns a tagged tuple with either the updated resource or a
+  changeset.
+
+  ## Examples
+
+      iex> remove_tag_by_resource_id(string, resource_id)
+      {:ok, %Resource{}}
+
+      iex> remove_tag_by_resource_id([one or more bad values])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def remove_tag_by_resource_id(resource_id, string) do
+    resource = get_resource!(resource_id)
+
+    list_of_tags =
+      resource
+      |> Map.get(:tags)
+      |> List.delete(string)
+
+    resource
+    |> update_resource(%{tags: list_of_tags})
+  end
+
+  @doc """
   Returns the list of resources.
 
   ## Examples
