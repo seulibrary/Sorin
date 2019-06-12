@@ -195,12 +195,13 @@ defmodule Core.Collections do
   """
   def get_highest_resources_index(collection_id) do
     index =
-      from(r in Core.Resources.Resource,
-	where: r.collection_id == ^collection_id,
-	select: r.collection_index,
-	order_by: r.collection_index
+      from(
+        r in Resource,
+        where: r.collection_id == ^collection_id,
+        select: r.collection_index,
+        order_by: r.collection_index
       )
-      |> Core.Repo.all()
+      |> Repo.all()
       |> Enum.at(-1)
 
     case index do
