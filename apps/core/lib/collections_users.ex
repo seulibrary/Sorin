@@ -13,6 +13,59 @@ defmodule Core.CollectionsUsers do
   }
 
   @doc """
+  Moves a collection from one position on a user's dashboard to
+  another by assigning a specified new index value to its
+  CollectionsUsers record and re-indexing the user's other collections
+  as appropriate.
+
+  Takes a valid collection id as an integer, a valid user id as an
+  integer, and a target index value (zero-indexed position) as an integer.
+
+  Returns either the updated CollectionsUsers struct or a changeset
+  specifying the error.
+
+  ## Examples
+
+      iex> move_collection(collection_id, user_id, target_index)
+      %Core.CollectionsUsers.CollectionUser{}
+
+      iex> move_collection([one or more bad values])
+      {:error, #Ecto.Changeset}
+
+  """
+  def move_collection(collection_id, user_id, target_index) when target_index > 0 do
+    col_user =
+      CollectionUser
+      |> Repo.get_by!(collection_id: collection_id, user_id: user_id)
+
+    # Reindex collections_users above the source location down
+    # There will temporarily be two collections with the same index
+    from(cu in CollectionUser,
+      where:
+        cu.user_id == ^user_id and
+          cu.index > ^col_user.index
+    )
+    |> Repo.update_all(inc: [index: -1])
+
+    # Reindex collections_users above the target index up
+    from(cu in CollectionUser,
+      where:
+        cu.user_id == ^user_id and
+          cu.index >= ^target_index
+    )
+    |> Repo.update_all(inc: [index: 1])
+
+    # Set the_collection's index to target
+    col_user
+    |> Ecto.Changeset.change(index: target_index)
+    |> Repo.update!()
+  end
+
+  def move_collection(_, _, target_index) when target_index <= 0 do
+    {:error, "User collections cannot be moved into the first position."}
+  end
+
+  @doc """
   Returns the list of collections_users.
 
   ## Examples
