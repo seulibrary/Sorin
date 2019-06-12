@@ -15,10 +15,6 @@ defmodule Core.Accounts do
     Resources.Resource,
   }
 
-  ###############################
-  # CUSTOM FUNCTIONS
-  ##################
-
   @doc """
   Gets all CollectionsUsers records for a specified user, ordered by
   index and with all associations preloaded and ordered by index.
@@ -174,10 +170,6 @@ defmodule Core.Accounts do
     |> Core.Repo.all()
     |> Enum.at(-1)
   end
-
-  ###############################
-  # GENERATED FUNCTIONS
-  ###########
 
   @doc """
   Returns the list of users.
