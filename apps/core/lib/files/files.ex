@@ -156,20 +156,26 @@ defmodule Core.Files do
   Calls delete_file_by_id() on every file that has no collection_id or
   resource_id.
 
+  Returns a tagged tuple with the number of files deleted.
+
   ## Examples
 
       iex> remove_orphaned_files()
-      :ok
+      {:ok, 7}
 
   """
   def remove_orphaned_files() do
-    from(
-      f in Core.Files.File,
-      where: fragment("collection_id is null and resource_id is null"),
-      select: f.id
-    )
-    |> Core.Repo.all()
-    |> Enum.each(fn(x) -> delete_file_by_id(x) end)
+    removed_files =
+      from(
+        f in Files.File,
+        where: fragment("collection_id is null and resource_id is null"),
+        select: f.id
+      )
+      |> Repo.all()
+
+    Enum.each(removed_files, &delete_file_by_id(&1))
+
+    {:ok, Enum.count(removed_files)}
   end
 
   @doc """
