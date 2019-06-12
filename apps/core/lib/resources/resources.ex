@@ -9,11 +9,6 @@ defmodule Core.Resources do
     Repo,
     Resources.Resource,
   }
-
-
-  ####################################
-  # CUSTOM FUNCTIONS
-  ########
   
   @doc """
   High-level function for copying a resource and its associated note
@@ -103,10 +98,6 @@ defmodule Core.Resources do
     new_resource
   end
 
-  ####################################
-  # GENERATED FUNCTIONS
-  ###########
-  
   @doc """
   Returns the list of resources.
 
