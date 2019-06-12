@@ -145,6 +145,30 @@ defmodule Core.Accounts do
     |> remove_user()
   end
 
+  def update_by_csv(file_path) do
+    # NOTE:   Currently only updates fullname
+    current_users =
+      from(u in User, select: [u.email, u.fullname])
+      |> Repo.all()
+
+    csv_list =
+      File.stream!(file_path)
+      |> CSV.decode!()
+      |> Enum.to_list()
+
+    updated_users =
+    for [a, b] <- current_users, [x, y] <- csv_list,
+      a == x && b != y,
+      do: update_by_email(x, y)
+
+    {Enum.count(updated_users), updated_users}
+  end
+
+  defp update_by_email(email, fullname) do
+    Repo.get_by!(User, email: email)
+    |> update_user(%{fullname: fullname})
+  end
+
   @doc """
   High-level function for syncing a list of user accounts in a file with 
   the database.
