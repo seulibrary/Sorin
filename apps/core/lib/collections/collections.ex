@@ -64,7 +64,7 @@ defmodule Core.Collections do
   end
 
   @doc """
-  Gets a specific set of fields intended for the 
+  Gets a specific set of fields intended for the
   permalink view of a collection.
 
   Takes the collection's uuid as a string.
@@ -77,18 +77,17 @@ defmodule Core.Collections do
   """
   def get_permalink_view(uuid) do
     resources_query =
-      from r in Core.Resources.Resource,
-      preload: [:notes],
-      order_by: r.collection_index
-    
+      from(
+        r in Resource,
+        preload: [:notes],
+        order_by: r.collection_index
+      )
+
     from(
-      c in Core.Collections.Collection,
+      c in Collection,
       where: c.permalink == ^uuid,
       select: c,
-      preload: [
-	:notes,
-	resources: ^resources_query
-      ]
+      preload: [:notes, resources: ^resources_query]
     )
     |> Repo.all()
   end
