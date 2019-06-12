@@ -14,24 +14,6 @@ defmodule Core.Collections do
   }
 
   @doc """
-  Creates a record in the collections_users join table.
-
-  Takes a map of values, and requires valid collection_id 
-  and user_id as integers.
-
-  ## Examples
-
-      iex> create_collections_users(%{collection_id: id, user_id: id, ...})
-      [%CollectionsUsers{}, ...]
-
-  """
-  def create_collections_users(attrs \\ %{}) do
-    %Core.Collections.CollectionsUsers{}
-    |> Core.Collections.CollectionsUsers.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
   Gets a specific set of fields intended for the 
   permalink view of a collection.
 
