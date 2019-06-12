@@ -216,6 +216,35 @@ defmodule Core.Resources do
   end
 
   @doc """
+  Adds the specified string as a tag to the specified resource.
+
+  Takes a tag as a string and a valid resource id as an integer.
+
+  Returns a tagged tuple with either the updated resource or a
+  changeset.
+
+  ## Examples
+
+      iex> add_tag_by_resource_id(string, resource_id)
+      {:ok, %Resource{}}
+
+      iex> add_tag_by_resource_id([one or more bad values])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def add_tag_by_resource_id(resource_id, string) do
+    resource = get_resource!(resource_id)
+
+    list_of_tags =
+      resource
+      |> Map.get(:tags)
+      |> List.insert_at(-1, String.upcase(string))
+
+    resource
+    |> update_resource(%{tags: list_of_tags})
+  end
+
+  @doc """
   Returns the list of resources.
 
   ## Examples
