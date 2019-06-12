@@ -74,43 +74,32 @@ defmodule Core.Accounts do
 
   Takes a unique email address as a string and a full name as a string.
 
-  In a single database transaction, creates a user record, an "Inbox"
-  collection for that user, and a collections_users record to associate
-  the two.
-
-  Returns a nested tagged tuple.
+  Creates a user record, an "Inbox" collection for that user, and a
+  collections_users record to associate the two.
 
   ## Example
 
       iex> make_user("hsolo@ra.net", "Solo, Han")
-      {:ok, {:ok, %CollectionsUsers{}}}
+      %Core.Accounts.User{}
+
+      iex> make_user("existing_email", "fullname")
+      {:error, %Ecto.Changeset{}}
 
   """
   def make_user(email, fullname) do
-    # TODO: Make this return something sane, like :ok
-    Core.Repo.transaction(fn ->
-      user =
-	%Core.Accounts.User{
-	  email: email,
-	  fullname: fullname}
-      |> Core.Repo.insert!()
-
-      collection =
-      	%Core.Collections.Collection{
-      	  creator_id: user.id,
-      	  permalink:  Ecto.UUID.generate(),
-      	  title:      "Inbox",
-	  write_users: [user.fullname]}
-      |> Core.Repo.insert!()
-
-      Core.Collections.CollectionsUsers.changeset(
-	%Core.Collections.CollectionsUsers{},
-	%{user_id:       user.id,
-	  collection_id: collection.id,
-	  index: 0,
-	  write_access: true})
-      |> Core.Repo.insert
-    end)
+    with {:ok, user} <- create_user(%{email: email, fullname: fullname}),
+	 {:ok, collection} <- Collections.create_collection(
+	   %{creator_id: user.id,
+	     permalink: Ecto.UUID.generate(),
+	     title: "Inbox",
+	     write_users: [user.fullname]})
+      do CollectionsUsers.create_collection_user(
+	    %{user_id: user.id,
+	      collection_id: collection.id,
+	      index: 0,
+	      write_access: true})
+      user
+    end
   end
 
   @doc """
