@@ -407,6 +407,129 @@ defmodule Core.Collections do
   end
 
   @doc """
+  High-level function for "importing" a collection, where importing means
+  the specified collection is exactly recreated as an original collection
+  for the specified user with all content and associations intact, except
+  files, which are not imported.
+
+  The original collection's "imports_count" field is incremented, the new
+  collection's "import_stamp" is populated with a string recording that it was
+  imported from [fullname of original collection's creator] on [timestamp], and
+  the new collection's "chain_of_cust" field is first copied from the source,
+  then appended to with a string recording that it was imported by [fullname
+  of the importer] on [timestamp].
+
+  Takes a valid collection id as an integer and a valid user id as an integer.
+
+  Returns the new CollectionsUsers struct with all associations preloaded and
+  ordered.
+
+  ## Example
+
+      iex> import_collection(collection_id, user_id)
+      %Core.CollectionsUsers.CollectionUser{}
+
+  """
+  def import_collection_by_id(collection_id, user_id) do
+    new_index = Accounts.get_highest_col_user_index(user_id) + 1
+
+    # Source collection query, with all associations preloaded and ordered
+    resources_query =
+      from r in Resource,
+        preload: [:notes],
+        order_by: r.collection_index
+
+    source_collection =
+      from(c in Collection,
+        where: c.id == ^collection_id,
+        select: c,
+        preload: [:notes, resources: ^resources_query]
+      )
+      |> Repo.one()
+
+    # Get current timestamp and full name of the source collection's creator
+    # for the new collection's import_stamp field
+    date =
+      DateTime.utc_now()
+      |> DateTime.truncate(:second)
+      |> DateTime.to_naive()
+
+    creator_fullname =
+      Accounts.get_user!(source_collection.creator_id)
+      |> Map.get(:fullname)
+
+    # Get fullname of new user for write_users and chain of custody for new
+    # collection
+    new_user_fullname =
+      Accounts.get_user!(user_id)
+      |> Map.get(:fullname)
+
+    # Get chain of custody of source collection to append new owner to
+    new_chain_of_cust =
+      source_collection
+      |> Map.get(:chain_of_cust)
+      |> List.insert_at(-1, "Imported by #{new_user_fullname} on #{date}")
+
+    # Create the new collection
+    {:ok, new_collection} =
+      create_collection(%{
+        chain_of_cust: new_chain_of_cust,
+        creator_id: user_id,
+        import_stamp: "Imported from #{creator_fullname} on #{date} UTC",
+        permalink: Ecto.UUID.generate(),
+        title: source_collection.title,
+        write_users: [new_user_fullname]
+      })
+
+    # Create the new collections_users record
+    Repo.transaction(fn ->
+      CollectionsUsers.create_collection_user(%{
+        collection_id: new_collection.id,
+        user_id: new_collection.creator_id,
+        index: new_index,
+        write_access: true
+      })
+
+      # Increment imports count on original
+      from(c in Collection,
+        where: c.id == ^collection_id
+      )
+      |> Repo.update_all(inc: [imports_count: 1])
+    end)
+
+    # If exists, migrate note association
+    cond do
+      source_collection.notes == nil ->
+        nil
+
+      true ->
+        Notes.import_note_by_id(
+          source_collection.notes.id,
+          :collection,
+          new_collection.id
+        )
+    end
+
+    # Import resources to the new collection. First gets list of resource
+    # IDs, then for each, calls copy_resource.
+    #
+    # NOTE: Core.Resources.copy_resource() creates a new resource with
+    #       certain fields copied from the original. Notes are imported,
+    #       but not files.
+    source_collection.resources
+    |> Enum.map(fn resource -> Map.get(resource, :id) end)
+    |> Enum.map(fn id -> Resources.copy_resource(id, new_collection.id) end)
+
+    # Return the imported collection with associations preloaded
+    from(cu in CollectionsUsers.CollectionUser,
+      where: cu.user_id == ^user_id,
+      where: cu.collection_id == ^new_collection.id,
+      preload: [collection: [:files, :notes, resources: ^resources_query]]
+    )
+    |> Repo.one()
+  end
+
+  @doc """
   Returns the list of collections.
 
   ## Examples
