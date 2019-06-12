@@ -239,6 +239,36 @@ defmodule Core.Collections do
   end
 
   @doc """
+  Adds the specified string as a tag to the specified collection.
+
+  Takes a valid collection id as an integer and the new tag as a
+  string.
+
+  Returns a tagged tuple with either the updated collection or a
+  changeset.
+
+  ## Examples
+
+      iex> add_tag_by_collection_id(collection_id, string)
+      {:ok, %Collection{}}
+
+      iex> add_tag_by_collection_id([one or more bad values])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def add_tag_by_collection_id(collection_id, string) do
+    collection = get_collection!(collection_id)
+
+    list_of_tags =
+      collection
+      |> Map.get(:tags)
+      |> List.insert_at(-1, String.upcase(string))
+
+    collection
+    |> update_collection(%{tags: list_of_tags})
+  end
+
+  @doc """
   Returns the list of collections.
 
   ## Examples
