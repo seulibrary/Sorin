@@ -107,8 +107,8 @@ defmodule Core.Files do
 
   """
   def get_file_by_uuid(uuid) do
-    Core.Files.File
-    |> Core.Repo.get_by(uuid: uuid)
+    Files.File
+    |> Repo.get_by(uuid: uuid)
   end
 
   @doc """
