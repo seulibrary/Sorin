@@ -41,12 +41,17 @@ defmodule Core.Resources do
 
     # If a note exists, migrate the association
     cond do
-      source_resource.notes == nil -> nil
+      source_resource.notes == nil ->
+        nil
+
       true ->
-	Core.Notes.import_note_to_resource(source_resource.notes.id, new_resource.id)
+        Core.Notes.import_note_by_id(
+          source_resource.notes.id,
+          :resource,
+          new_resource.id
+        )
     end
 
-    # Return the new resource
     new_resource
   end
 
