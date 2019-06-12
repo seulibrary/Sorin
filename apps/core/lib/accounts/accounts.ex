@@ -243,18 +243,18 @@ defmodule Core.Accounts do
 
   ## Example
 
-      iex> get_highest_collections_users_index(2)
+      iex> get_highest_col_user_index(2)
       3
 
   """
-  def get_highest_collections_users_index(user_id) do
+  def get_highest_col_user_index(user_id) do
     from(
-      cu in Core.Collections.CollectionsUsers,
+      cu in CollectionUser,
       where: cu.user_id == ^user_id,
       select: cu.index,
       order_by: cu.index
     )
-    |> Core.Repo.all()
+    |> Repo.all()
     |> Enum.at(-1)
   end
 
