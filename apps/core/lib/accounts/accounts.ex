@@ -27,20 +27,17 @@ defmodule Core.Accounts do
   ## Examples
 
       iex> get_dashboard(user_id)
-      [
-       %Core.Collections.CollectionsUsers{},
-       ...
-      ]
+      [%Core.CollectionsUsers.CollectionUser{}, ...]
 
   """
   def get_dashboard(user_id) do
     resources_query =
-      from r in Resources.Resource,
+      from r in Resource,
       preload: [:files, :notes],
       order_by: r.collection_index
 
     from(
-      cu in Collections.CollectionsUsers,
+      cu in CollectionUser,
       where: cu.user_id == ^user_id,
       preload: [
     	collection: [
@@ -48,7 +45,7 @@ defmodule Core.Accounts do
     	  :notes,
     	  resources: ^resources_query]],
       order_by: cu.index)
-      |> Core.Repo.all()
+      |> Repo.all()
   end
 
   @doc """
