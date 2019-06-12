@@ -44,11 +44,11 @@ defmodule Core.Notes do
       iex> delete_note_by_id(note_id)
       {:ok, %Note{}}
 
-      iex> delete_note(bad_value)
+      iex> delete_note_by_id(bad_value)
       {:error, %Ecto.Changeset{}}
 
   """
-  def remove_note_by_id(note_id) do
+  def delete_note_by_id(note_id) do
     get_note!(note_id)
     |> delete_note()
   end
