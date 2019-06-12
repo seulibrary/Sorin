@@ -140,18 +140,17 @@ defmodule Core.Files do
 
   ## Examples
 
-      iex> download_file_web(uuid)
-      file_as_string
+      iex> download_file_by_uuid(uuid)
+      "[file as string of bytes]"
 
   """
-  def download_file_web(file_uuid) do
+  def download_file_by_uuid(uuid) do
     {:ok, %{body: body}} =
-      ExAws.S3.get_object(Application.get_env(:ex_aws, :bucket), file_uuid)
+      ExAws.S3.get_object(Application.get_env(:ex_aws, :bucket), uuid)
       |> ExAws.request()
 
     body
   end
-
 
   @doc """
   Downloads a file, specified by its id, to the local directory. Intended to
