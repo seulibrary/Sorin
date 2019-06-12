@@ -6,10 +6,6 @@ defmodule Core.Notes do
   alias Core.Repo
   alias Core.Notes.Note
 
-  ###############################
-  # CUSTOM FUNCTIONS
-  ########
-
   @doc """
   Updates a note by its ID. Notes can more generically be updated with
   Notes.update_note(); update_note_by_id() is provided as a convenience
@@ -105,10 +101,6 @@ defmodule Core.Notes do
     create_note(%{resource_id: resource_id, body: note.body})
   end
 
-  ###############################
-  # GENERATED FUNCTIONS
-  ###########
-  
   @doc """
   Returns the list of notes.
 
