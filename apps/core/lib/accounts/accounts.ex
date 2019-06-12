@@ -170,32 +170,66 @@ defmodule Core.Accounts do
   end
 
   @doc """
-  High-level function for syncing a list of user accounts in a file with 
-  the database.
-  
-  Takes a csv file, specified by file path as a string, with one user 
+  High-level function for adding, removing, and updating user accounts
+  in the database with those listed in a provided csv file.
+
+  Accounts in the csv file that are not in the database are added;
+  accounts that are in the database but not the csv file are removed;
+  accounts whose email addresses are the same in the database and the
+  csv file but whose fullnames are different have their fullname
+  updated in the database to match the fullname in the csv.
+
+  Takes a csv file, specified by file path as a string, with one user
   account per row, with each row formatted as:
 
   email,"fullname"
 
-  Iterates over the file, skipping every row for which a user account already
-  exists for the given email value and creating a user account, with
-  associated Inbox collection, for every row with a new email value.
+  Returns a map with the numbers of added/updated/removed accounts,
+  along with the accounts themselves, sorted by the sync action.
 
   ## Example
 
-      iex> sync_from_csv("/path/to/users.csv")
+      iex> sync_by_csv("/path/to/users.csv")
+      {:ok, {:added, 24, [%Core.Accounts.User{}, ...]},
+            {:updated, 17, [%Core.Accounts.User{}, ...]},
+            {:removed, 3, [%Core.Accounts.User{}, ...]}
+      }
 
   """
-  def sync_from_csv(file_path) do
+  def sync_by_csv(file_path) do
     current_users =
-      from(u in Core.Accounts.User, select: u.email)
-      |> Core.Repo.all()
+      from(u in User, select: [u.email, u.fullname])
+      |> Repo.all()
 
-    File.stream!(file_path)
-    |> CSV.decode!()
-    |> Enum.reject(fn [email, _] -> email in current_users end)
-    |> Enum.each(fn [email, fullname] -> make_user(email, fullname) end)
+    current_emails = for [a, _] <- current_users, do: a
+
+    csv_list =
+      File.stream!(file_path)
+      |> CSV.decode!()
+      |> Enum.to_list()
+
+    csv_emails = for [a, _] <- csv_list, do: a
+
+    added_users =
+    for [a, b] <- csv_list,
+      a not in current_emails,
+      do: make_user(a, b)
+
+    removed_users =
+    for a <- current_emails,
+      a not in csv_emails,
+      do: delete_by_email(a)
+
+    updated_users =
+    for [a, b] <- current_users, [x, y] <- csv_list,
+      a == x && b != y,
+      do: update_by_email(x, y)
+
+    {:ok,
+     {:added, Enum.count(added_users), added_users},
+     {:removed, Enum.count(removed_users), removed_users},
+     {:updated, Enum.count(updated_users), updated_users}
+    }
   end
 
   @doc """
