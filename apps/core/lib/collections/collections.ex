@@ -269,6 +269,36 @@ defmodule Core.Collections do
   end
 
   @doc """
+  Removes the specified string from the tags field of the specified
+  collection.
+
+  Takes a tag as a string and a valid collection id as an integer.
+
+  Returns a tagged tuple with either the updated collection or a
+  changeset.
+
+  ## Examples
+
+      iex> remove_tag_by_collection_id(collection_id, string)
+      {:ok, %Collection{}}
+
+      iex> remove_tag_by_collection_id([one or more bad values])
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def remove_tag_by_collection_id(collection_id, string) do
+    collection = get_collection!(collection_id)
+
+    list_of_tags =
+      collection
+      |> Map.get(:tags)
+      |> List.delete(string)
+
+    collection
+    |> update_collection(%{tags: list_of_tags})
+  end
+
+  @doc """
   Returns the list of collections.
 
   ## Examples
