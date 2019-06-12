@@ -49,7 +49,7 @@ defmodule Core.Accounts do
   end
 
   @doc """
-  Returns total number of bytes currently used for 
+  Returns total number of bytes currently used for
   file storage by a user.
 
   Takes a valid user_id as an integer.
@@ -57,13 +57,13 @@ defmodule Core.Accounts do
   ## Examples
 
       iex> get_disk_usage()
-      [235]
+      235
 
   """
   def get_disk_usage(user_id) do
     from(
-      f in Core.Files.File,
-      where: f.uploader_id == ^user_id,
+      f in Files.File,
+      where: f.user_id == ^user_id,
       select: f.size)
       |> Repo.all()
       |> Enum.sum()
