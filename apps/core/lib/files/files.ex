@@ -9,10 +9,6 @@ defmodule Core.Files do
     Repo,
   }
 
-  #################################
-  # CUSTOM FUNCTIONS
-  ########
-
   @doc """
   High-level function for uploading a file to a specified resource or
   collection.
@@ -201,10 +197,6 @@ defmodule Core.Files do
     |> Core.Repo.all()
     |> Enum.each(fn(x) -> delete_file_by_id(x) end)
   end
-
-  #################################
-  # GENERATED FUNCTIONS
-  ###########
 
   @doc """
   Returns the list of files.
