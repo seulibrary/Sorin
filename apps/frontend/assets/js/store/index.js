@@ -16,12 +16,19 @@ const enhancers = []
 const middleware = [
     thunk,
     routerMiddleware(history)
+
 ]
 
-const composedEnhancers = compose(
-    composeWithDevTools(applyMiddleware(...middleware),
-        ...enhancers
-    ))
+const composedEnhancers = (ENV_MODE === "development") ? compose(
+          composeWithDevTools(
+              applyMiddleware(
+                  ...middleware),
+              ...enhancers
+          )) : compose(
+              applyMiddleware(
+                  ...middleware),
+              ...enhancers
+          )
 
 const store = createStore(
     rootReducer,
