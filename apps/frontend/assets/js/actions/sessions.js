@@ -39,7 +39,7 @@ export function setCurrentUser() {
                     socket: socket,
                     channel: userChannel,
                 })
-                
+
                 dispatch(joinSearchChannel())
                 dispatch(getDashboard(payload.data.id, socket))
                 getAuthTokens(userChannel)
