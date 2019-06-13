@@ -1,11 +1,13 @@
 defmodule ApiWeb.DashboardChannel do
   use ApiWeb, :channel
+  use Phoenix.Socket, log: :debug
 
   require Logger
-  
+
   import ApiWeb.Utils
 
-  def join("dashboard:" <> _collection_id, _params, socket) do
+
+  def join("dashboard:" <> _dashboard_id, _params, socket) do
     if socket.assigns.user_id do
       dashboard = Core.Accounts.get_dashboard(socket.assigns.user_id)
 
@@ -20,6 +22,7 @@ defmodule ApiWeb.DashboardChannel do
     broadcast!(socket, "get_collection", payload)
     {:noreply, socket}
   end
+
 
   def handle_in("move_collection", payload, socket) do
     if !is_inbox(socket.assigns.user_id, payload["collection_id"]) && payload["newIndex"] != 0 do
