@@ -112,11 +112,9 @@ class Modals extends Component {
 
     render() {
         const modals = this.props.modals.modals.map((item,i) => {
-            if (item.panel) {
+           
                 return <ModalPortal key={i} ><Modal item={item} onClose={(item) => this.props.dispatch(closeModal(item))}/></ModalPortal>
-            } else {
-                return <PermaLinkModalPortal key={i} ><Modal item={item} onClose={(item) => this.props.dispatch(closeModal(item))}/></PermaLinkModalPortal>
-            }
+
         })
 
         return (
