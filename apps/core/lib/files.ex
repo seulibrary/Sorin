@@ -5,7 +5,6 @@ defmodule Core.Files do
   import Ecto.Query, warn: false
   alias Core.{
     Accounts,
-    Files.File,
     Repo,
   }
 
@@ -107,7 +106,7 @@ defmodule Core.Files do
 
   """
   def get_file_by_uuid(uuid) do
-    Files.File
+    Core.Files.File
     |> Repo.get_by(uuid: uuid)
   end
 
@@ -167,7 +166,7 @@ defmodule Core.Files do
   def remove_orphaned_files() do
     removed_files =
       from(
-        f in Files.File,
+        f in Core.Files.File,
         where: fragment("collection_id is null and resource_id is null"),
         select: f.id
       )
