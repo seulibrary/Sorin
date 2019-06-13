@@ -7,6 +7,7 @@ defmodule ApiWeb.V1.TokenController do
     case Phoenix.Token.verify(conn, "user_id", user) do
       {:ok, user_id} ->
 
+      {:error, _reason} ->
         conn
         |> put_status(200)
         |> render(ApiWeb.API.TokenView, data: AuthTokens.get_auth_tokens_by_user_id(user_id, "api"))
