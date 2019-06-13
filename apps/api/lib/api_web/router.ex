@@ -6,15 +6,30 @@ defmodule ApiWeb.Router do
     plug :accepts, ["json"]
     plug :fetch_session
   end
-  
+
   pipeline :auth do
+    plug ApiWeb.AuthToken
+  end
+
+  pipeline :browser_auth do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
     plug ApiWeb.Auth
   end
 
   scope "/api", ApiWeb do
     pipe_through [:api]
 
-    post "/token", V1.TokenController, :manage_tokens
+    get "/collection/:id", V1.CollectionController, :show
+
+    scope "/" do
+      pipe_through [:browser_auth]
+
+      resources "/token", V1.TokenController, only: [:index, :create, :delete]
+    end
 
     scope "/" do
       pipe_through [:auth]
