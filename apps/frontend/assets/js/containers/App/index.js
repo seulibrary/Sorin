@@ -13,6 +13,7 @@ import Root from "../Root"
 import withTracker from "../../store/tracker"
 import PermalinkCollectionView from "../Collections/permalink"
 import About from "../About"
+import Settings from "../Settings"
 import Login from "../Login"
 import Search from "../Search"
 import Collections from "../Collections"
@@ -71,6 +72,7 @@ class App extends Component {
                     <Route path="/c/:collection_url" component={withTracker(PermalinkCollectionView)} />
                     <Redirect from="/c" to="/c/404" />
                     <Route path="/about" component={withTracker(About)} />
+                    <ProtectedRoute path="/settings" permission={this.props.session.currentUser} extensions={this.props.extensions} component={Settings} exitApp={this.exitApp} />
                     <ProtectedRoute path="/search" permission={this.props.session.currentUser} extensions={this.props.extensions} component={Search} exitApp={this.exitApp} />
                     <ProtectedRoute path="/collections" permission={this.props.session.currentUser} component={withTracker(Collections)} exitApp={this.exitApp} />
                     <ProtectedRoute exact path="/" permission={this.props.session.currentUser} extensions={this.props.extensions} component={Search} exitApp={this.exitApp} />
