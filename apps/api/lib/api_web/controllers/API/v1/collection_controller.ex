@@ -4,7 +4,7 @@ defmodule ApiWeb.V1.CollectionController do
   alias Core.Collections
   alias ApiWeb.{CollectionView, ErrorView}
 
- # action_fallback ApiWeb.FallbackController
+  action_fallback ApiWeb.FallbackController
 
   def show(conn, %{"id" => id} = _params) do
     case List.first(Collections.get_permalink_view(id)) do
