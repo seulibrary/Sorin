@@ -43,7 +43,7 @@ defmodule Api.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.1"},
+      {:phoenix, "~> 1.4.8"},
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.1"},
