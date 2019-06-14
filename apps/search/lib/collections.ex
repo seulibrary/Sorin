@@ -32,7 +32,7 @@ defmodule Search.Collections do
     count =
       from(
 	c in Core.Collections.Collection,
-	left_join: cu in Core.Collections.CollectionsUsers,
+	left_join: cu in Core.CollectionsUsers.CollectionUser,
 	on: c.id == cu.collection_id,
 	left_join: u in Core.Accounts.User,
 	on: cu.user_id == u.id,
@@ -53,7 +53,7 @@ defmodule Search.Collections do
     list_of_collections =
       from(
 	c in Core.Collections.Collection,
-	left_join: cu in Core.Collections.CollectionsUsers,
+	left_join: cu in Core.CollectionsUsers.CollectionUser,
 	on: c.id == cu.collection_id,
 	left_join: u in Core.Accounts.User,
 	on: cu.user_id == u.id,
@@ -102,7 +102,7 @@ defmodule Search.Collections do
     count =
       from(
 	c in Core.Collections.Collection,
-	left_join: cu in Core.Collections.CollectionsUsers,
+	left_join: cu in Core.CollectionsUsers.CollectionUser,
 	on: c.id == cu.collection_id,
 	left_join: u in Core.Accounts.User,
 	on: cu.user_id == u.id,
@@ -121,7 +121,7 @@ defmodule Search.Collections do
     list_of_collections =
       from(
 	c in Core.Collections.Collection,
-	left_join: cu in Core.Collections.CollectionsUsers,
+	left_join: cu in Core.CollectionsUsers.CollectionUser,
 	on: c.id == cu.collection_id,
 	left_join: u in Core.Accounts.User,
 	on: cu.user_id == u.id,
