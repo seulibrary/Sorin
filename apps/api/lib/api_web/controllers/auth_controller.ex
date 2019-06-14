@@ -7,8 +7,13 @@ defmodule ApiWeb.AuthController do
     alias Core.Repo
     alias Ueberauth.Strategy.Helpers
 
+    action_fallback ApiWeb.FallbackController
+
+
     def request(conn, _params) do
-      render(conn, "request.html", callback_url: Helpers.callback_url(conn))
+      # matches for any non existing auth paths.
+      conn
+      |> redirect(to: "/")
     end
 
     def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
@@ -21,7 +26,7 @@ defmodule ApiWeb.AuthController do
 
     def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
       conn
-      |> put_flash(:error, "Failt to authenticate.")
+      |> put_flash(:error, "Failed to authenticate.")
       |> redirect(to: "/")
     end
 
