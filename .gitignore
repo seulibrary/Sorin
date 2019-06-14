@@ -22,8 +22,13 @@ erl_crash.dump
 # Ignore all node modules
 node_modules/
 
+# Ignore secret files
+*.secret.exs
+
+
 # Ignore workspace settings
 .elixir_ls/
+.eslintrc
 .eslintrc.json
 
 # OS generated files #
