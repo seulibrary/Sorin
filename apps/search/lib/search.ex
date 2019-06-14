@@ -25,14 +25,14 @@ defmodule Search do
 
   """
   def all(string, limit \\ 25, offset \\ 0, filters \\ %{}) do
-    catalogs = search_catalogs(string, limit, offset, filters)
-    collections = search_collections(string, limit, offset)
-    users = search_users(string, limit, offset)
+    catalogs = Task.async(Search, :search_catalogs, [string, limit, offset, filters])
+    collections = Task.async(Search, :search_collections, [string, limit, offset])
+    users = Task.async(Search, :search_users, [string, limit, offset])
 
     {:ok,
-     %{catalogs: catalogs,
-       collections: collections,
-       users: users
+     %{catalogs: Task.await(catalogs),
+       collections: Task.await(collections),
+       users: Task.await(users)
      }}
   end
 
