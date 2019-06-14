@@ -60,8 +60,6 @@ defmodule ApiWeb.UserChannel do
   end
 
   def handle_in("delete_token", params, socket) do
-    IO.inspect params
-
     with token when is_map(token) <- Core.AuthTokens.get_auth_token(%{key: params["token"]}),
          {:ok, %Core.AuthTokens.AuthToken{}} <- Core.AuthTokens.delete_auth_token(token) do
       push(socket, "deleted_token", ApiWeb.TokenView.render("token.json", data: token))
