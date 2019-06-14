@@ -29,7 +29,7 @@ defmodule ApiWeb.SearchChannel do
         },
         socket
       ) do
-IO.inspect filters
+
     case Search.all(query, limit, offset, filters) do
       {:ok, search} ->
         broadcast!(
@@ -81,7 +81,7 @@ IO.inspect filters
     socket
   ) do
     results = Search.search_collections(params["query"], params["limit"], params["offset"])
-      IO.inspect "hit"
+
     broadcast!(
       socket,
       "load_more_collection_results",
