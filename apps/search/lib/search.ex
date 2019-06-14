@@ -30,7 +30,8 @@ defmodule Search do
     users = Task.async(Search, :search_users, [string, limit, offset])
 
     {:ok,
-     %{catalogs: Task.await(catalogs),
+     %{
+       catalogs: Task.await(catalogs),
        collections: Task.await(collections),
        users: Task.await(users)
      }}
@@ -49,14 +50,15 @@ defmodule Search do
 
       iex> search_catalogs("Proust", 25, 0)
       [%{}, ...]
-  
+
 
   """
   def search_catalogs(string, limit, offset, filters) do
     Kernel.apply(
       Application.get_env(:search, :search_target),
       :search,
-      [string, limit, offset, filters])
+      [string, limit, offset, filters]
+    )
   end
 
   @doc """
