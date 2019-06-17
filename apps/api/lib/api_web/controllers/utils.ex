@@ -32,7 +32,7 @@ defmodule ApiWeb.Utils do
       user_id: user_id
     )
     |> Map.get(:index)
-    
+
     case index do
       0 -> true
       _ -> false
@@ -40,9 +40,9 @@ defmodule ApiWeb.Utils do
   end
 
   def can_edit_collection(user_id, collection_id) do
-    case Core.Collections.CollectionsUsers 
+    case Core.Collections.CollectionsUsers
     |> Core.Repo.get_by(
-      collection_id: collection_id, 
+      collection_id: collection_id,
       user_id: user_id,
       write_access: true
     ) do
@@ -54,7 +54,7 @@ defmodule ApiWeb.Utils do
   def can_move_collection(user_id, collection_id) do
     case Core.Collections.CollectionsUsers
     |> Core.Repo.get_by!(
-      collection_id: collection_id, 
+      collection_id: collection_id,
       user_id: user_id
     ) do
       _users when is_nil(_users) -> {:error, "User does not have permission"}
@@ -65,7 +65,7 @@ defmodule ApiWeb.Utils do
   def can_move_collection!(user_id, collection_id) do
     case Core.Collections.CollectionsUsers
     |> Core.Repo.get_by!(
-      collection_id: collection_id, 
+      collection_id: collection_id,
       user_id: user_id
     ) do
       _users when is_nil(_users) -> false
