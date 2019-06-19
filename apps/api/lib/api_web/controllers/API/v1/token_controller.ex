@@ -9,7 +9,7 @@ defmodule ApiWeb.V1.TokenController do
 
         conn
         |> put_status(200)
-        |> render(ApiWeb.API.TokenView, data: AuthTokens.get_auth_tokens_by_user_id(user_id))
+        |> render(ApiWeb.API.TokenView, data: AuthTokens.get_auth_tokens_by_user_id(user_id, "api"))
     end
   end
 

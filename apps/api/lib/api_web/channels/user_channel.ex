@@ -54,7 +54,7 @@ defmodule ApiWeb.UserChannel do
       ApiWeb.TokenView.render(
         "tokens.json",
         %{data: Core.AuthTokens.get_auth_tokens_by_user_id(
-          socket.assigns.user_id)}))
+          socket.assigns.user_id, "api")}))
 
     {:noreply, socket}
   end

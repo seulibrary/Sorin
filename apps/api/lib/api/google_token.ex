@@ -9,12 +9,15 @@ defmodule Api.GoogleToken do
   return Google auth token from user and save/update it as needed. This should be called on initial login.
   """
   def save_auth_token(user, auth_token) do
-    token = Core.AuthTokens.get_login_token_by_user_id(user.id, "login")
+    token = Core.AuthTokens.get_login_token_by_user_id(user.id)
 
     if token do
       Logger.info "> User Login #{user.email}"
+      updated_token = update_token(token, auth_token |> Map.from_struct)
+      IO.inspect token
+      IO.inspect updated_token
 
-      update_user_auth_token(token, update_token(token, auth_token |> Map.from_struct))
+      update_user_auth_token(token, updated_token)
     else
       Logger.info "> New User Login #{user.email}"
 
@@ -51,7 +54,7 @@ defmodule Api.GoogleToken do
   end
 
   defp update_user_auth_token(auth_token_struct, token) do
-    Core.AuthTokens.update_auth_token(auth_token_struct, token: token)
+    Core.AuthTokens.update_auth_token(auth_token_struct, %{token: token})
 
     {:ok, token}
   end
@@ -80,14 +83,14 @@ defmodule Api.GoogleToken do
   end
 
   defp update_token(auth_token, new_token) do
-    auth_token
-    |> update_token_field(:access_token, new_token.access_token)
-    |> update_token_field(:expires_at, new_token.expires_at)
-    |> update_token_field(:refresh_token, new_token.refresh_token)
+    auth_token.token
+    |> update_token_field("access_token", new_token.access_token)
+    |> update_token_field("expires_at", new_token.expires_at)
+    |> update_token_field("refresh_token", new_token.refresh_token)
   end
 
   defp update_refresh_token(auth_token, refreshedToken) do
-    auth_token
+    auth_token.token
     |> update_token_field("access_token", refreshedToken["access_token"])
     |> update_token_field("expires_at", refreshedToken["expires_in"] + (DateTime.utc_now |> DateTime.to_unix))
   end
