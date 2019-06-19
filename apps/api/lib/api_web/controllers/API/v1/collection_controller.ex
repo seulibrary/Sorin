@@ -1,9 +1,8 @@
 defmodule ApiWeb.V1.CollectionController do
   use ApiWeb, :controller
 
-  alias Core.Dashboard
   alias Core.Collections
-  alias ApiWeb.CollectionView
+  alias ApiWeb.{CollectionView, ErrorView}
 
   action_fallback ApiWeb.FallbackController
 
@@ -12,7 +11,7 @@ defmodule ApiWeb.V1.CollectionController do
       nil -> 
         conn
         |> put_status(404)
-        |> render(ApiWeb.ErrorView, "404.json")
+        |> render(ErrorView, "404.json")
 
       collection ->
         conn
@@ -24,19 +23,19 @@ defmodule ApiWeb.V1.CollectionController do
   def show(conn, _params) do
     conn
     |> put_status(404)
-    |> put_view(ApiWeb.ErrorView)
+    |> put_view(ErrorView)
     |> render("404.json")
   end
 
   def create(conn, %{"title" => title}) do
     user_id = conn.assigns.user_id
 
-    case Dashboard.Collections.new_collection(user_id, title) do
+    case Core.Collections.new_collection(user_id, title) do
       {:ok, collection} ->
         FrontendWeb.Endpoint.broadcast!(
           "dashboard:#{user_id}",
           "add_collection_to_dashboard",
-          ApiWeb.CollectionView.render("dashboardCollection.json",
+          CollectionView.render("dashboardCollection.json",
             collection: collection
           )
         )
@@ -48,7 +47,7 @@ defmodule ApiWeb.V1.CollectionController do
       _ ->
         conn
         |> put_status(500)
-        |> put_view(ApiWeb.ErrorView)
+        |> put_view(ErrorView)
         |> render("500.json")
     end
   end
@@ -56,7 +55,7 @@ defmodule ApiWeb.V1.CollectionController do
   def create(conn, _params) do
     conn
     |> put_status(400)
-    |> render(ApiWeb.ErrorView, "400.json")
+    |> render(ErrorView, "400.json")
   end
 
   #TODO: Waiting on Casey to merge his changes in before continued work to reduce any duplicate work or changes

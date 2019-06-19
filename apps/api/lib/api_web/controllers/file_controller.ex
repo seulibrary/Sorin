@@ -3,13 +3,13 @@ defmodule ApiWeb.FileController do
   
     require Logger
 
-    def get_file(conn, %{"id" => id, "user" => user} = params) do
+    def get_file(conn, %{"id" => id, "user" => user}) do
         case Phoenix.Token.verify(conn, "user_id", user, max_age: 86400) do
             {:ok, user_id} ->
                 Logger.info"> User Id: #{user_id}, Download File: #{id}"
 
                 file = Core.Files.get_file_by_uuid(id)
-                file_download = Core.Files.download_file_web(id)
+                file_download = Core.Files.download_file_by_uuid(id)
 
                 conn
                 |> put_resp_header("x-filename", file.title)

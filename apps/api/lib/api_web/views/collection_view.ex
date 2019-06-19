@@ -17,6 +17,7 @@ defmodule ApiWeb.CollectionView do
             collection: render_one(data.collection, __MODULE__, "collection.json", as: :collection),
             color: data.color,
             index: data.index,
+            id: data.id,
             pending_approval: data.pending_approval,
             write_access: data.write_access
         }
@@ -53,15 +54,15 @@ defmodule ApiWeb.CollectionView do
             files: files,
             id:  collection.id,
             imports_count: collection.imports_count,
-            inserted_at: collection.inserted_at |> DateTime.to_string,
+            inserted_at: collection.inserted_at |> NaiveDateTime.to_string,
             notes: notes,
             permalink: collection.permalink,
-            provenance: collection.provenance,
+            # provenance: collection.provenance,
             published: collection.published,
             resources: resources,
             tags: collection.tags,
             title: collection.title,
-            updated_at: collection.updated_at |> DateTime.to_string,
+            updated_at: collection.updated_at |> NaiveDateTime.to_string,
             # users: collection.users, not preloaded
             write_users: collection.write_users
         }
@@ -134,12 +135,12 @@ defmodule ApiWeb.CollectionView do
             collection_id: file.collection_id,
             # file_url: file.file_url, Does not belong in FE
             id: file.id,
-            inserted_at: file.inserted_at |> DateTime.to_string,
+            inserted_at: file.inserted_at |> NaiveDateTime.to_string,
             media_type: file.media_type,
             resource_id: file.resource_id,
             size: file.size,
             title: file.title,
-            updated_at: file.updated_at |> DateTime.to_string,
+            updated_at: file.updated_at |> NaiveDateTime.to_string,
             uploader_id: file.uploader_id,
             uuid: file.uuid
         }
@@ -150,9 +151,9 @@ defmodule ApiWeb.CollectionView do
             body: note.body,
             collection_id: note.collection_id,
             id: note.id,
-            inserted_at: note.inserted_at |> DateTime.to_string,
+            inserted_at: note.inserted_at |> NaiveDateTime.to_string,
             resource_id: note.resource_id,
-            updated_at: note.updated_at |> DateTime.to_string
+            updated_at: note.updated_at |> NaiveDateTime.to_string
         }
     end
 end

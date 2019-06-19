@@ -26,7 +26,7 @@ defmodule ApiWeb.Utils do
   end
 
   def is_inbox(user_id, collection_id) do
-    index = Core.Collections.CollectionsUsers
+    index = Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
       collection_id: collection_id,
       user_id: user_id
@@ -40,7 +40,7 @@ defmodule ApiWeb.Utils do
   end
 
   def can_edit_collection(user_id, collection_id) do
-    case Core.Collections.CollectionsUsers
+    case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by(
       collection_id: collection_id,
       user_id: user_id,
@@ -52,7 +52,7 @@ defmodule ApiWeb.Utils do
   end
 
   def can_move_collection(user_id, collection_id) do
-    case Core.Collections.CollectionsUsers
+    case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
       collection_id: collection_id,
       user_id: user_id
@@ -63,9 +63,9 @@ defmodule ApiWeb.Utils do
   end
 
   def can_move_collection!(user_id, collection_id) do
-    case Core.Collections.CollectionsUsers
+    case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
-      collection_id: collection_id,
+      collection_id: collection_id, 
       user_id: user_id
     ) do
       _users when is_nil(_users) -> false
