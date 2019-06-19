@@ -130,7 +130,7 @@ defmodule ApiWeb.Utils do
   def can_move_collection?(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
-      collection_id: collection_id,
+      collection_id: collection_id, 
       user_id: user_id
     ) do
       _users when is_nil(_users) -> false

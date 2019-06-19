@@ -339,7 +339,6 @@ defmodule ApiWeb.CollectionChannel do
 
   def handle_in("google_export", payload, socket) do
     push(socket, "start_google_export", %{})
-
     case Api.GoogleToken.auth_token(Accounts.get_user!(socket.assigns.user_id)) do
       {:ok, token} ->
         connection = GoogleApi.Drive.V3.Connection.new(token)
