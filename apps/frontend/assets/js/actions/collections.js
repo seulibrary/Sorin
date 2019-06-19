@@ -19,6 +19,17 @@ export const getDashboard = (user, socket) => {
             })
         })
 
+        dashboard_channel.on("move_collection", payload => {
+            dispatch({
+                type: Constants.MOVE_COLLECTION,
+                payload: {
+                    collectionId: payload.collection_id, 
+                    newIndex: payload.newIndex,
+                    oldIndex: payload.oldIndex
+                }
+            })
+        })
+
         dashboard_channel.on("clone_collection", payload => {
             dispatch(
                 connectCollection(socket, payload)
@@ -32,6 +43,7 @@ export const getDashboard = (user, socket) => {
         })
 
         dashboard_channel.on("add_collection_to_dashboard", payload => {
+            console.log("Create new collection")
             dispatch(
                 connectCollection(socket, payload)
             )
