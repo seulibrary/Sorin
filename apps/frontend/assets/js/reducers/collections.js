@@ -263,16 +263,23 @@ const collections = (state = initialState, action) => {
         }
 
     case Constants.MOVE_COLLECTION:
-
         let orig_collections = state.collections
-        const collection_to_move = orig_collections[action.payload.oldIndex]
+        
+        // Confirms that the move has not happened in your brower already
+        if (orig_collections[action.payload.oldIndex].data.id == action.payload.collectionId) {
+            const collection_to_move = orig_collections[action.payload.oldIndex]
 
-        orig_collections.splice(action.payload.oldIndex, 1)
-        orig_collections.splice(action.payload.newIndex, 0, collection_to_move)
-
-        return {
-            ...state,
-            collections: orig_collections
+            orig_collections.splice(action.payload.oldIndex, 1)
+            orig_collections.splice(action.payload.newIndex, 0, collection_to_move)
+    
+            return {
+                ...state,
+                collections: orig_collections
+            }
+        } else {
+            return {
+                ...state
+            }
         }
 
     case Constants.ADD_RESOURCE:
