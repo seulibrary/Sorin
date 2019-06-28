@@ -135,8 +135,8 @@ defmodule Core.Resources do
       Collections.get_highest_resources_index(collection_id) + 1
 
     resource_map
-    |> Map.put(:collection_id, collection_id)
-    |> Map.put(:collection_index, index)
+    |> Map.put("collection_id", collection_id)
+    |> Map.put("collection_index", index)
     |> create_resource()
   end
 
