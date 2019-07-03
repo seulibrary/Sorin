@@ -14,31 +14,52 @@ defmodule ApiWeb.CollectionChannel do
     Resources
   }
 
+  alias ApiWeb.Presence
+
   def join("collection:" <> collection_id, _params, socket) do
     case can_move_collection(socket.assigns.user_id, collection_id) do
-      {:ok, _} -> 
+      {:ok, _} ->
         Logger.info "> Connect to channel collection:" <> collection_id
+
+        send(self(), :after_join)
+
         {:ok, socket}
-      {:error, msg} -> 
+      {:error, msg} ->
         Logger.error "> Error Connecting to channel collection:" <> collection_id
         {:reply, {:error, %{msg: msg}}, socket}
     end
+  end
+
+  def handle_info(:after_join, socket) do
+    # adding test data in the map. Could add in extra data like user name?
+    collection_id = String.split(socket.topic, ":") |> List.last
+
+    {:ok, _} = Presence.track(socket, :users, %{
+          name: socket.assigns.user.fullname,
+          collection_id: collection_id,
+          # can_edit_collection: can_edit_collection?(socket.assigns.user_id, collection_id),
+          online_at: inspect(System.system_time(:second))
+                              })
+
+    push_presence_state(socket)
+
+    {:noreply, socket}
+  end
+
+  defp push_presence_state(socket) do
+    push(socket, "presence_state", Presence.list(socket))
   end
 
   def handle_in("edit_collection", payload, socket) do
     Logger.info "> Edit Collection"
 
     case can_move_collection(socket.assigns.user_id, payload["collection"]["id"]) do
-      {:ok, _} ->
+      {:ok, collectionUser} ->
         if payload["color"] do
           Logger.info "> Update Collection Color"
 
           CollectionsUsers.update_collection_user(
-            %CollectionsUsers.CollectionUser{
-              collection_id: payload["collection"]["id"],
-              user_id: socket.assigns.user_id,
-              id: payload["id"]
-            }, %{
+            collectionUser, %{
               color: payload["color"],
               archived: payload["archived"],
               pending_approval: payload["pending_approval"]
@@ -50,7 +71,7 @@ defmodule ApiWeb.CollectionChannel do
       {:error, _} ->
         {:reply, {:error, %{msg: "You are unauthorized to edit this collection."}}, socket}
 
-      {:ok, _} ->
+      {:ok, collectionUser} ->
         title = if !is_inbox(socket.assigns.user_id, payload["collection"]["id"]) do
             payload["collection"]["title"]
           else
@@ -58,14 +79,13 @@ defmodule ApiWeb.CollectionChannel do
           end
 
         published = if !is_inbox(socket.assigns.user_id, payload["collection"]["id"]) do
-            payload["collection"]["title"]
+            payload["collection"]["published"]
           else
             false
           end
-
+        IO.inspect "hello there."
         Collections.update_collection(
-          %Collections.Collection{
-            id: payload["collectoin"]["id"]},
+            collectionUser.collection,
           %{
             title: title,
             published: published})
@@ -98,11 +118,11 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("add_collection_tag", payload, socket) do
-    case can_edit_collection(socket.assigns.user_id, payload["collection_id"]) do
-      {:error, _} ->
+    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+      false ->
         {:reply, {:error, %{msg: "Permissions lacking"}}, socket}
 
-      {:ok, _} ->
+      true ->
         case Collections.add_tag_by_collection_id(
               payload["collection_id"],
                payload["label"]
@@ -121,11 +141,11 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("remove_collection_tag", payload, socket) do
-    case can_edit_collection(socket.assigns.user_id, payload["collection_id"]) do
-      {:error, _} ->
+    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+      false ->
         {:reply, {:error, %{msg: "Permissions lacking"}}, socket}
 
-      {:ok, _} ->
+      true ->
         Collections.remove_tag_by_collection_id(
           payload["collection_id"],
           payload["tag"]
@@ -141,11 +161,13 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("create_resource", payload, socket) do
-    case can_edit_collection(socket.assigns.user_id, payload["collection_id"]) do
-      {:error, _} ->
+    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+      false ->
         {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
 
-      {:ok, _} ->
+      true ->
+        IO.inspect "Hello world."
+
         case Resources.create_indexed_resource(
             payload["data"],
             payload["collection_id"]
@@ -166,12 +188,11 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("remove_resource", payload, socket) do
-    # IO.inspect payload
-    case can_edit_collection(socket.assigns.user_id, payload["collection_id"]) do
-      {:error, _} ->
+    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+      false ->
         {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
 
-      {:ok, _} ->
+      true ->
         if Resources.remove_resource_by_id(payload["resource_id"]) do
           broadcast!(socket, "remove_resource", payload)
           {:noreply, socket}
@@ -182,11 +203,11 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("edit_resource", payload, socket) do
-    case can_edit_collection(socket.assigns.user_id, payload["collection_id"]) do
-      {:error, _} ->
+    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+      false ->
         {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
 
-      {:ok, _} ->
+      true ->
         resource = Resources.get_resource!(payload["data"]["id"])
         title = if resource.identifier, do: resource.title, else: payload["data"]["title"]
 
@@ -320,14 +341,12 @@ defmodule ApiWeb.CollectionChannel do
 
   def handle_in("google_export", payload, socket) do
     push(socket, "start_google_export", %{})
-    
+
     case Api.GoogleToken.auth_token(Accounts.get_user!(socket.assigns.user_id)) do
       {:ok, token} ->
         connection = GoogleApi.Drive.V3.Connection.new(token)
         tmp_file_name = Ecto.UUID.generate()
         data = payload["collection_data"]
-        
-        # IO.inspect data
 
         # Create File
         File.write(

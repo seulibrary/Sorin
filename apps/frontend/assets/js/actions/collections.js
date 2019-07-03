@@ -1,4 +1,10 @@
+import { Presence } from "../../../../../deps/phoenix"
 import Constants from "../constants"
+import { handleActions, createAction } from 'redux-actions'
+
+
+export const setPresence = createAction('PRESENCE/SET')
+export const presenceDiff = createAction('PRESENCE/DIFF')
 
 export const getDashboard = (user, socket) => {
     return (dispatch) => {
@@ -23,9 +29,21 @@ export const getDashboard = (user, socket) => {
             dispatch({
                 type: Constants.MOVE_COLLECTION,
                 payload: {
-                    collectionId: payload.collection_id, 
-                    newIndex: payload.newIndex,
-                    oldIndex: payload.oldIndex
+                    collection_id: payload.collection_id, 
+                    new_index: payload.new_index,
+                    old_index: payload.old_index
+                }
+           })
+        })
+
+        dashboard_channel.on("move_resource", payload => {
+            dispatch({
+                type: Constants.MOVE_RESOURCE,
+                payload: {
+                    source_collection_id: parseInt(payload.source_collection_id),
+                    target_collection_id: parseInt(payload.target_collection_id),
+                    resource_id: parseInt(payload.resource_id),
+                    index: parseInt(payload.target_index)
                 }
             })
         })
@@ -43,7 +61,6 @@ export const getDashboard = (user, socket) => {
         })
 
         dashboard_channel.on("add_collection_to_dashboard", payload => {
-            console.log("Create new collection")
             dispatch(
                 connectCollection(socket, payload)
             )
@@ -95,6 +112,16 @@ export const connectCollection = (socket, collection) => {
         if (collection.hasOwnProperty("collection")) {
             channel = socket.channel(`collection:${collection.collection.id}`)
 
+            channel.on("presence_state", state => {
+                console.log(state)
+                dispatch(setPresence(state))
+            })
+
+            channel.on("presence_diff", diff => {
+                dispatch(presenceDiff(diff))
+            })
+
+
             channel.join().receive("ok", () => {
                 dispatch({
                     type: Constants.ADD_COLLECTION_TO_DASHBOARD,
@@ -106,6 +133,15 @@ export const connectCollection = (socket, collection) => {
             })
         } else {
             channel = socket.channel(`collection:${collection.id}`)
+            // need to work on these.... have to track state. could put into collection?
+            channel.on("presence_state", state => {
+                console.log(state)
+                dispatch(setPresence(state))
+            })
+
+            channel.on("presence_diff", diff => {
+                dispatch(presenceDiff(diff))
+            })
 
             channel.join().receive("ok", () => {
                 dispatch({
@@ -126,12 +162,21 @@ export const connectCollection = (socket, collection) => {
         dispatch(_actions(channel))
     }
 }
+let presences = {}
 
 const _actions = (channel) => {
     return (dispatch) => {
-        channel.on("edit_collection", payload => {
+        
+        channel.on("updated_collection", payload => {
             dispatch({
                 type: Constants.EDIT_COLLECTION,
+                payload: payload
+            })
+        })
+
+        channel.on("updated_resource", payload => {
+            dispatch({
+                type: Constants.EDIT_RESOURCE,
                 payload: payload
             })
         })
@@ -221,19 +266,22 @@ const _actions = (channel) => {
 
 export const moveCollection = (channel, collection_id, new_index, old_index) => {
     return (dispatch) => {
+
         channel.push("move_collection", {
             collection_id: parseInt(collection_id),
-            newIndex: parseInt(new_index),
-            oldIndex: parseInt(old_index)
+            new_index: parseInt(new_index),
+            old_index: parseInt(old_index)
         })
 
         dispatch({
             type: Constants.MOVE_COLLECTION,
             payload: {
-                newIndex: parseInt(new_index),
-                oldIndex: parseInt(old_index)
+                collection_id: parseInt(collection_id),
+                new_index: parseInt(new_index),
+                old_index: parseInt(old_index)
             }
         })
+
     }
 }
 

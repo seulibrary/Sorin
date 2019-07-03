@@ -20,14 +20,15 @@ import {
 } from "../../actions/files"
 import { googleExport } from "../../actions/export"
 import Constants from "../../constants"
-import { fullUrl, uuidv4 } from "../../utils"
+import { siteUrl, uuidv4 } from "../../utils"
 
 class EditCollection extends Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
     }
 
-    onTitleChange = e => { 
+    onTitleChange = (e) => {
+        console.log("hi")
         this.props.dispatch({
             type: Constants.EDIT_COLLECTION_TITLE,
             collection_id: this.props.id,
@@ -122,7 +123,7 @@ class EditCollection extends Component {
     downloadFile = e => {
         e.preventDefault()
 
-        downloadFile(e.currentTarget.dataset.id, this.props.settings.api_port)
+        downloadFile(e.currentTarget.dataset.id)
     }
 
     removeFile = e => {
@@ -243,7 +244,7 @@ class EditCollection extends Component {
                                             type="text"
                                         />
                                     ) :
-                                        <h3>{data.collection.title}</h3>
+                                     <h3>{data.collection.title}</h3>
                                     }
                                 </div>
                             )}
@@ -255,9 +256,9 @@ class EditCollection extends Component {
                                 id={data.collection.notes != null ? data.collection.notes.id : ""}
                                 onChange={this.onNoteChange}
                                 data={
-                                    data.collection.notes != null
-                                        ? data.collection.notes.body
-                                        : ""
+                                data.collection.notes != null
+                                ? data.collection.notes.body
+                                : ""
                                 }
                                 writeAccess={data.write_access}
                             />
@@ -292,41 +293,41 @@ class EditCollection extends Component {
                                     {data.write_access ? (
                                         <div>
                                             {data.collection.published ?
-                                                <div>
-                                                    <label className="makepublic sub-title">Published
-                                                        <br />
-                                                        <span className="make-public-small">
-                                                            A published collection is findable from the search bar, where other users will be able to view, clone, or import them. Publishing cannot be undone.
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                                :
-                                                <div>
-                                                    <label className="makepublic inline" htmlFor="makepublic">
-                                                        Publish: <input
-                                                            type="checkbox"
-                                                            id="makepublic"
-                                                            className="make-public-checkbox"
-                                                            onChange={this.handleMakePublic}
-                                                            checked={data.collection.published}
-                                                        />
-                                                        <br />
-                                                        <span className="make-public-small">
-                                                            Publishing makes collections findable from the search bar, where other users will be able to view, clone, or import them. Publishing cannot be undone.
-                                                        </span>
-                                                    </label>
-                                                </div>
+                                             <div>
+                                                 <label className="makepublic sub-title">Published
+                                                     <br />
+                                                     <span className="make-public-small">
+                                                         A published collection is findable from the search bar, where other users will be able to view, clone, or import them. Publishing cannot be undone.
+                                                     </span>
+                                                 </label>
+                                             </div>
+                                            :
+                                             <div>
+                                                 <label className="makepublic inline" htmlFor="makepublic">
+                                                     Publish: <input
+                                                                  type="checkbox"
+                                                                  id="makepublic"
+                                                                  className="make-public-checkbox"
+                                                                  onChange={this.handleMakePublic}
+                                                                  checked={data.collection.published}
+                                                     />
+                                                     <br />
+                                                     <span className="make-public-small">
+                                                         Publishing makes collections findable from the search bar, where other users will be able to view, clone, or import them. Publishing cannot be undone.
+                                                     </span>
+                                                 </label>
+                                             </div>
                                             }
                                         </div>
                                     ) :
-                                        <div>
-                                            <label className="makepublic sub-title">Published
-                                                <br />
-                                                <span className="make-public-small">
-                                                    A published collection is findable from the search bar, where other users will be able to view, clone, or import them. Publishing cannot be undone.
-                                                </span>
-                                            </label>
-                                        </div>
+                                     <div>
+                                         <label className="makepublic sub-title">Published
+                                             <br />
+                                             <span className="make-public-small">
+                                                 A published collection is findable from the search bar, where other users will be able to view, clone, or import them. Publishing cannot be undone.
+                                             </span>
+                                         </label>
+                                     </div>
                                     }
 
                                     <label>
@@ -342,15 +343,15 @@ class EditCollection extends Component {
                                         className="add-text exp close full-width"
                                         type="text"
                                         readOnly={true}
-                                        value={fullUrl + "/c/" + data.collection.permalink}
+                                        value={siteUrl + "/c/" + data.collection.permalink}
                                     />
-                                
+                                    
                                     <label className="sub-title">Export Options</label>
                                     
                                     <div className="export">
                                         { this.props.exportData.exporting ? 
-                                            <Loader text={"Uploading File..."} isVisible={true} /> : 
-                                            <p onClick={this.exportToGoogle}>Save to Google Drive</p> }
+                                          <Loader text={"Uploading File..."} isVisible={true} /> : 
+                                          <p onClick={this.exportToGoogle}>Save to Google Drive</p> }
                                     </div>
                                 </Accordion>
                             )}
@@ -385,7 +386,7 @@ class EditCollection extends Component {
                             <i className={data.collection.files.length > 0 ? "attach" : "" }></i>
                             {this.props.index != 0 && showFiles ? (
                                 <Accordion title="Attachments" >
-                                	
+                                	  
                                     {data.collection.files.length == 0 && !this.props.files.uploadingFile && data.write_access ? (
                                         <Dropzone maxSize={200000000} multiple={false} onDrop={this.onDrop} className={"file-drop"}>
                                             <p>
@@ -401,23 +402,23 @@ class EditCollection extends Component {
                                         {data.collection.files.map((f, index) => (
                                             <li key={index}>
                                                 <span
-                                                	className="filename"
+                                                	  className="filename"
                                                     title={f.size + " Bytes - Click to download attachment"}
                                                     onClick={this.downloadFile}
                                                     data-id={f.uuid}
-                                            
+                                                    
                                                 >
                                                     {f.title}
                                                 </span>
                                                 { data.write_access ?
-                                                    <React.Fragment>
-                                                        &nbsp;
-                                                        <span className={"delete"} onClick={this.removeFile} data-id={f.uuid} title="Delete File">
-                                                            &times;
-                                                        </span>
-                                                    </React.Fragment>
-                                                    :
-                                                    ""
+                                                  <React.Fragment>
+                                                  &nbsp;
+                                                  <span className={"delete"} onClick={this.removeFile} data-id={f.uuid} title="Delete File">
+                                                  &times;
+                                                  </span>
+                                                  </React.Fragment>
+                                                  :
+                                                  ""
                                                 }
                                             </li>
                                         ))}

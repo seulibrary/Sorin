@@ -1,4 +1,5 @@
 import Constants from "../constants"
+import { setPresence, presenceDiff } from '../actions/collections'
 
 const initialState = {
     collections: [],
@@ -43,14 +44,14 @@ const collections = (state = initialState, action) => {
         return {
             ...state,
             collections: state.collections.map(
-                (collection, index) => {
+                (collection) => {
                     if (collection.data.collection.id === action.payload.id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 ...action.payload
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -59,13 +60,50 @@ const collections = (state = initialState, action) => {
             )
         }
 
+    case "PRESENCE/SET":
+        return {
+            ...state,
+            collections: state.collections.map(
+                (collection) => {
+                    if (collection.data.collection.id === parseInt(action.payload.users.metas[0].collection_id)) {
+                        return {
+                            ...collection,
+                            presence: action.payload.users.metas,
+                        }
+                    } else {
+                        return collection
+                    }
+                }
+            )
+        }
+
+    case "PRESENCE/DIFF":
+        return {
+            ...state,
+            collections: state.collections.map(
+                (collection) => {
+                    if (collection.data.collection.id === action.collection_id) {
+                        return {
+                            ...collection,
+                            presence: {
+                                ...action.payload
+                            },
+                        }
+                    } else {
+                        return collection
+                    }
+                })
+        }
+
     case Constants.EDIT_COLLECTION_TITLE:
         return {
             ...state,
             collections: state.collections.map(
-                (collection, index) => {
+                (collection) => {
                     if (collection.data.collection.id === action.collection_id) {
+                        console.log('found collection', collection)
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
@@ -73,7 +111,6 @@ const collections = (state = initialState, action) => {
                                     title: action.payload
                                 }
                             },
-                            channel: collection.channel
                         }
                     } else {
                         return collection
@@ -89,14 +126,14 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     published: true
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -112,14 +149,14 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.payload.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     tags: collection.data.collection.tags.concat(action.payload.tag)
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -135,14 +172,14 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.payload.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     tags: collection.data.collection.tags.filter(tag => tag !== action.payload.tag)
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -158,11 +195,11 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 color: action.color
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -180,6 +217,7 @@ const collections = (state = initialState, action) => {
                         let notes = collection.data.collection.notes
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
@@ -189,8 +227,7 @@ const collections = (state = initialState, action) => {
                                         body: action.payload
                                     }
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -206,14 +243,14 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     notes: action.payload
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -229,11 +266,11 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 currentCollectionNote: action.payload
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -249,11 +286,11 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 currentCollectionNote: ""
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -264,14 +301,14 @@ const collections = (state = initialState, action) => {
 
     case Constants.MOVE_COLLECTION:
         let orig_collections = state.collections
-        
-        // Confirms that the move has not happened in your brower already
-        if (orig_collections[action.payload.oldIndex].data.id == action.payload.collectionId) {
-            const collection_to_move = orig_collections[action.payload.oldIndex]
 
-            orig_collections.splice(action.payload.oldIndex, 1)
-            orig_collections.splice(action.payload.newIndex, 0, collection_to_move)
-    
+        // Confirms that the move has not happened in your brower already
+        if (orig_collections[action.payload.old_index].data.id == action.payload.collection_id) {
+            const collection_to_move = orig_collections[action.payload.old_index]
+
+            orig_collections.splice(action.payload.old_index, 1)
+            orig_collections.splice(action.payload.new_index, 0, collection_to_move)
+
             return {
                 ...state,
                 collections: orig_collections
@@ -293,14 +330,14 @@ const collections = (state = initialState, action) => {
                         }
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: [...collection.data.collection.resources, newResource]
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -316,6 +353,7 @@ const collections = (state = initialState, action) => {
                 (collection) => {
                     if (collection.data.collection.id === action.payload.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
@@ -330,8 +368,7 @@ const collections = (state = initialState, action) => {
                                         }
                                     )
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -340,7 +377,10 @@ const collections = (state = initialState, action) => {
             )
         }
     case Constants.MOVE_RESOURCE:
-        let originalResource = state.collections.map(
+        let orig_state = state.collections
+
+        // Ger original resource that is being moved
+        let originalResource = orig_state.map(
             (collection, index) => {
                 if (collection.data.collection.id === action.payload.source_collection_id) {
                     return collection.data.collection.resources.filter(resource => resource.id === action.payload.resource_id)
@@ -348,22 +388,32 @@ const collections = (state = initialState, action) => {
             }
         )
 
+        // clean up the results
         let filteredOR = originalResource.filter(n => {
             return n != undefined
         })
 
-        let collectionsFilter = state.collections.map(
+        if (!Array.isArray(filteredOR[0]) || !filteredOR[0].length) {
+            // array does not exist, is not an array, or is empty
+            // ⇒ do not attempt to process any further
+            return {
+                ...state
+            }
+        }
+
+        // remove resource from collection
+        let collectionsFilter = orig_state.map(
             (collection, index) => {
                 if (collection.data.collection.id === action.payload.source_collection_id) {
                     return {
+                        ...collection,
                         data: {
                             ...collection.data,
                             collection: {
                                 ...collection.data.collection,
                                 resources: collection.data.collection.resources.filter(resource => resource.id !== action.payload.resource_id)
                             }
-                        },
-                        channel: collection.channel
+                        }
                     }
                 } else {
                     return collection
@@ -371,18 +421,19 @@ const collections = (state = initialState, action) => {
             }
         )
 
+        // add resource into collection
         let collectionsAdd = collectionsFilter.map(
             (collection, index) => {
                 if (collection.data.collection.id === action.payload.target_collection_id) {
                     return {
+                        ...collection,
                         data: {
                             ...collection.data,
                             collection: {
                                 ...collection.data.collection,
                                 resources: insert(collection.data.collection.resources, action.payload.index, filteredOR[0][0])
                             }
-                        },
-                        channel: collection.channel
+                        }
                     }
                 } else {
                     return collection
@@ -401,14 +452,14 @@ const collections = (state = initialState, action) => {
                 (collection, index) => {
                     if (collection.data.collection.id === action.payload.collection_id) {
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: collection.data.collection.resources.filter(resource => resource.id !== action.payload.resource_id)
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -428,14 +479,14 @@ const collections = (state = initialState, action) => {
                         }
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: [...collection.data.collection.resources, newResource]
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -462,14 +513,14 @@ const collections = (state = initialState, action) => {
                         })
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: resources
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -496,14 +547,14 @@ const collections = (state = initialState, action) => {
                         })
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: resources
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -530,14 +581,14 @@ const collections = (state = initialState, action) => {
                         })
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: resources
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -567,14 +618,14 @@ const collections = (state = initialState, action) => {
                         })
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: resources
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -602,14 +653,14 @@ const collections = (state = initialState, action) => {
                         })
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: resources
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -636,14 +687,14 @@ const collections = (state = initialState, action) => {
                         })
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: resources
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -670,14 +721,14 @@ const collections = (state = initialState, action) => {
                         })
 
                         return {
+                            ...collection,
                             data: {
                                 ...collection.data,
                                 collection: {
                                     ...collection.data.collection,
                                     resources: resources
                                 }
-                            },
-                            channel: collection.channel
+                            }
                         }
                     } else {
                         return collection
@@ -694,6 +745,7 @@ const collections = (state = initialState, action) => {
                     (collection) => {
                         if (collection.data.collection.id === action.payload.collection_id) {
                             return {
+                                ...collection,
                                 data: {
                                     ...collection.data,
                                     collection: {
@@ -709,8 +761,7 @@ const collections = (state = initialState, action) => {
                                             }
                                         })
                                     }
-                                },
-                                channel: collection.channel
+                                }
                             }
                         } else {
                             return collection
@@ -724,14 +775,14 @@ const collections = (state = initialState, action) => {
                     (collection) => {
                         if (collection.data.collection.id === action.payload.collection_id) {
                             return {
+                                ...collection,
                                 data: {
                                     ...collection.data,
                                     collection: {
                                         ...collection.data.collection,
                                         files: collection.data.collection.files.concat(action.payload.file)
                                     }
-                                },
-                                channel: collection.channel
+                                }
                             }
                         } else {
                             return collection
@@ -750,6 +801,7 @@ const collections = (state = initialState, action) => {
                     (collection) => {
                         if (collection.data.collection.id === action.payload.collection_id) {
                             return {
+                                ...collection,
                                 data: {
                                     ...collection.data,
                                     collection: {
@@ -765,8 +817,7 @@ const collections = (state = initialState, action) => {
                                             }
                                         })
                                     }
-                                },
-                                channel: collection.channel
+                                }
                             }
                         } else {
                             return collection
@@ -780,14 +831,14 @@ const collections = (state = initialState, action) => {
                     (collection) => {
                         if (collection.data.collection.id === action.payload.collection_id) {
                             return {
+                                ...collection,
                                 data: {
                                     ...collection.data,
                                     collection: {
                                         ...collection.data.collection,
                                         files: collection.data.collection.files.filter(file => file.id !== action.payload.file_id)
                                     }
-                                },
-                                channel: collection.channel
+                                }
                             }
                         } else {
                             return collection
