@@ -83,7 +83,7 @@ defmodule ApiWeb.CollectionChannel do
           else
             false
           end
-
+        IO.inspect "hello there."
         Collections.update_collection(
             collectionUser.collection,
           %{

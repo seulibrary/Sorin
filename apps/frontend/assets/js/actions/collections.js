@@ -44,9 +44,21 @@ export const getDashboard = (user, socket) => {
             dispatch({
                 type: Constants.MOVE_COLLECTION,
                 payload: {
-                    collectionId: payload.collection_id, 
-                    newIndex: payload.newIndex,
-                    oldIndex: payload.oldIndex
+                    collection_id: payload.collection_id, 
+                    new_index: payload.new_index,
+                    old_index: payload.old_index
+                }
+           })
+        })
+
+        dashboard_channel.on("move_resource", payload => {
+            dispatch({
+                type: Constants.MOVE_RESOURCE,
+                payload: {
+                    source_collection_id: parseInt(payload.source_collection_id),
+                    target_collection_id: parseInt(payload.target_collection_id),
+                    resource_id: parseInt(payload.resource_id),
+                    index: parseInt(payload.target_index)
                 }
             })
         })
@@ -64,7 +76,6 @@ export const getDashboard = (user, socket) => {
         })
 
         dashboard_channel.on("add_collection_to_dashboard", payload => {
-            console.log("Create new collection")
             dispatch(
                 connectCollection(socket, payload)
             )

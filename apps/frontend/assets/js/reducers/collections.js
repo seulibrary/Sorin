@@ -101,6 +101,7 @@ const collections = (state = initialState, action) => {
             collections: state.collections.map(
                 (collection) => {
                     if (collection.data.collection.id === action.collection_id) {
+                        console.log('found collection', collection)
                         return {
                             ...collection,
                             data: {
