@@ -1,6 +1,6 @@
 defmodule ApiWeb.SearchChannel do
   use ApiWeb, :channel
-  
+
   require Logger
 
   def join("search:" <> user_id, _params, socket) do
@@ -50,7 +50,7 @@ defmodule ApiWeb.SearchChannel do
     socket
   ) do
     results = Search.search_catalogs(params["query"], params["limit"], params["offset"], params["filters"])
-    
+
     broadcast!(
       socket,
       "load_more_catalog_results",

@@ -141,7 +141,7 @@ defmodule ApiWeb.CollectionView do
             size: file.size,
             title: file.title,
             updated_at: file.updated_at |> NaiveDateTime.to_string,
-            uploader_id: file.uploader_id,
+            # user: file.user,
             uuid: file.uuid
         }
     end

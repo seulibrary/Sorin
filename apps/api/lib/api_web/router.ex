@@ -15,7 +15,6 @@ defmodule ApiWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
-    plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug ApiWeb.Auth
   end
@@ -28,6 +27,7 @@ defmodule ApiWeb.Router do
     scope "/" do
       pipe_through [:browser_auth]
 
+      post "/file/:id", FileController, :get_file
       resources "/token", V1.TokenController, only: [:index, :create, :delete]
     end
 
@@ -35,7 +35,6 @@ defmodule ApiWeb.Router do
       pipe_through [:auth]
 
       resources "/collection", V1.CollectionController, only: [:create]
-      post "/file/:id", FileController, :get_file
     end
   end
 end
