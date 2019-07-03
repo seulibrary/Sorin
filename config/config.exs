@@ -18,7 +18,7 @@ config :api,
 
 # Configures the endpoint
 config :api, ApiWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "http://localhost"],
   render_errors: [view: ApiWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Api.PubSub, adapter: Phoenix.PubSub.PG2]
 
@@ -39,7 +39,7 @@ config :frontend,
 
 # Configures the endpoint
 config :frontend, FrontendWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "http://localhost"],
   render_errors: [view: FrontendWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Frontend.PubSub, adapter: Phoenix.PubSub.PG2]
 

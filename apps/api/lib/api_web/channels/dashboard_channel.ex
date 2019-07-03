@@ -32,30 +32,31 @@ defmodule ApiWeb.DashboardChannel do
 
 
   def handle_in("move_collection", payload, socket) do
-    if !is_inbox(socket.assigns.user_id, payload["collection_id"]) && payload["newIndex"] != 0 do
-      case can_move_collection(socket.assigns.user_id, payload["collection_id"]) do
-        {:ok, _} ->
+    if !is_inbox(socket.assigns.user_id, payload["collection_id"]) && payload["new_index"] != 0 do
+      case can_move_collection?(socket.assigns.user_id, payload["collection_id"]) do
+        true ->
           CollectionsUsers.move_collection(
             payload["collection_id"],
             socket.assigns.user_id,
-            payload["newIndex"]
+            payload["new_index"]
           )
           broadcast!(socket, "move_collection", payload)
           {:reply, {:ok, %{msg: "Collection moved."}}, socket}
-        {:error, _} -> 
+        false ->
           {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
       end
     end
   end
 
   def handle_in("move_resource", payload, socket) do
-    if can_edit_collection(socket.assigns.user_id, payload["source_collection_id"]) || ( can_move_collection(socket.assigns.user_id, payload["source_collection_id"]) && can_move_collection(socket.assigns.user_id, payload["target_collection_id"])) do
+    if can_edit_collection?(socket.assigns.user_id, payload["source_collection_id"]) || ( can_move_collection?(socket.assigns.user_id, payload["source_collection_id"]) && can_move_collection?(socket.assigns.user_id, payload["target_collection_id"])) do
       Resources.move_resource_by_id(
         payload["resource_id"],
         payload["target_collection_id"],
         payload["target_index"]
       )
-      {:noreply, socket}
+      broadcast!(socket, "move_resource", payload)
+      {:reply, {:ok, %{msg: "Resource moved."}}, socket}
     else
       {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
     end
@@ -82,8 +83,8 @@ defmodule ApiWeb.DashboardChannel do
 
   def handle_in("remove_collection", payload, socket) do
     if !is_inbox(socket.assigns.user_id, payload["collection_id"]) do
-      case can_move_collection(socket.assigns.user_id, payload["collection_id"]) do
-        {:ok, _} -> 
+      case can_move_collection?(socket.assigns.user_id, payload["collection_id"]) do
+        true -> 
           Collections.remove_collection(
             payload["collection_id"],
             socket.assigns.user_id
@@ -91,7 +92,7 @@ defmodule ApiWeb.DashboardChannel do
 
           broadcast!(socket, "remove_collection", payload)
           {:noreply, socket}
-        {:error, _} -> 
+        false -> 
           {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
       end
     else

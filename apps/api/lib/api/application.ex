@@ -11,7 +11,8 @@ defmodule Api.Application do
       # Start the Ecto repository
       # Api.Repo,
       # Start the endpoint when the application starts
-      ApiWeb.Endpoint
+      ApiWeb.Endpoint,
+      ApiWeb.Presence
       # Starts a worker by calling: Api.Worker.start_link(arg)
       # {Api.Worker, arg},
     ]

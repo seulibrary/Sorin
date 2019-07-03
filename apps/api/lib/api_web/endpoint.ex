@@ -44,7 +44,7 @@ defmodule ApiWeb.Endpoint do
 
   #plug CORSPlug, origin: ["http://localhost:4000", "http://localhost:8000"] Close access
   # plug Corsica, origins: ~r{^(.*.?)localhost(.*.?)$}
-  plug Corsica, [origins: "*", allow_headers: ["accept", "content-type", "x-csrf-token"], expose_headers: ["x-filename"]]
+  plug Corsica, origins: "*", allow_headers: ["accept", "content-type", "x-csrf-token"], expose_headers: ["x-filename"]
 
   plug ApiWeb.Router
 end
