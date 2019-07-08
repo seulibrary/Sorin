@@ -28,7 +28,6 @@ class EditCollection extends Component {
     }
 
     onTitleChange = (e) => {
-        console.log("hi")
         this.props.dispatch({
             type: Constants.EDIT_COLLECTION_TITLE,
             collection_id: this.props.id,
@@ -148,7 +147,7 @@ class EditCollection extends Component {
         let collectionData = this.props.collections.collections.find(
             collection => collection.data.collection.id === this.props.id
         )
-
+console.log(collectionData.data.collection.resources)
         collectionData.channel.push("edit_collection", collectionData.data)
 
         this.props.dispatch({

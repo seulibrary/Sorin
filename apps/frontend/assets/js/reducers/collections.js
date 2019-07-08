@@ -101,7 +101,6 @@ const collections = (state = initialState, action) => {
             collections: state.collections.map(
                 (collection) => {
                     if (collection.data.collection.id === action.collection_id) {
-                        console.log('found collection', collection)
                         return {
                             ...collection,
                             data: {
@@ -346,7 +345,6 @@ const collections = (state = initialState, action) => {
             )
         }
     case Constants.EDIT_RESOURCE:
-        // console.log(action.payload)
         return {
             ...state,
             collections: state.collections.map(
@@ -793,7 +791,6 @@ const collections = (state = initialState, action) => {
         }
 
     case Constants.FILE_DELETE:
-        // console.log(action)
         if (action.payload.resource_id) {
             return {
                 ...state,
