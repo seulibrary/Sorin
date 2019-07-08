@@ -147,7 +147,7 @@ class EditCollection extends Component {
         let collectionData = this.props.collections.collections.find(
             collection => collection.data.collection.id === this.props.id
         )
-
+console.log(collectionData.data.collection.resources)
         collectionData.channel.push("edit_collection", collectionData.data)
 
         this.props.dispatch({
