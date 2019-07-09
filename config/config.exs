@@ -9,6 +9,9 @@
 # move said applications out of the umbrella.
 use Mix.Config
 
+################ CORE ####################
+config :core, ecto_repos: [Core.Repo]
+
 ################ API ####################
 config :api,
   namespace: Api
