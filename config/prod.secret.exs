@@ -16,20 +16,3 @@ config :core, Core.Repo,
   # ssl: true,
   url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
-
-################ API ####################
-ueberauth_client_id =
-  System.get_env("UEBERAUTH_CLIENT_ID") ||
-    raise """
-    environment variable UEBERAUTH_CLIENT_ID is missing.
-    """
-
-ueberauth_client_secret =
-  System.get_env("UEBERAUTH_CLIENT_SECRET") ||
-    raise """
-    environment variable UEBERAUTH_CLIENT_SECRET is missing.
-    """
-
-config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: ueberauth_client_id,
-  client_secret: ueberauth_client_secret
