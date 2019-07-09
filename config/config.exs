@@ -33,6 +33,16 @@ config :ueberauth, Ueberauth,
     identity: {Ueberauth.Strategy.Identity, [scrub_params: false, callback_methods: ["POST"]]}
   ]
 
+################ FRONTEND ####################
+config :frontend,
+  namespace: Frontend
+
+# Configures the endpoint
+config :frontend, FrontendWeb.Endpoint,
+  url: [host: "localhost"],
+  render_errors: [view: FrontendWeb.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: Frontend.PubSub, adapter: Phoenix.PubSub.PG2]
+
 ################ META ####################
 # Configures Elixir's Logger
 config :logger, :console,
