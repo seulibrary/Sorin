@@ -34,4 +34,6 @@ config :frontend, FrontendWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+# Import prod.secret.exs, which loads secrets and
+# configuration from environment variables.
 import_config "prod.secret.exs"
