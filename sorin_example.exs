@@ -30,7 +30,7 @@ access_key_id =
     raise """
     environment variable ACCESS_KEY_ID is missing.
     """
-SECRET_ACCESS_KEY =
+secret_access_key =
   System.get_env("SECRET_ACCESS_KEY") ||
     raise """
     environment variable SECRET_ACCESS_KEY is missing.
