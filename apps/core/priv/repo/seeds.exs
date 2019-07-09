@@ -9,3 +9,7 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+# Make users with their Inboxes
+users =
+for x <- 1..6, do: Core.Accounts.make_user("email#{x}", "fullname#{x}")
