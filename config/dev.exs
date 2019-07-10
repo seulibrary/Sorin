@@ -42,7 +42,7 @@ config :frontend, FrontendWeb.Endpoint,
       "--color",
       "--config",
       "webpack.config.js",
-      cd: Path.expand("../assets", __DIR__)]
+      cd: Path.expand("../apps/frontend/assets", __DIR__)]
   ]
 
 # Watch static and templates for browser reloading.
