@@ -2,14 +2,13 @@ defmodule Core.Notes.Note do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "notes" do
     field :body, :string
 
     belongs_to :collection, Core.Collections.Collection
     belongs_to :resource,   Core.Resources.Resource
-    
-    timestamps(type: :utc_datetime)
+
+    timestamps()
   end
 
   @doc false

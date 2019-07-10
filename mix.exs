@@ -29,6 +29,7 @@ defmodule Sorin.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      "ecto.seeds": ["run apps/core/priv/repo/seeds.exs"],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]

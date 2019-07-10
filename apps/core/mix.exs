@@ -4,39 +4,58 @@ defmodule Core.MixProject do
   def project do
     [
       app: :core,
-      version: "0.1.0",
+      version: "1.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.8",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
+  # Configuration for the OTP application.
+  #
+  # Type `mix help compile.app` for more information.
   def application do
     [
-      extra_applications: [:logger],
-      mod: {Core.Application, []}
+      mod: {Core.Application, []},
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  # Specifies your project dependencies.
+  #
+  # Type `mix help deps` for examples and options.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
-      # {:sibling_app_in_umbrella, in_umbrella: true}
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"},
-      {:ex_aws, "~> 2.0"},
+      {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
-      {:sweet_xml, "~> 0.6"},
-      {:hackney, "~> 1.13"},
-      {:jason, "~> 1.1"},
-      {:csv, "~> 2.0"},
+      {:postgrex, ">= 0.0.0"},
+      {:jason, "~> 1.0"},
+      {:csv, "~> 2.3"},
+    ]
+  end
+
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to create, migrate and run the seeds file at once:
+  #
+  #     $ mix ecto.setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
+  defp aliases do
+    [
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end
