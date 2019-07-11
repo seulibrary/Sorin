@@ -41,7 +41,7 @@ config :frontend, FrontendWeb.Endpoint,
       "--watch-stdin",
       "--color",
       "--config",
-      "webpack.config.js",
+      "webpack.dev.js",
       cd: Path.expand("../apps/frontend/assets", __DIR__)]
   ]
 
