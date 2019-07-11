@@ -83,7 +83,7 @@ defmodule ApiWeb.CollectionChannel do
           else
             false
           end
-        IO.inspect "hello there."
+
         Collections.update_collection(
             collectionUser.collection,
           %{
@@ -166,8 +166,6 @@ defmodule ApiWeb.CollectionChannel do
         {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
 
       true ->
-        IO.inspect "Hello world."
-
         case Resources.create_indexed_resource(
             payload["data"],
             payload["collection_id"]
