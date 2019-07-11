@@ -4,7 +4,6 @@ defmodule ApiWeb.FileController do
     require Logger
 
     def get_file(conn, %{"id" => id, "user" => user}) do
-      IO.inspect "Hello"
         case Phoenix.Token.verify(conn, "user_id", user, max_age: 86400) do
             {:ok, user_id} ->
               Logger.info"> User Id: #{user_id}, Download File: #{id}"

@@ -14,9 +14,6 @@ defmodule Api.GoogleToken do
     if token do
       Logger.info "> User Login #{user.email}"
       updated_token = update_token(token, auth_token |> Map.from_struct)
-      IO.inspect token
-      IO.inspect updated_token
-
       update_user_auth_token(token, updated_token)
     else
       Logger.info "> New User Login #{user.email}"
