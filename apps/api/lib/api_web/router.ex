@@ -22,6 +22,7 @@ defmodule ApiWeb.Router do
   scope "/api", ApiWeb do
     pipe_through [:api]
 
+    get "/search", V1.SearchController, :search
     get "/collection/:id", V1.CollectionController, :show
 
     scope "/" do
