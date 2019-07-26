@@ -11,7 +11,7 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :api, ApiWeb.Endpoint,
-  http: [:inet6, port: System.get_env("PORT") || 8080],
+  http: [:inet6, port: System.get_env("PORT") || 8080, protocol_options: [idle_timeout: 70_000]],
   url: [host: "", port: 8080],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
