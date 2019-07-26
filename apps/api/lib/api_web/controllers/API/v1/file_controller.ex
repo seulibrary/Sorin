@@ -1,4 +1,4 @@
-defmodule ApiWeb.FileController do
+defmodule ApiWeb.V1.FileController do
     use ApiWeb, :controller
   
     require Logger
