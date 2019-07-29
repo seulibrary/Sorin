@@ -3,11 +3,11 @@ defmodule Core.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :email, :string, null: false
-      add :fullname, :string, null: false
-      add :organization_id, :string
-      add :photo_url, :string
-      add :type, :string
+      add :email, :text, null: false
+      add :fullname, :text, null: false
+      add :organization_id, :text
+      add :photo_url, :text
+      add :type, :text
 
       timestamps()
     end

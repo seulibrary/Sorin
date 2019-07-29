@@ -4,8 +4,8 @@ defmodule Core.Repo.Migrations.CreateCollectionsUsers do
   def change do
     create table(:collections_users) do
       add :archived, :boolean, default: false, null: false
-      add :cloned_from, :string
-      add :color, :string
+      add :cloned_from, :text
+      add :color, :text
       add :index, :integer
       add :pending_approval, :boolean, default: false, null: false
       add :write_access, :boolean, default: false, null: false

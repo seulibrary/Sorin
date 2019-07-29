@@ -3,11 +3,11 @@ defmodule Core.Repo.Migrations.CreateFiles do
 
   def change do
     create table(:files) do
-      add :file_url, :string
-      add :media_type, :string
+      add :file_url, :text
+      add :media_type, :text
       add :size, :integer
-      add :title, :string
-      add :uuid, :string
+      add :title, :text
+      add :uuid, :text
       add :collection_id, references(:collections, on_delete: :nilify_all)
       add :resource_id, references(:resources, on_delete: :nilify_all)
       add :user_id, references(:users, on_delete: :nothing)

@@ -3,36 +3,36 @@ defmodule Core.Repo.Migrations.CreateResources do
 
   def change do
     create table(:resources) do
-      add :call_number, :string
+      add :call_number, :text
       add :catalog_url, :text
       add :collection_index, :integer
-      add :contributor, {:array, :string}
+      add :contributor, {:array, :text}
       add :coverage, :text
-      add :creator, {:array, :string}
-      add :date, :string
+      add :creator, {:array, :text}
+      add :date, :text
       add :description, :text
       add :direct_url, :text
-      add :doi, :string
+      add :doi, :text
       add :ext_collection, :text
       add :format, :text
       add :identifier, :text
       add :is_part_of, :text
-      add :issue, :string
-      add :journal, :string
-      add :language, :string
-      add :page_end, :string
-      add :page_start, :string
-      add :pages, :string
-      add :publisher, :string
+      add :issue, :text
+      add :journal, :text
+      add :language, :text
+      add :page_end, :text
+      add :page_start, :text
+      add :pages, :text
+      add :publisher, :text
       add :relation, :text
       add :rights, :text
       add :series, :text
       add :source, :text
       add :subject, {:array, :text}
-      add :tags, {:array, :string}, default: []
+      add :tags, {:array, :text}, default: []
       add :title, :text, null: false
       add :type, :text
-      add :volume, :string
+      add :volume, :text
       add :collection_id, references(:collections, on_delete: :delete_all)
 
       timestamps()

@@ -6,8 +6,8 @@ defmodule Core.Repo.Migrations.CreateAuthTokens do
       add :user_id, references(:users, on_delete: :delete_all)
       add :token, :map
       add :use_count, :integer
-      add :label, :string
-      add :type, :string
+      add :label, :text
+      add :type, :text
 
       timestamps(type: :timestamptz)
     end
