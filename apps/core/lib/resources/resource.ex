@@ -26,6 +26,7 @@ defmodule Core.Resources.Resource do
     field :publisher, :string
     field :relation, :string
     field :rights, :string
+    field :save_from_catalog, :map
     field :series, :string
     field :source, :string
     field :subject, {:array, :string}

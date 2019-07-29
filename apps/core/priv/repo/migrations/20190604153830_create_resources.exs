@@ -26,6 +26,7 @@ defmodule Core.Repo.Migrations.CreateResources do
       add :publisher, :text
       add :relation, :text
       add :rights, :text
+      add :save_from_catalog, :map
       add :series, :text
       add :source, :text
       add :subject, {:array, :text}
