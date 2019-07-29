@@ -9,7 +9,7 @@ defmodule Core.Resources do
     Repo,
     Resources.Resource,
   }
-  
+
   @doc """
   High-level function for copying a resource and its associated note
   from one collection to another. Preserves the collection_index of
