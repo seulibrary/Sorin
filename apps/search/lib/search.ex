@@ -31,9 +31,9 @@ defmodule Search do
 
     {:ok,
      %{
-       catalogs: Task.await(catalogs),
-       collections: Task.await(collections),
-       users: Task.await(users)
+       catalogs: Task.await(catalogs, 60_000),
+       collections: Task.await(collections, 60_000),
+       users: Task.await(users, 60_000)
      }}
   end
 
