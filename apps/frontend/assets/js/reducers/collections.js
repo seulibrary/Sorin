@@ -466,33 +466,6 @@ const collections = (state = initialState, action) => {
             )
         }
 
-    case Constants.SAVE_TO_INBOX:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-                    if (collection.data.collection.id === action.inbox_id) {
-                        let newResource = {
-                            ...action.payload
-                        }
-
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                collection: {
-                                    ...collection.data.collection,
-                                    resources: [...collection.data.collection.resources, newResource]
-                                }
-                            }
-                        }
-                    } else {
-                        return collection
-                    }
-                }
-            )
-        }
-
     case Constants.EDIT_RESOURCE_TITLE:
         return {
             ...state,
