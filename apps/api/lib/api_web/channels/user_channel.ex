@@ -67,9 +67,9 @@ defmodule ApiWeb.UserChannel do
 
     {:noreply, socket}
   end
-
+  
   def handle_in("create_token", params, socket) do
-    token = Phoenix.Token.sign("ElNO1SCiwmTp7Oxd9gkkv77FQutRdSMOTJvF8UBvT7hW2HrxZorkiPiXYY0xSmFN", "user_id", socket.assigns.user_id)
+    token = Phoenix.Token.sign(socket, "user_id", socket.assigns.user_id)
 
     with {:ok, authtoken} <- Core.AuthTokens.create_auth_token(%{
                   token: %{key: token},
