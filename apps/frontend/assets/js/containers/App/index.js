@@ -13,12 +13,13 @@ import Root from "../Root"
 import withTracker from "../../store/tracker"
 import PermalinkCollectionView from "../Collections/permalink"
 import About from "../About"
-import Settings from "../Settings"
-import Login from "../Login"
+// import Settings from "../Settings"
+// import Login from "../Login"
 import Search from "../Search"
 import Collections from "../Collections"
 import {addExtensions, extensionsLoaded} from "../../actions/extensions"
-import { getSiteSettings } from "../../utils"
+import { getSiteSettings, uuidv4 } from "../../utils"
+import FourOFour from "../Errors/404.js"
 
 class App extends Component {
     constructor(props) {
@@ -32,8 +33,10 @@ class App extends Component {
 
     componentDidMount() {
         let extensions = EXTERNAL_EXTENSIONS.map(plugin => {
-            let waitForChunk = import("../../extensions/" + plugin + "/settings.js")
-                
+            let path = plugin.split("/")
+
+            let waitForChunk = import(`../../extensions/${path[path.length -1]}/settings.js`)
+        
             return new Promise((resolve, reject) => waitForChunk.then( resp => {
                 resolve(resp.components)
             }))
@@ -69,13 +72,18 @@ class App extends Component {
         return(
             <Root>
                 <Switch>
+                    <Route exact path="/" extensions={this.props.extensions} component={withTracker(Search)} exitApp={this.exitApp} />
+
                     <Route path="/c/:collection_url" component={withTracker(PermalinkCollectionView)} />
                     <Redirect from="/c" to="/c/404" />
+                    
                     <Route path="/about" component={withTracker(About)} />
-                    <ProtectedRoute path="/settings" permission={this.props.session.currentUser} extensions={this.props.extensions} component={Settings} exitApp={this.exitApp} />
-                    <ProtectedRoute path="/search" permission={this.props.session.currentUser} extensions={this.props.extensions} component={Search} exitApp={this.exitApp} />
+                    <Route path="/search" extensions={this.props.extensions} component={withTracker(Search)} exitApp={this.exitApp} />
+                    
+                    {/* <ProtectedRoute path="/settings" permission={this.props.session.currentUser} extensions={this.props.extensions} component={withTracker(Settings)} exitApp={this.exitApp} /> */}
                     <ProtectedRoute path="/collections" permission={this.props.session.currentUser} component={withTracker(Collections)} exitApp={this.exitApp} />
-                    <ProtectedRoute exact path="/" permission={this.props.session.currentUser} extensions={this.props.extensions} component={Search} exitApp={this.exitApp} />
+                    
+                    <Route component={withTracker(FourOFour)} exitApp={this.exitApp} />
                 </Switch>
             </Root>
         )
@@ -105,7 +113,7 @@ class ProtectedRoute extends Component {
 
                             <Component {...props} />
                         </React.Fragment> :
-                        <Login />
+                        <Search loginPrompt={true} />
                 )}
             />
         )
