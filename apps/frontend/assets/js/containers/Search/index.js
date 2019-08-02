@@ -25,7 +25,6 @@ class Search extends Component {
         this._resultsScrollRef = React.createRef()
     }
 
-
     componentDidMount() {
         if (this.props.location && !this.props.loginPrompt) {
             var params = new URLSearchParams(this.props.location.search)
@@ -56,6 +55,10 @@ class Search extends Component {
                         type: Constants.SET_SEARCH_FILTERS,
                         payload: searchFilters
                     })
+
+                    if (searchFilters.hasOwnProperty("preSearchType")) {
+                        this.handleSearchView(searchFilters.preSearchType)
+                    }
                 }
                 
                 this.props.dispatch(
@@ -158,10 +161,16 @@ class Search extends Component {
                     return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
                 }).join('%26') + "%5D"
             }
-
+            
             this.props.history.push("/search" + params)
             
+            // Make sure offset is reset to 0 in redux for new search
+            this.props.dispatch({
+                type: Constants.RESET_SEARCH_OFFSET
+            })
+
             this.props.dispatch(search(this.props.search.query, params, this.props.searchFilters.searchFilters))
+            
         }
     }
 
@@ -177,10 +186,8 @@ class Search extends Component {
                 return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
             }).join('%26') + "%5D"
         }
-        history.scrollRestoration = "auto"
-
-        this.props.history.push("/search" + params)    
         
+        window.history.pushState("", "SORIN SEACH", "/search" + params)
         this.props.dispatch(searchAppend(this.props.search.query, params,
             this.props.searchFilters, "catalog"))
     }
@@ -247,8 +254,6 @@ class Search extends Component {
                     }).join('%26') + "%5D"
                 }
         
-                // this.props.history.push("/search" + params)
-            
                 return (
                     <div>
                         {searchresults.results.map((data, index) => {
@@ -258,8 +263,7 @@ class Search extends Component {
                         })}
                         <Loader isVisible={this.props.search.searchLoading} />
                         {showLoadMoreResults ? 
-                        <Link to={"/search" + params} onClick={this.loadMore} id="load-more" >Load More</Link>
-                            
+                        <span onClick={this.loadMore} id="load-more" >Load More</span>
                             : "" }
                     </div>
                 )
