@@ -1,5 +1,5 @@
 import Constants from "../constants"
-import { apiUrl } from "../utils"
+import { apiUrl, parseJSON } from "../utils"
 
 export const getCollection = (url) => (dispatch) => {
 
@@ -9,15 +9,12 @@ export const getCollection = (url) => (dispatch) => {
 
     fetch(apiUrl + "/api/collection/" + url, {
         method: "GET",
-    }).then(parseJson)
+        credentials: "same-origin"
+    }).then(parseJSON)
         .then((json) => {
             dispatch({
                 type: Constants.GET_COLLECTION_BY_URL,
                 payload: json
             })
         })
-}
-
-const parseJson = (resp) => {
-    return resp.json()
 }
