@@ -77,7 +77,7 @@ export const downloadFile = (id) => {
         headers: {
             "x-csrf-token": window.csrfToken
         },
-        credentials: 'same-origin',
+        credentials: "same-origin",
         body: data
     }).then(processStatus)
         .then(function (resp) {
