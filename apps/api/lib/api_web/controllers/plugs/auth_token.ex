@@ -21,7 +21,6 @@ defmodule ApiWeb.AuthToken do
     end
 
     defp get_auth_token(conn) do
-      secret_key = "123"
       case extract_token(conn) do
         {:ok, token} -> verify_token(token)
         error -> error
