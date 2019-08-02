@@ -23,18 +23,19 @@ defmodule ApiWeb.Router do
     pipe_through [:api]
 
     get "/search", V1.SearchController, :search
-    get "/collection/:id", V1.CollectionController, :show
+    get "/collection/:id", V1.CollectionController, :show        
 
     scope "/" do
       pipe_through [:browser_auth]
 
-      post "/file/:id", FileController, :get_file
+      post "/file/:id", V1.FileController, :get_file
       resources "/token", V1.TokenController, only: [:index, :create, :delete]
     end
 
     scope "/" do
       pipe_through [:auth]
 
+      resources "/resource", V1.ResourceController, only: [:create]
       resources "/collection", V1.CollectionController, only: [:create]
     end
   end
