@@ -1,7 +1,7 @@
 import { Presence } from "../../../../../deps/phoenix"
 import Constants from "../constants"
 import { handleActions, createAction } from 'redux-actions'
-
+import _ from "lodash"
 
 export const setPresence = createAction('PRESENCE/SET')
 export const presenceDiff = createAction('PRESENCE/DIFF')
@@ -14,14 +14,6 @@ export const getDashboard = (user, socket) => {
             dispatch({
                 type: Constants.REMOVE_COLLECTION,
                 payload: payload
-            })
-        })
-
-        dashboard_channel.on("save_to_inbox", payload => {
-            dispatch({
-                type: Constants.SAVE_TO_INBOX,
-                inbox_id: payload.inbox_id,
-                payload: payload.data
             })
         })
 
@@ -85,6 +77,8 @@ export const getDashboard = (user, socket) => {
                         type: Constants.SET_INBOX_ID,
                         inbox_id: data.collection.id
                     })
+                    
+                    
                 }
                 // Connect to each collection
                 dispatch(connectCollection(socket, data))
@@ -99,12 +93,6 @@ export const getDashboard = (user, socket) => {
     }
 }
 
-export const createCollection = (channel, title) => {
-    channel.push("create_collection", {
-        title: title
-    })
-}
-
 export const connectCollection = (socket, collection) => {
     return (dispatch) => {
         let channel = {}
@@ -113,7 +101,6 @@ export const connectCollection = (socket, collection) => {
             channel = socket.channel(`collection:${collection.collection.id}`)
 
             channel.on("presence_state", state => {
-                console.log(state)
                 dispatch(setPresence(state))
             })
 
@@ -130,12 +117,17 @@ export const connectCollection = (socket, collection) => {
                         channel: channel
                     }
                 })
+                
+                if (collection.index === 0) {
+                    // See if there are any resrouce cookies that need to be saved
+                    // only do it for inbox (index 0)
+                    checkForResourceCookies(channel, collection.collection.id)
+                }
+                
             })
         } else {
             channel = socket.channel(`collection:${collection.id}`)
-            // need to work on these.... have to track state. could put into collection?
             channel.on("presence_state", state => {
-                console.log(state)
                 dispatch(setPresence(state))
             })
 
@@ -262,6 +254,26 @@ const _actions = (channel) => {
             })
         })
     }
+}
+
+export const createCollection = (channel, title) => {
+    channel.push("create_collection", {
+        title: title
+    })
+}
+
+export const saveResourceToCookie = (resource, login_state) => {
+    window.localStorage.setItem(resource.title + "_sorin_resource", JSON.stringify(resource))
+    window.location.href = "/auth/google?state=" + encodeURIComponent(login_state)
+}
+
+export const checkForResourceCookies = (channel, collection_id) => {
+    _.forIn(window.localStorage, (value, objKey) => {
+        if (true === _.endsWith(objKey, '_sorin_resource')) {
+            createResource(channel, collection_id, JSON.parse(window.localStorage.getItem(objKey)))
+        }
+    });
+    window.localStorage.clear()
 }
 
 export const moveCollection = (channel, collection_id, new_index, old_index) => {
