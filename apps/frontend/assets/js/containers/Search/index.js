@@ -40,7 +40,7 @@ class Search extends Component {
 
                 this.props.dispatch({
                     type: Constants.SET_SEARCH_OFFSET,
-                    payload: offset
+                    payload: parseInt(offset)
                 })
             
                 if (params.get("filters")) {
@@ -194,7 +194,7 @@ class Search extends Component {
 
     loadMoreUsers = (e) => {
         e.preventDefault()
-
+               
         let params = '?query=' + this.props.search.query + "&offset=" + this.props.search.searchOffset
 
         let filters = this.props.searchFilters.searchFilters
@@ -231,6 +231,11 @@ class Search extends Component {
     }
 
     loadResults = () => {
+        var params = new URLSearchParams(this.props.location.search)
+
+        var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
+
+        
         switch(this.props.search.searchView) {
         case "catalog": {
             const searchresults = this.props.search.searchResults.catalogs ? this.props.search.searchResults.catalogs : null
@@ -257,8 +262,10 @@ class Search extends Component {
                 return (
                     <div>
                         {searchresults.results.map((data, index) => {
+                            let index_offset = index + offset
+
                             return (
-                                <SearchResult key={"search-result-" + index} data={data} index={index} />
+                                <SearchResult key={"search-result-" + index_offset} data={data} index={index_offset} />
                             )
                         })}
                         <Loader isVisible={this.props.search.searchLoading} />
@@ -292,8 +299,10 @@ class Search extends Component {
                 return(
                     <div>
                         { users.results.map((data, index) => {
+                            let index_offset_users = index + offset
+
                             return (
-                                <CollectionResult key={"user-results" + index} data={data} index={index} />
+                                <CollectionResult key={"user-results" + index_offset_users} data={data} index={index_offset_users} />
                             )
                         })}
                         <Loader isVisible={this.props.search.searchLoading} />
@@ -327,8 +336,10 @@ class Search extends Component {
                 return (
                     <div>
                         { user_collections.results.map((data, index) => {
+                            let index_offset_collections = index + offset
+
                             return (
-                                <CollectionResult key={"collections-results-" + index} data={data} index={index} />
+                                <CollectionResult key={"collections-results-" + index_offset_collections} data={data} index={index_offset_collections} />
                             )
                         })}
                         <Loader isVisible={this.props.search.searchLoading} />
