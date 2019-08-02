@@ -14,16 +14,18 @@ class SearchFilter extends Component {
         }
     }
 
-    componentDidMount() {
-        this.props.extensions.files.map(el => {
-            if (el.path === "searchFilter") {
-                this.props.dispatch(addComponentsToArea({searchFilter: [el]}))
-            }
-        })
+    componentDidMount(e) {
+        if (!this.props.extensions.hasOwnProperty("searchFilter")) {
+            this.props.extensions.files.map(el => {
+                if (el.path === "searchFilter") { 
+                    this.props.dispatch(addComponentsToArea({searchFilter: [el]}))
+                }
+            })
+        }
     }
     
     renderExtensions = () => {
-        if (this.props.extensions.searchFilter) {
+        if (this.props.extensions.hasOwnProperty("searchFilter")) {
             return this.props.extensions.searchFilter.map( (extension, i) => {
                 if (extension.component) {   
                     var Component = extension.component
@@ -37,7 +39,6 @@ class SearchFilter extends Component {
 
     render() {
         const showFilters = this.props.extensions.searchFilter
-
         return (
             <React.Fragment>
                 { showFilters ? 
