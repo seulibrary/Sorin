@@ -13,11 +13,82 @@ import {search,
 import Constants from "../../constants"
 import ErrorBoundary from "../Errors"
 import SearchFilter from "../../components/SearchFilter"
+import { openModal } from "../../actions/modal"
+import { uuidv4 } from "../../utils"
+
+import { Link } from "react-router-dom"
 
 class Search extends Component {
+    constructor(props) {
+        super(props)
+
+        this._resultsScrollRef = React.createRef()
+    }
+
+
     componentDidMount() {
+        if (this.props.location && !this.props.loginPrompt) {
+            var params = new URLSearchParams(this.props.location.search)
+
+            var offset = params.get("offset") ? params.get("offset") : 0
+            
+            if (params.get("query") != null && params.get("query") != this.props.search.query) {
+                
+                this.props.dispatch({
+                    type: Constants.SEARCH,
+                    payload: params.get("query")
+                })
+
+                this.props.dispatch({
+                    type: Constants.SET_SEARCH_OFFSET,
+                    payload: offset
+                })
+            
+                if (params.get("filters")) {
+                    // parse filters into redux
+                    let searchFilters = this.parseParams(
+                        decodeURI(
+                            params.get("filters")
+                        )
+                    )
+
+                    this.props.dispatch({
+                        type: Constants.SET_SEARCH_FILTERS,
+                        payload: searchFilters
+                    })
+                }
+                
+                this.props.dispatch(
+                    search(
+                        params.get("query"), 
+                        this.props.location.search,
+                        this.props.searchFilters.searchFilters
+                    )
+                )
+            }
+        }
+    
         this.updateWindowDimensions()
         window.addEventListener("resize", this.updateWindowDimensions)
+      }
+
+    parseParams = (url) => {
+        var hash;
+        var myJson = {};
+        var cleanUrl = url.replace('[', '').replace('%5B').replace(']', '').replace('%5D', '')
+
+        var hashes = cleanUrl.slice(cleanUrl.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            var value = hash[1]
+            // convert string bool to bool
+            value = value == 'true' ? true : value
+            value = value == 'false' ? false : value
+
+            myJson[hash[0]] = value
+        }
+
+        return myJson
     }
 
     componentWillUnmount() {
@@ -25,7 +96,13 @@ class Search extends Component {
     }
 	
     updateWindowDimensions = () => {
-        document.getElementById("search").style.height = ( window.innerHeight - (  document.getElementById("header").offsetHeight + document.getElementById("tabs").offsetHeight )) + "px"
+        let header = document.getElementById("header")
+        let tabs = document.getElementById("tabs")
+        let search = document.getElementById("search")
+
+        if (search && header != null && tabs != null) {
+            search.style.height = ( window.innerHeight - (  header.offsetHeight + tabs.offsetHeight )) + "px"
+        }
     }
 
     onQueryChange = (e) => {
@@ -63,31 +140,86 @@ class Search extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault()
+
         // if old results, clear search state, but leave filters
         if (this.props.search.searchResults.catalogs || this.props.search.searchResults.collections || this.props.search.searchResults.users) {
             this.props.dispatch({type: Constants.SEARCH_RESET})
         }
         // make sure there is actually content in search
         if (this.props.search.query.trim().length != 0) {
-            this.props.dispatch(search(this.props.search.searchChannel, this.props.search.query, this.props.search, this.props.searchFilters.searchFilters))
+            // build url
+            let params = '?query='+this.props.search.query
+
+            let filters = this.props.searchFilters.searchFilters
+
+            // check for search filters
+            if (this.props.searchFilters.hasOwnProperty("searchFilters")) {
+                params +=  "&filters=%5B" + Object.keys(filters).map(function(k) {
+                    return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
+                }).join('%26') + "%5D"
+            }
+
+            this.props.history.push("/search" + params)
+            
+            this.props.dispatch(search(this.props.search.query, params, this.props.searchFilters.searchFilters))
         }
     }
 
     loadMore = (e) => {
         e.preventDefault()
-        this.props.dispatch(searchAppend(this.props.search.searchChannel, this.props.search.query, this.props.search,
+
+        let params = '?query=' + this.props.search.query + "&offset=" + this.props.search.searchOffset
+
+        let filters = this.props.searchFilters.searchFilters
+
+        if (this.props.searchFilters.hasOwnProperty("searchFilters")) {
+            params +=  "&filters=%5B" + Object.keys(filters).map(function(k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
+            }).join('%26') + "%5D"
+        }
+        history.scrollRestoration = "auto"
+
+        this.props.history.push("/search" + params)    
+        
+        this.props.dispatch(searchAppend(this.props.search.query, params,
             this.props.searchFilters, "catalog"))
     }
 
     loadMoreUsers = (e) => {
         e.preventDefault()
-        this.props.dispatch(searchAppend(this.props.search.searchChannel, this.props.search.query, this.props.search,
+
+        let params = '?query=' + this.props.search.query + "&offset=" + this.props.search.searchOffset
+
+        let filters = this.props.searchFilters.searchFilters
+
+        if (this.props.searchFilters.hasOwnProperty("searchFilters")) {
+            params +=  "&filters=%5B" + Object.keys(filters).map(function(k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
+            }).join('%26') + "%5D"
+        }
+        
+        this.props.history.push("/search" + params)
+        
+        this.props.dispatch(searchAppend(this.props.search.query, params,
             this.props.searchFilters, "users"))
     }
 
     loadMoreCollections = (e) => {
         e.preventDefault()
-        this.props.dispatch(searchAppend(this.props.search.searchChannel, this.props.search.query, this.props.search,
+
+        let params = '?query=' + this.props.search.query + "&offset=" + this.props.search.searchOffset
+
+        let filters = this.props.searchFilters.searchFilters
+
+        if (this.props.searchFilters.hasOwnProperty("searchFilters")) {
+            params +=  "&filters=%5B" + Object.keys(filters).map(function(k) {
+                return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
+            }).join('%26') + "%5D"
+        }
+
+        this.props.history.push("/search" + params)
+
+        this.props.dispatch(searchAppend(this.props.search.query, params,
             this.props.searchFilters, "collections"))
     }
 
@@ -104,6 +236,19 @@ class Search extends Component {
                         <div>Sorry, no results found.</div>
                     )
                 }
+
+                let params = '?query=' + this.props.search.query + "&offset=" + this.props.search.searchOffset
+        
+                let filters = this.props.searchFilters.searchFilters
+        
+                if (this.props.searchFilters.hasOwnProperty("searchFilters")) {
+                    params +=  "&filters=%5B" + Object.keys(filters).map(function(k) {
+                        return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
+                    }).join('%26') + "%5D"
+                }
+        
+                // this.props.history.push("/search" + params)
+            
                 return (
                     <div>
                         {searchresults.results.map((data, index) => {
@@ -113,7 +258,8 @@ class Search extends Component {
                         })}
                         <Loader isVisible={this.props.search.searchLoading} />
                         {showLoadMoreResults ? 
-                            <button onClick={this.loadMore} name="catalog" id="load-more">Load More</button>
+                        <Link to={"/search" + params} onClick={this.loadMore} id="load-more" >Load More</Link>
+                            
                             : "" }
                     </div>
                 )
@@ -133,6 +279,12 @@ class Search extends Component {
                     )
                 }
 
+                if (users.results.length === 0) {
+                    return (
+                        <div>Sorry, you need to be logged in to view user results.</div>
+                    )
+                }
+
                 return(
                     <div>
                         { users.results.map((data, index) => {
@@ -142,7 +294,7 @@ class Search extends Component {
                         })}
                         <Loader isVisible={this.props.search.searchLoading} />
                         {showLoadMoreUsers ? 
-                            <button onClick={this.loadMoreUsers} id="load-more">Load More</button>
+                            <span onClick={this.loadMoreUsers} id="load-more">Load More</span>
                             : "" }
                     </div>
                 )
@@ -159,6 +311,12 @@ class Search extends Component {
                 if (user_collections.num_results === 0) {
                     return (
                         <div>Sorry, no results found.</div>
+                    )
+                }
+
+                if (user_collections.results.length === 0) {
+                    return (
+                        <div>Sorry, you need to be logged in to view collection results.</div>
                     )
                 }
 
@@ -239,7 +397,7 @@ class Search extends Component {
                     </span>
                 </div>
 
-                <div className="results">
+                <div className="results" ref={this._resultsScrollRef} onScroll={this.logScroll}>
                     <ErrorBoundary>
                         { this.loadResults() }
                     </ErrorBoundary>
@@ -253,7 +411,8 @@ export default connect(
     function mapStateToProps(state) {
         return {
             search: state.search,
-            searchFilters: state.searchFilters
+            searchFilters: state.searchFilters,
+            session: state.session
         }
     },
     function mapDispatchToProps(dispatch) {
