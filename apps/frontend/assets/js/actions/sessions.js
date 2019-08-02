@@ -1,7 +1,8 @@
 import Constants     from "../constants"  
 import { Socket } from "../../../../../deps/phoenix"
 import { getDashboard } from "../actions/collections"
-import { joinSearchChannel } from "../actions/search"
+import { checkForResourceCookies } from "./collections"
+
 
 export function setCurrentUser() {
     return (dispatch) => {
@@ -40,7 +41,6 @@ export function setCurrentUser() {
                     channel: userChannel,
                 })
 
-                dispatch(joinSearchChannel())
                 dispatch(getDashboard(payload.data.id, socket))
                 getAuthTokens(userChannel)
             })
@@ -61,7 +61,8 @@ export function setCurrentUser() {
                     method: "POST",
                     headers: {
                         "x-csrf-token": window.csrfToken,
-                    }
+                    },
+                    credentials: "same-origin"
                 })
             })
 
