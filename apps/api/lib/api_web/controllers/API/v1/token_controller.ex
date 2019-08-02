@@ -16,7 +16,7 @@ defmodule ApiWeb.V1.TokenController do
   def create(conn, %{"user" => user}) do
     case Phoenix.Token.verify(conn, "user_id", user) do
       {:ok, user_id} ->
-        token = Phoenix.Token.sign("ElNO1SCiwmTp7Oxd9gkkv77FQutRdSMOTJvF8UBvT7hW2HrxZorkiPiXYY0xSmFN", "user_id", user_id)
+        token = Phoenix.Token.sign(conn, "user_id", user_id)
 
         with {:ok, %AuthTokens.AuthToken{}} <- AuthTokens.create_auth_token(%{
               token: %{key: token},
