@@ -170,7 +170,6 @@ class Search extends Component {
             })
 
             this.props.dispatch(search(this.props.search.query, params, this.props.searchFilters.searchFilters))
-            
         }
     }
 
@@ -362,10 +361,10 @@ class Search extends Component {
             <div id="search">
                 <form id="search-field" onSubmit={this.handleSubmit}>
                     <input type="text"  id="search-main" placeholder="Search Library Item or User" onChange={this.handleSearch} value={this.props.search.query} />
-
+                    
                     <select 
                         id="search-dropdown" 
-                        defaultValue={this.props.searchFilters.preSearchType}
+                        value={this.props.searchFilters.searchFilters.preSearchType}
                         onChange={this.handleSearchType}
                         name="preSearchType">
                         <option value="catalog">Library Search</option>
