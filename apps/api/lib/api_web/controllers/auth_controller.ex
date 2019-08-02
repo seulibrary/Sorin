@@ -20,7 +20,7 @@ defmodule ApiWeb.AuthController do
       fullname = auth.info.first_name <> " " <> auth.info.last_name
       user_params = %{fullname: fullname, email: auth.info.email}
       changeset = User.changeset(%User{}, user_params)
-  
+
       create(conn, changeset, params["state"])
     end
 
@@ -41,6 +41,7 @@ defmodule ApiWeb.AuthController do
         {:ok, user} ->
           user_id_token = Phoenix.Token.sign(conn, "user_id", user.id)
 
+          # update auth token if needed
           Api.GoogleToken.save_auth_token(user, conn.assigns.ueberauth_auth.extra.raw_info.token)
           
           url = ((url_state |> Jason.decode!)["url"]) || "/"
