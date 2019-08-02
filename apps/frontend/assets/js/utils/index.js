@@ -66,6 +66,7 @@ export function httpPost(url, data, headers = defaultHeaders) {
     return fetch(url, {
         method: "POST",
         headers: headers,
+        credentials: "same-origin",
         body: body
     })
         .then(checkStatus)
