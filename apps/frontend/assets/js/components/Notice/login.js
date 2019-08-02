@@ -5,7 +5,6 @@ import { uuidv4 } from "../../utils"
 
 class LoginNotice extends Component {
     componentDidMount() {
-        console.log("hi")
         this.renderModal()
     }
 
