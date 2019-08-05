@@ -5,11 +5,13 @@ defmodule Api.GoogleToken do
 
   require Logger
 
+  alias Core.AuthTokens
+
   @doc """
   return Google auth token from user and save/update it as needed. This should be called on initial login.
   """
   def save_auth_token(user, auth_token) do
-    token = Core.AuthTokens.get_login_token_by_user_id(user.id)
+    token = AuthTokens.get_login_token_by_user_id(user.id)
 
     if token do
       Logger.info "> User Login #{user.email}"
@@ -45,22 +47,24 @@ defmodule Api.GoogleToken do
   end
 
   defp create_user_auth_token(user, auth_token) do
-    Core.AuthTokens.create_auth_token(%{token: auth_token, type: "login", user_id: user.id})
+    AuthTokens.create_auth_token(%{token: auth_token, type: "login", user_id: user.id})
 
     {:ok, auth_token}
   end
 
   defp update_user_auth_token(auth_token_struct, token) do
-    Core.AuthTokens.update_auth_token(auth_token_struct, %{token: token})
+    AuthTokens.update_auth_token(auth_token_struct, %{token: token})
 
     {:ok, token}
   end
 
   defp refresh_token(user) do
+    token = AuthTokens.get_login_token_by_user_id(user.id)
+
     response = "https://www.googleapis.com/oauth2/v4/token?" <>
       "client_id=" <> Application.get_env(:ueberauth, Ueberauth.Strategy.Google.OAuth)[:client_id] <>
       "&client_secret=" <> Application.get_env(:ueberauth, Ueberauth.Strategy.Google.OAuth)[:client_secret] <>
-      "&refresh_token=" <> user.auth_token["refresh_token"] <>
+      "&refresh_token=" <> token.token["refresh_token"] <>
       "&grant_type=refresh_token"
       |> HTTPoison.post("",  [])
 
@@ -68,7 +72,7 @@ defmodule Api.GoogleToken do
       {:ok, body} ->
         Logger.info "> User #{user.email} token refresh"
 
-        updated_token = user.auth_token
+        updated_token = token.token
         |> update_refresh_token(body)
 
         {:ok, update_user_auth_token(user, updated_token)}
@@ -99,7 +103,9 @@ defmodule Api.GoogleToken do
   end
 
   defp get_token(user) do
-    case check_expiration(user.auth_token["expires_at"]) do
+    auth_token = AuthTokens.get_login_token_by_user_id(user.id)
+
+    case check_expiration(auth_token.token["expires_at"]) do
       :expired ->
         Logger.info "> Refresh token"
 
@@ -110,7 +116,7 @@ defmodule Api.GoogleToken do
         end
       _ ->
         Logger.info "> Get user token."
-        {:ok, user.auth_token["access_token"]}
+        {:ok, auth_token.token["access_token"]}
     end
   end
 
