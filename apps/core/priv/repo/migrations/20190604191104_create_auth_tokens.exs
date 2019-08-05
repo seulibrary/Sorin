@@ -9,7 +9,6 @@ defmodule Core.Repo.Migrations.CreateAuthTokens do
       add :label, :text
       add :type, :text
 
-      timestamps(type: :timestamptz)
     end
 
     create unique_index("auth_tokens", :token)
