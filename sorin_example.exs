@@ -7,7 +7,7 @@ config :search,
 
 ### Search target
 wskey =
-  System.get_env("WSKEY") ||
+  System.get_env("WORLDCAT_WSKEY") ||
     raise """
     environment variable WSKEY is missing.
     """
@@ -26,12 +26,12 @@ config :frontend,
 
 ### File storage
 access_key_id =
-  System.get_env("ACCESS_KEY_ID") ||
+  System.get_env("S3_ACCESS_KEY_ID") ||
     raise """
     environment variable ACCESS_KEY_ID is missing.
     """
 secret_access_key =
-  System.get_env("SECRET_ACCESS_KEY") ||
+  System.get_env("S3_SECRET_ACCESS_KEY") ||
     raise """
     environment variable SECRET_ACCESS_KEY is missing.
     """
@@ -60,7 +60,7 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
 
 ### Secret keys
 secret_key_base =
-  System.get_env("SECRET_KEY_BASE") ||
+  System.get_env("PHOENIX_SECRET_KEY_BASE") ||
     raise """
     environment variable SECRET_KEY_BASE is missing.
     You can generate one by calling: mix phx.gen.secret
