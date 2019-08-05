@@ -88,6 +88,29 @@ export function setCurrentUser() {
                     })
                 })
             })
+
+            userChannel.on("created_token", payload => {
+                dispatch({
+                    type: Constants.CREATE_TOKEN,
+                    payload: payload
+                })
+            })
+
+            userChannel.on("deleted_token", payload => {
+                dispatch({
+                    type: Constants.DELETE_TOKEN,
+                    payload: payload
+                })
+            })
+
+            userChannel.on("token_list", payload => {
+                payload.data.map( token => {
+                    dispatch({
+                        type: Constants.CREATE_TOKEN,
+                        payload: token
+                    })
+                })
+            })
         })
 
         socket.onError((error) => {
