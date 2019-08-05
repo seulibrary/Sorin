@@ -12,7 +12,6 @@ defmodule Core.AuthTokens.AuthToken do
 
     belongs_to :user, Core.Accounts.User
 
-    timestamps(type: :utc_datetime)
   end
 
   @doc false
