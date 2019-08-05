@@ -18,6 +18,7 @@ defmodule Sorin.MixProject do
   defp deps do
     [
       {:sorin_worldcat, git: "https://github.com/seulibrary/Sorin-WorldCat.git"},
+      {:distillery, "~> 2.1"},
     ]
   end
 
