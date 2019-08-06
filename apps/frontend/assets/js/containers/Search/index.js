@@ -225,9 +225,6 @@ class Search extends Component {
     }
 
     loadResults = () => {
-        
-
-        
         switch(this.props.search.searchView) {
         case "catalog": {
             const searchresults = this.props.search.searchResults.catalogs ? this.props.search.searchResults.catalogs : null
@@ -241,15 +238,8 @@ class Search extends Component {
                     )
                 }
 
-                let params = '?query=' + this.props.search.query + "&offset=" + this.props.search.searchOffset
+                var params = new URLSearchParams(this.props.location.search)
                 var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
-                let filters = this.props.searchFilters.searchFilters
-        
-                if (this.props.searchFilters.hasOwnProperty("searchFilters")) {
-                    params +=  "&filters=%5B" + Object.keys(filters).map(function(k) {
-                        return encodeURIComponent(k) + '=' + encodeURIComponent(filters[k])
-                    }).join('%26') + "%5D"
-                }
         
                 return (
                     <div>
