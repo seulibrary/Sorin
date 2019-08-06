@@ -35,6 +35,12 @@ class SearchResult extends Component {
 
                             saveResourceToCookie(this.props.data, login_state)
                         },
+                        onCancel: () => {
+                            this.resetSaveItState()
+                        },
+                        onClose: () => {
+                            this.resetSaveItState()
+                        },
                         text: "Would you like to sign in and save this item?"
                     })
                 )
@@ -58,6 +64,12 @@ class SearchResult extends Component {
                 }
             }    
         }
+    }
+
+    resetSaveItState = () => {
+        this.setState({
+            saveit: "save it!"
+        })
     }
 
     checkInbox = (resource) => {
