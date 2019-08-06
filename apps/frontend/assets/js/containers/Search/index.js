@@ -19,10 +19,6 @@ import { uuidv4 } from "../../utils"
 import { Link } from "react-router-dom"
 
 class Search extends Component {
-    // constructor(props) {
-    //     super(props)
-    // }
-
     componentDidMount() {
         if (this.props.hasOwnProperty("location")) {
             if (this.props.location && !this.props.loginPrompt) {
