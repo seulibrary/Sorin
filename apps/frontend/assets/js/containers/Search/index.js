@@ -19,58 +19,57 @@ import { uuidv4 } from "../../utils"
 import { Link } from "react-router-dom"
 
 class Search extends Component {
-    constructor(props) {
-        super(props)
-
-        this._resultsScrollRef = React.createRef()
-    }
+    // constructor(props) {
+    //     super(props)
+    // }
 
     componentDidMount() {
-        if (this.props.location && !this.props.loginPrompt) {
-            var params = new URLSearchParams(this.props.location.search)
+        if (this.props.hasOwnProperty("location")) {
+            if (this.props.location && !this.props.loginPrompt) {
+                var params = new URLSearchParams(this.props.location.search)
 
-            var offset = params.get("offset") ? params.get("offset") : 0
-            
-            if (params.get("query") != null && params.get("query") != this.props.search.query) {
+                var offset = params.get("offset") ? params.get("offset") : 0
                 
-                this.props.dispatch({
-                    type: Constants.SEARCH,
-                    payload: params.get("query")
-                })
-
-                this.props.dispatch({
-                    type: Constants.SET_SEARCH_OFFSET,
-                    payload: parseInt(offset)
-                })
-            
-                if (params.get("filters")) {
-                    // parse filters into redux
-                    let searchFilters = this.parseParams(
-                        decodeURI(
-                            params.get("filters")
-                        )
-                    )
-
+                if (params.get("query") != null && params.get("query") != this.props.search.query) {
+                    
                     this.props.dispatch({
-                        type: Constants.SET_SEARCH_FILTERS,
-                        payload: searchFilters
+                        type: Constants.SEARCH,
+                        payload: params.get("query")
                     })
 
-                    if (searchFilters.hasOwnProperty("preSearchType")) {
-                        this.handleSearchView(searchFilters.preSearchType)
-                    }
-                }
+                    this.props.dispatch({
+                        type: Constants.SET_SEARCH_OFFSET,
+                        payload: parseInt(offset)
+                    })
                 
-                this.props.dispatch(
-                    search(
-                        params.get("query"), 
-                        this.props.location.search,
-                        this.props.searchFilters.searchFilters
+                    if (params.get("filters")) {
+                        // parse filters into redux
+                        let searchFilters = this.parseParams(
+                            decodeURI(
+                                params.get("filters")
+                            )
+                        )
+
+                        this.props.dispatch({
+                            type: Constants.SET_SEARCH_FILTERS,
+                            payload: searchFilters
+                        })
+
+                        if (searchFilters.hasOwnProperty("preSearchType")) {
+                            this.handleSearchView(searchFilters.preSearchType)
+                        }
+                    }
+                    
+                    this.props.dispatch(
+                        search(
+                            params.get("query"), 
+                            this.props.location.search,
+                            this.props.searchFilters.searchFilters
+                        )
                     )
-                )
+                }
             }
         }
-    
         this.updateWindowDimensions()
         window.addEventListener("resize", this.updateWindowDimensions)
       }
@@ -230,9 +229,7 @@ class Search extends Component {
     }
 
     loadResults = () => {
-        var params = new URLSearchParams(this.props.location.search)
-
-        var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
+        
 
         
         switch(this.props.search.searchView) {
@@ -249,7 +246,7 @@ class Search extends Component {
                 }
 
                 let params = '?query=' + this.props.search.query + "&offset=" + this.props.search.searchOffset
-        
+                var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
                 let filters = this.props.searchFilters.searchFilters
         
                 if (this.props.searchFilters.hasOwnProperty("searchFilters")) {
@@ -411,7 +408,7 @@ class Search extends Component {
                     </span>
                 </div>
 
-                <div className="results" ref={this._resultsScrollRef} onScroll={this.logScroll}>
+                <div className="results">
                     <ErrorBoundary>
                         { this.loadResults() }
                     </ErrorBoundary>
