@@ -105,8 +105,13 @@ class SearchResult extends Component {
                         { data.date ? <i>({data.date})</i> : "" }
                     </h4>
                     <div className="contrib">
-                        <span><i>{data.creator}</i></span>
-                        <span>{data.contributor}</span>
+                      
+                        <span><i>{data.creator ? data.creator.join("; "): ""}</i></span>
+                        
+                        <span>
+                        {data.contributor ? data.contributor.join("; "): ""}
+                        </span>
+
                         <span>{data.is_part_of}</span>
                         { data.call_number && <span className="callNumber">Available in the book stacks {data.call_number}</span> }
 
