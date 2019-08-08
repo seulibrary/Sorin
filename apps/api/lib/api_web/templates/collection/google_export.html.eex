@@ -24,7 +24,7 @@
 
   <p><strong>Published:</strong> <%= if @data["published"], do: "Yes", else: "No" %></p>
   <p><strong>Clone Count:</strong> <%= @data["clones_count"] %></p>
-  <p><strong>Permalink:</strong> <%= Application.get_env(:frontend, :settings)[:url] %><%= @data["permalink"] %></p>
+  <p><strong>Permalink:</strong> <%= Application.get_env(:frontend, :settings)[:url] %>/c/<%= @data["permalink"] %></p>
 
   <%= if @data["provenance"] do %>
     <p><strong>Provenance:</strong> <%= @data["provenance"] %></p>
