@@ -5,7 +5,7 @@ config :core, Core.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
-  database: "core_dev",
+  database: "sorin_dev",
   hostname: "localhost",
   pool_size: 10
 

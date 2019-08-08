@@ -5,14 +5,34 @@
 use Mix.Config
 
 ################ CORE ####################
-database_url =
-  System.get_env("DATABASE_URL") ||
+database_username =
+  System.get_env("PROD_DATABASE_USERNAME") ||
     raise """
-    environment variable DATABASE_URL is missing.
-    For example: ecto://USER:PASS@HOST/DATABASE
+    environment variable PROD_DATABASE_USERNAME is missing.
     """
-
+database_password =
+  System.get_env("PROD_DATABASE_PASSWORD") ||
+    raise """
+    environment variable PROD_DATABASE_PASSWORD is missing.
+    """
+database_name =
+  System.get_env("PROD_DATABASE_NAME") ||
+    raise """
+    environment variable PROD_DATABASE_NAME is missing.
+    """
+database_hostname =
+  System.get_env("PROD_DATABASE_HOSTNAME") ||
+    raise """
+    environment variable PROD_DATABASE_HOSTNAME is missing.
+    """
+database_pool_size =
+  System.get_env("PROD_DATABASE_POOL_SIZE") ||
+    raise """
+    environment variable PROD_DATABASE_POOL_SIZE is missing.
+    """
 config :core, Core.Repo,
-  # ssl: true,
-  url: database_url,
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
+  username: database_username,
+  password: database_password,
+  database: database_name,
+  hostname: database_hostname,
+  pool_size: String.to_integer(database_pool_size)
