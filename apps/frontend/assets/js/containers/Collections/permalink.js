@@ -11,7 +11,6 @@ class PermalinkCollectionView extends Component {
         if (!this.props.collection.collectionLoading) {
             this.props.dispatch(
                 getCollection(
-                    this.props.settings.api_port,
                     this.props.match.params.collection_url
                 )
             )

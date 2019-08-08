@@ -4,17 +4,17 @@ defmodule ApiWeb.FallbackController do
 
   See `Phoenix.Controller.action_fallback/1` for more details.
   """
-  # use ApiWeb, :controller
+  use ApiWeb, :controller
 
-  # def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
-  #   conn
-  #   |> put_status(:unprocessable_entity)
-  #   |> render(ApiWeb.ChangesetView, "error.json", changeset: changeset)
-  # end
+  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> render(ApiWeb.ChangesetView, "error.json", changeset: changeset)
+  end
 
-  # def call(conn, {:error, :not_found}) do
-  #   conn
-  #   |> put_status(:not_found)
-  #   |> render(ApiWeb.ErrorView, :"404")
-  # end
+  def call(conn, {:error, :not_found}) do
+    conn
+    |> put_status(:not_found)
+    |> render(ApiWeb.ErrorView, :"404")
+  end
 end

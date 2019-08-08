@@ -10,13 +10,13 @@ defmodule Mix.Tasks.SetupExtension do
       frontend_extension_path = "apps/frontend/assets/js/extensions/"
 
       #  Check to see if directory for extension exists
-      if !File.exists?(frontend_extension_path <> extension) do
-        File.mkdir!(frontend_extension_path <> extension)
+      if !File.exists?(frontend_extension_path <> Macro.underscore(extension)) do
+        File.mkdir!(frontend_extension_path <> Macro.underscore(extension))
       end
       
-      if File.exists?(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> "/package.json") do
+      if File.exists?(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> Macro.underscore(extension) <> "/package.json") do
         # Run NPM install to get any deps
-        Mix.Shell.Process.cmd("npm install --prefix " <> Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/")
+        Mix.Shell.Process.cmd("npm install --prefix " <> Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> extension)
         
         IO.puts "npm ran"
       end
@@ -27,8 +27,8 @@ defmodule Mix.Tasks.SetupExtension do
       end
       
       # Copy files from extension to frontend if js directory exists
-      if File.exists?(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/") do
-        File.cp_r(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/", frontend_extension_path <> extension, fn source, destination ->
+      if File.exists?(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> extension) do
+        File.cp_r(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> extension, frontend_extension_path <> Macro.underscore(extension), fn source, destination ->
         IO.gets("Overwriting #{destination} by #{source}. Type y to confirm. ") == "y\n" end)
       end
     end)

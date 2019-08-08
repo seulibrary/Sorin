@@ -48,11 +48,10 @@ class Modal extends Component {
         }
     }
 
-    cancelButton = input => {
-        if (input) {
-            setTimeout(() => {
-                input.focus()
-            }, 100)
+    onCancel = () => {
+        if (this.props.item.onCancel) {
+            this.props.item.onCancel()
+            this.props.onClose(this.props.item)
         }
     }
 
@@ -68,7 +67,7 @@ class Modal extends Component {
                         <div className="text">{text}</div>
                         <div className="buttons">
                             <button tabIndex="-1" className="btn modal-button confirm" onClick={this.onConfirm}>{buttonText ? buttonText[0] : "Confirm"}</button>
-                            <button tabIndex="0" className="btn modal-button close" ref={this.cancelButton} onClick={this.onClose}>{buttonText ? buttonText[1] : "Cancel"}</button>
+                            <button tabIndex="0" className="btn modal-button close" onClick={this.onCancel}>{buttonText ? buttonText[1] : "Cancel"}</button>
                         </div>
                     </div>
                 </div>
@@ -112,11 +111,9 @@ class Modals extends Component {
 
     render() {
         const modals = this.props.modals.modals.map((item,i) => {
-            if (item.panel) {
+           
                 return <ModalPortal key={i} ><Modal item={item} onClose={(item) => this.props.dispatch(closeModal(item))}/></ModalPortal>
-            } else {
-                return <PermaLinkModalPortal key={i} ><Modal item={item} onClose={(item) => this.props.dispatch(closeModal(item))}/></PermaLinkModalPortal>
-            }
+
         })
 
         return (

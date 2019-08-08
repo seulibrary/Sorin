@@ -31,7 +31,7 @@ class ClipboardText extends Component {
 
         return (
             <div>
-                <div id="cite-copy" ref={(element) => { this.input = element }}>
+                <div id={this.props.idName ? this.props.idName : "cite-copy"} ref={(element) => { this.input = element }}>
                     {ReactHtmlParser(value)}
                 </div>
                 <span className="btn"

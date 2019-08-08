@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 import { signOut } from "../../actions/sessions"
+import {withRouter} from 'react-router-dom'
 
 class Hamburger extends Component {
     constructor(props) {
@@ -59,6 +60,9 @@ class Menu extends Hamburger {
     }
 
     render() {
+        let params = this.props.location.search ? this.props.location.search : ""
+        let login_state = JSON.stringify({url: this.props.location.pathname + params})
+        
         return (
             <div className="navigation-wrapper" onClick={this.props.onClick} onKeyPress={this.props.onKeyPress}>
                 <div className="navigation-menu">
@@ -70,11 +74,10 @@ class Menu extends Hamburger {
                                 <a href="/auth/signout" onClick={this.signOutUser}>Sign Out</a>
                             </li> :
                             <li>
-                                <a href="/auth/google">Sign In</a>
+                                <a href={"/auth/google?state=" + encodeURIComponent(login_state)}>Sign In</a>
                             </li>
                         }
                         <li><a href="/about">About {this.props.settings.app_name}</a></li>
-                    
                     </ul>
                 </div> 
             </div>
@@ -82,7 +85,7 @@ class Menu extends Hamburger {
     }
 }
 
-export default connect(
+export default withRouter(connect(
     function mapStateToProps(state) {
         return {
             settings: state.settings,
@@ -94,4 +97,4 @@ export default connect(
             dispatch,
         }
     }
-)(Hamburger)
+)(Hamburger))

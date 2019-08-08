@@ -1,7 +1,8 @@
 import Constants     from "../constants"  
 import { Socket } from "../../../../../deps/phoenix"
 import { getDashboard } from "../actions/collections"
-import { joinSearchChannel } from "../actions/search"
+import { checkForResourceCookies } from "./collections"
+
 
 export function setCurrentUser() {
     return (dispatch) => {
@@ -39,9 +40,8 @@ export function setCurrentUser() {
                     socket: socket,
                     channel: userChannel,
                 })
-
-                dispatch(joinSearchChannel())
                 dispatch(getDashboard(payload.data.id, socket))
+                getAuthTokens(userChannel)
             })
 
             userChannel.on("logged_out", () => {
@@ -60,7 +60,54 @@ export function setCurrentUser() {
                     method: "POST",
                     headers: {
                         "x-csrf-token": window.csrfToken,
-                    }
+                    },
+                    credentials: "same-origin"
+                })
+            })
+
+            userChannel.on("created_token", payload => {
+                dispatch({
+                    type: Constants.CREATE_TOKEN,
+                    payload: payload
+                })
+            })
+
+            userChannel.on("deleted_token", payload => {
+                dispatch({
+                    type: Constants.DELETE_TOKEN,
+                    payload: payload
+                })
+            })
+
+            userChannel.on("token_list", payload => {
+                payload.data.map( token => {
+                    dispatch({
+                        type: Constants.CREATE_TOKEN,
+                        payload: token
+                    })
+                })
+            })
+
+            userChannel.on("created_token", payload => {
+                dispatch({
+                    type: Constants.CREATE_TOKEN,
+                    payload: payload
+                })
+            })
+
+            userChannel.on("deleted_token", payload => {
+                dispatch({
+                    type: Constants.DELETE_TOKEN,
+                    payload: payload
+                })
+            })
+
+            userChannel.on("token_list", payload => {
+                payload.data.map( token => {
+                    dispatch({
+                        type: Constants.CREATE_TOKEN,
+                        payload: token
+                    })
                 })
             })
         })
@@ -91,4 +138,16 @@ export function signOut(channel) {
     return (dispatch) => {
         channel.push("logout")
     }
+}
+
+export const getAuthTokens = (channel) => {
+    channel.push("get_tokens")
+}
+
+export const createAuthToken = (channel, label) => {
+    channel.push("create_token", {label: label})
+}
+
+export const deleteAuthToken = (channel, token) => {
+    channel.push("delete_token", {token: token})
 }

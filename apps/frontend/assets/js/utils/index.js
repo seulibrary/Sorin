@@ -1,7 +1,10 @@
 import Constants from "../constants"
 
-export const hostUrl = window.location.protocol + "//" + window.location.hostname
-export const fullUrl = window.location.origin
+const settings = importJson()
+
+export const siteUrl = settings.url
+
+export const apiUrl = siteUrl + ":" + settings.api_port
 
 export const getSiteSettings = () => {
     return {
@@ -29,7 +32,7 @@ export function uuidv4() {
 
 export function formatBytes(a, b) {
     if (0 == a) return "0 Bytes"
-    
+
     var c = 1024,
         d = b || 2,
         e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
@@ -54,7 +57,6 @@ export function checkStatus(response) {
 }
 
 export function parseJSON(response) {
-    // console.log(response)
     return response.json()
 }
 
@@ -64,6 +66,7 @@ export function httpPost(url, data, headers = defaultHeaders) {
     return fetch(url, {
         method: "POST",
         headers: headers,
+        credentials: "same-origin",
         body: body
     })
         .then(checkStatus)

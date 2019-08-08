@@ -4,7 +4,6 @@ const year = (new Date()).getFullYear()
 
 const initialState = {
     query: "",
-    searchChannel: {},
     searchResults: {},
     searchOffset: 0,
     searchLoading: false,
@@ -67,6 +66,11 @@ const search = (state = initialState, action) => {
         return {
             ...state,
             searchOffset: state.searchOffset + 25
+        }
+    case Constants.SET_SEARCH_OFFSET:
+        return {
+            ...state,
+            searchOffset: action.payload
         }
     case Constants.RESET_SEARCH_OFFSET:
         return {

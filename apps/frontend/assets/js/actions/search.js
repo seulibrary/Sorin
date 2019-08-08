@@ -1,148 +1,76 @@
 import Constants from "../constants"
-import { Socket } from "../../../../../deps/phoenix"
+import { apiUrl, parseJSON } from "../utils"
 
-export const joinSearchChannel = () => {
-    return (dispatch) => {
-        const socket = new Socket("/socket", {
-            params: {
-                token: window.userToken
-            }
-        })
-
-        socket.connect()
-
-        const channel = socket.channel("search:" + window.userToken)
-
-        if (channel.state != "joined") {
-            channel.join().receive("ok", () => {
-                dispatch({
-                    type: Constants.SEARCH_SET_CHANNEL,
-                    channel: channel
-                })
-            })
-        }
-
-        channel.on("search", payload => {
-            dispatch({
-                type: Constants.SEARCH_RESULTS,
-                payload: payload,
-            })
-
-            dispatch({
-                type: Constants.UPDATE_SEARCH_OFFSET
-            })
-        })
-
-        channel.on("load_more_catalog_results", payload => {
-            dispatch({
-                type: Constants.APPEND_CATALOG_RESULTS,
-                payload: payload,
-            })
-
-            dispatch({
-                type: Constants.UPDATE_SEARCH_OFFSET
-            })
-        })
-
-        channel.on("load_more_user_results", payload => {
-            dispatch({
-                type: Constants.APPEND_USER_RESULTS,
-                payload: payload,
-            })
-
-            dispatch({
-                type: Constants.UPDATE_SEARCH_OFFSET
-            })
-        })
-
-        channel.on("load_more_collection_results", payload => {
-            
-            
-            dispatch({
-                type: Constants.APPEND_COLLECTION_RESULTS,
-                payload: payload,
-            })
-
-            dispatch({
-                type: Constants.UPDATE_SEARCH_OFFSET
-            })
-        })
+export const search = (query, url, searchFilters = {}) => (dispatch) => {
+    // Toggles which "tab/section" is auto selected when results are returned
+    if (searchFilters.hasOwnProperty("preSearchType")) {
+        dispatch(switchView({
+            view: searchFilters.preSearchType
+        }))
     }
-}
-
-export const leaveSearchChannel = (channel) => {
-    return (dispatch) => {
-        channel.leave()
-
-        dispatch({
-            type: Constants.SEARCH_REMOVE_CHANNEL
-        })
-    }
-}
-
-export const search = (channel, query, searchObject, searchFilters) => {
-    return (dispatch) => {
-        if (searchFilters.hasOwnProperty("preSearchType")) {
-            dispatch(switchView({
-                view: searchFilters.preSearchType
-            }))
-        }
-        
-        dispatch({
-            type: Constants.SEARCH_LOADING
-        })
-        
-        // Make sure offset is reset to 0 in redux
-        dispatch({
-            type: Constants.RESET_SEARCH_OFFSET
-        })
-
-        channel.push("search", {
-            query: query,
-            limit: 25,
-            offset: 0,
-            filters: searchFilters
-        })
-    }
-}
-
-export const searchAppend = (channel, query, searchObject, searchFilters, type) => {
-    return (dispatch) => {
-        dispatch({
-            type: Constants.SEARCH_LOADING
-        })
-
-        switch (type) {
-        case "catalog":
-            channel.push("load_more_catalog_results", {
-                query: query,
-                limit: 25,
-                offset: searchObject.searchOffset,
-                filters: searchFilters
-            })
-            break
-        case "users":
-            channel.push("load_more_user_results", {
-                query: query,
-                limit: 25,
-                offset: searchObject.searchOffset,
-                filters: searchFilters
-            })
-            break
-        case "collections":
-            channel.push("load_more_collection_results", {
-                query: query,
-                limit: 25,
-                offset: searchObject.searchOffset,
-                filters: searchFilters
-            })
-            break
-        default:
-            return false
-        }
-    }
-}
     
+    dispatch({
+        type: Constants.SEARCH_LOADING
+    })
+
+    fetch(apiUrl + "/api/search" + url, {
+        method: "GET",
+        credentials: "include"
+    }).then(parseJSON)
+    .then((payload) => {
+        dispatch({
+            type: Constants.SEARCH_RESULTS,
+            payload: payload,
+        })
+
+        dispatch({
+            type: Constants.UPDATE_SEARCH_OFFSET
+        })
+    })
+}
+
+export const searchAppend = (query, url, searchFilters, type) => (dispatch) => {
+        dispatch({
+            type: Constants.SEARCH_LOADING
+        })
+
+        fetch(apiUrl + "/api/search" + url, {
+            method: "GET",
+            credentials: "include"
+        }).then(parseJSON)
+        .then((payload) => {
+            switch (type) {
+                case "catalog":
+                    dispatch({
+                        type: Constants.APPEND_CATALOG_RESULTS,
+                        payload: payload.catalogs,
+                    })
+    
+                    break
+                case "users":
+                    dispatch({
+                        type: Constants.APPEND_USER_RESULTS,
+                        payload: payload.users,
+                    })
+    
+                    break
+                case "collections":
+                    dispatch({
+                        type: Constants.APPEND_COLLECTION_RESULTS,
+                        payload: payload.collections,
+                    })
+    
+                    break
+                default:
+                    return false
+            }
+    
+            dispatch({
+                type: Constants.UPDATE_SEARCH_OFFSET
+            })
+        })
+}
+
 export const setFilters = (payload) => {
     return (dispatch) => {
         dispatch({

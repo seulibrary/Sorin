@@ -1,18 +1,63 @@
 defmodule ApiWeb.Utils do
+  @moduledoc """
+  Utility functions
+  To be used in ApiWeb
+  """
+
+  @doc """
+  Returns true if list is empty.
+
+  ## Examples
+
+      iex> nil?([])
+      true
+  """
   def nil?([]), do: true
 
+  @doc """
+  Returns false if list is not empty.
+
+  ## Examples
+
+      iex> nil?([1, 2])
+      false
+  """
   def nil?(list) when is_list(list) do
     false
   end
 
+  @doc """
+  Returns true if string is empty.
+
+  ## Examples
+
+      iex> nil?("")
+      true
+  """
   def nil?(string) when string == "" do
     true
   end
 
+  @doc """
+  Returns true if string is nil.
+
+  ## Examples
+
+      iex> nil?(nil)
+      true
+  """
   def nil?(string) when string == nil do
     true
   end
 
+  @doc """
+  Returns false if string is not empty.
+
+  ## Examples
+
+      iex> nil?("Hello")
+      false
+  """
   def nil?(_string) do
     false
   end
@@ -25,14 +70,22 @@ defmodule ApiWeb.Utils do
     :maps.filter(fn _, value -> Ecto.assoc_loaded?(value) end, map)
   end
 
+  @doc """
+  Checks to see is a collection is the given users inbox.
+
+  ## Examples
+
+        iex> is_inbox(1, 1)
+        (true || false)
+  """
   def is_inbox(user_id, collection_id) do
-    index = Core.Collections.CollectionsUsers
+    index = Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
       collection_id: collection_id,
       user_id: user_id
     )
     |> Map.get(:index)
-    
+
     case index do
       0 -> true
       _ -> false
@@ -40,30 +93,42 @@ defmodule ApiWeb.Utils do
   end
 
   def can_edit_collection(user_id, collection_id) do
-    case Core.Collections.CollectionsUsers 
+    case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by(
-      collection_id: collection_id, 
+      collection_id: collection_id,
       user_id: user_id,
-      write_access: true
+      write_access: true)
+    |> Core.Repo.preload(:collection) do
+      user when is_nil(user) -> {:error, "User does not have permission"}
+      collection -> {:ok, collection}
+    end
+  end
+
+  def can_edit_collection?(user_id, collection_id) do
+    case Core.CollectionsUsers.CollectionUser
+    |> Core.Repo.get_by(
+      collection_id: collection_id,
+    user_id: user_id,
+    write_access: true
     ) do
-      _user when is_nil(_user) -> {:error, "User does not have permission"}
-      _ -> {:ok, "User can edit collection."}
+      _user when is_nil(_user) -> false
+      collection -> true
     end
   end
 
   def can_move_collection(user_id, collection_id) do
-    case Core.Collections.CollectionsUsers
+    case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
-      collection_id: collection_id, 
-      user_id: user_id
-    ) do
+      collection_id: collection_id,
+      user_id: user_id)
+    |> Core.Repo.preload(:collection) do
       _users when is_nil(_users) -> {:error, "User does not have permission"}
-      _ -> {:ok, "User can move collection."}
+      collectionUser -> {:ok, collectionUser}
     end
   end
 
-  def can_move_collection!(user_id, collection_id) do
-    case Core.Collections.CollectionsUsers
+  def can_move_collection?(user_id, collection_id) do
+    case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
       collection_id: collection_id, 
       user_id: user_id

@@ -1,5 +1,5 @@
 import { saveAs } from "file-saver"
-import { uuidv4 } from "../utils"
+import { apiUrl, uuidv4 } from "../utils"
 import { openModal } from "./modal"
 import Constants from "../constants"
 
@@ -66,17 +66,18 @@ export const fileStatusReset = () => {
     }
 }
 
-export const downloadFile = (id, port) => {
+export const downloadFile = (id) => {
     let data = new FormData()
     let filename = ""
 
     data.append("user", window.userToken)
 
-    fetch("/" + port + "/api/file/" + id, {
+    fetch(apiUrl + "/api/file/" + id, {
         method: "POST",
         headers: {
             "x-csrf-token": window.csrfToken
         },
+        credentials: "same-origin",
         body: data
     }).then(processStatus)
         .then(function (resp) {

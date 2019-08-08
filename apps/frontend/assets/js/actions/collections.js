@@ -1,4 +1,10 @@
+import { Presence } from "../../../../../deps/phoenix"
 import Constants from "../constants"
+import { handleActions, createAction } from 'redux-actions'
+import _ from "lodash"
+
+export const setPresence = createAction('PRESENCE/SET')
+export const presenceDiff = createAction('PRESENCE/DIFF')
 
 export const getDashboard = (user, socket) => {
     return (dispatch) => {
@@ -11,11 +17,49 @@ export const getDashboard = (user, socket) => {
             })
         })
 
-        dashboard_channel.on("save_to_inbox", payload => {
+        dashboard_channel.on("move_collection", payload => {
             dispatch({
-                type: Constants.SAVE_TO_INBOX,
-                inbox_id: payload.inbox_id,
-                payload: payload.data
+                type: Constants.MOVE_COLLECTION,
+                payload: {
+                    collection_id: payload.collection_id, 
+                    new_index: payload.new_index,
+                    old_index: payload.old_index
+                }
+           })
+        })
+
+        dashboard_channel.on("move_resource", payload => {
+            dispatch({
+                type: Constants.MOVE_RESOURCE,
+                payload: {
+                    source_collection_id: parseInt(payload.source_collection_id),
+                    target_collection_id: parseInt(payload.target_collection_id),
+                    resource_id: parseInt(payload.resource_id),
+                    index: parseInt(payload.target_index)
+                }
+            })
+        })
+
+        dashboard_channel.on("move_collection", payload => {
+            dispatch({
+                type: Constants.MOVE_COLLECTION,
+                payload: {
+                    collection_id: payload.collection_id, 
+                    new_index: payload.new_index,
+                    old_index: payload.old_index
+                }
+           })
+        })
+
+        dashboard_channel.on("move_resource", payload => {
+            dispatch({
+                type: Constants.MOVE_RESOURCE,
+                payload: {
+                    source_collection_id: parseInt(payload.source_collection_id),
+                    target_collection_id: parseInt(payload.target_collection_id),
+                    resource_id: parseInt(payload.resource_id),
+                    index: parseInt(payload.target_index)
+                }
             })
         })
 
@@ -56,6 +100,8 @@ export const getDashboard = (user, socket) => {
                         type: Constants.SET_INBOX_ID,
                         inbox_id: data.collection.id
                     })
+                    
+                    
                 }
                 // Connect to each collection
                 dispatch(connectCollection(socket, data))
@@ -70,18 +116,21 @@ export const getDashboard = (user, socket) => {
     }
 }
 
-export const createCollection = (channel, title) => {
-    channel.push("create_collection", {
-        title: title
-    })
-}
-
 export const connectCollection = (socket, collection) => {
     return (dispatch) => {
         let channel = {}
 
         if (collection.hasOwnProperty("collection")) {
             channel = socket.channel(`collection:${collection.collection.id}`)
+
+            channel.on("presence_state", state => {
+                dispatch(setPresence(state))
+            })
+
+            channel.on("presence_diff", diff => {
+                dispatch(presenceDiff(diff))
+            })
+
 
             channel.join().receive("ok", () => {
                 dispatch({
@@ -91,9 +140,23 @@ export const connectCollection = (socket, collection) => {
                         channel: channel
                     }
                 })
+                
+                if (collection.index === 0) {
+                    // See if there are any resrouce cookies that need to be saved
+                    // only do it for inbox (index 0)
+                    checkForResourceCookies(channel, collection.collection.id)
+                }
+                
             })
         } else {
             channel = socket.channel(`collection:${collection.id}`)
+            channel.on("presence_state", state => {
+                dispatch(setPresence(state))
+            })
+
+            channel.on("presence_diff", diff => {
+                dispatch(presenceDiff(diff))
+            })
 
             channel.join().receive("ok", () => {
                 dispatch({
@@ -114,12 +177,21 @@ export const connectCollection = (socket, collection) => {
         dispatch(_actions(channel))
     }
 }
+let presences = {}
 
 const _actions = (channel) => {
     return (dispatch) => {
-        channel.on("edit_collection", payload => {
+        
+        channel.on("updated_collection", payload => {
             dispatch({
                 type: Constants.EDIT_COLLECTION,
+                payload: payload
+            })
+        })
+
+        channel.on("updated_resource", payload => {
+            dispatch({
+                type: Constants.EDIT_RESOURCE,
                 payload: payload
             })
         })
@@ -207,21 +279,44 @@ const _actions = (channel) => {
     }
 }
 
+export const createCollection = (channel, title) => {
+    channel.push("create_collection", {
+        title: title
+    })
+}
+
+export const saveResourceToCookie = (resource, login_state) => {
+    window.localStorage.setItem(resource.title + "_sorin_resource", JSON.stringify(resource))
+    window.location.href = "/auth/google?state=" + encodeURIComponent(login_state)
+}
+
+export const checkForResourceCookies = (channel, collection_id) => {
+    _.forIn(window.localStorage, (value, objKey) => {
+        if (true === _.endsWith(objKey, '_sorin_resource')) {
+            createResource(channel, collection_id, JSON.parse(window.localStorage.getItem(objKey)))
+        }
+    });
+    window.localStorage.clear()
+}
+
 export const moveCollection = (channel, collection_id, new_index, old_index) => {
     return (dispatch) => {
+
         channel.push("move_collection", {
             collection_id: parseInt(collection_id),
-            newIndex: parseInt(new_index),
-            oldIndex: parseInt(old_index)
+            new_index: parseInt(new_index),
+            old_index: parseInt(old_index)
         })
 
         dispatch({
             type: Constants.MOVE_COLLECTION,
             payload: {
-                newIndex: parseInt(new_index),
-                oldIndex: parseInt(old_index)
+                collection_id: parseInt(collection_id),
+                new_index: parseInt(new_index),
+                old_index: parseInt(old_index)
             }
         })
+
     }
 }
 

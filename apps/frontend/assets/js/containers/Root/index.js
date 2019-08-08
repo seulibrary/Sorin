@@ -1,19 +1,40 @@
 import React, { Component } from "react"
 import Hamburger from "../../components/Hamburger"
 import ModalContainer from "../../components/Modal/Container"
+import { openModal } from "../../actions/modal"
+import { uuidv4 } from "../../utils"
 import { withRouter, NavLink } from "react-router-dom"
 import { connect } from "react-redux"
 import Notice from "../../components/Notice"
 import Header from "../../components/Header"
 class Root extends Component {
     constructor(props) {
-        super(props)  
+        super(props)
+        this.state = {
+            showNotice: false
+        }
     }
 
     activeEvent = (match, location) => {
         if (location.pathname === "/" || match) {
             return true
         }
+
+        return false
+    }
+
+    loginBlocked = (e) => {
+        e.preventDefault()
+        
+        let login_state = "?state=" + JSON.stringify({url: "/collections"})
+
+        this.props.dispatch(
+            openModal({
+                id: uuidv4,
+                type: "alert",
+                text: <div>You need to <a href={"/auth/google" + login_state}>login</a> to access collections.</div>
+            })
+        )
 
         return false
     }
@@ -27,16 +48,18 @@ class Root extends Component {
                     <Hamburger />
                 </header>
 
-                {this.props.session.currentUser && 
                     <ul className="tabs" id="tabs">
                         <li className="tab">
                             <NavLink to="/search" activeClassName="active" isActive={this.activeEvent}>Search</NavLink>
                         </li>
                         <li className="tab">
-                            <NavLink to="/collections" activeClassName="active">Collections</NavLink>
+                            {this.props.session.currentUser ?
+                                <NavLink to="/collections" activeClassName="active">Collections</NavLink>
+                                :
+                                <NavLink to="/collections" onClick={this.loginBlocked} activeClassName="active">Collections</NavLink>
+                            }
                         </li>
                     </ul>
-                }
                 
                 <Notice />
 

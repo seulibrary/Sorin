@@ -6,7 +6,8 @@ const initialState = {
     channel: null,
     error: null,
     dashboardChannel: null,
-    inbox_id: null
+    inbox_id: null,
+    auth_tokens: []
 }
 
 const session = (state = initialState, action) => {
@@ -25,6 +26,16 @@ const session = (state = initialState, action) => {
         return {
             ...state,
             inbox_id: action.inbox_id
+        }
+    case Constants.CREATE_TOKEN:
+        return {
+            ...state,
+            auth_tokens: state.auth_tokens.concat(action.payload)
+        }
+    case Constants.DELETE_TOKEN:
+        return {
+            ...state,
+            auth_tokens: state.auth_tokens.filter(token => token.token !== action.payload.token)
         }
     case Constants.USER_SIGNED_OUT:
         return initialState
