@@ -14,7 +14,7 @@ defmodule Mix.Tasks.SetupExtension do
         File.mkdir!(frontend_extension_path <> Macro.underscore(extension))
       end
       
-      if File.exists?(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> Macro.underscore(extension) <> "/package.json") do
+      if File.exists?(Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> extension <> "/package.json") do
         # Run NPM install to get any deps
         Mix.Shell.Process.cmd("npm install --prefix " <> Mix.Project.deps_path() <> "/" <> Macro.underscore(extension) <> "/assets/js/" <> extension)
         
