@@ -4,7 +4,7 @@ const settings = importJson()
 
 export const siteUrl = settings.url
 
-export const apiUrl = settings.hasOwnProperty("api_url") ? settings.api_url : siteUrl
+export const apiUrl = settings.hasOwnProperty("api_url") && settings.api_url != "" ? settings.api_url : siteUrl
 
 export const getSiteSettings = () => {
     return {
