@@ -265,7 +265,9 @@ class Search extends Component {
 
             if (users) {
                 let showLoadMoreUsers = (this.props.search.searchOffset < users.num_results)
-
+                var params = new URLSearchParams(this.props.location.search)
+                var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
+        
                 if (users.num_results === 0){
                     return (
                         <div>Sorry, no results found.</div>
@@ -299,7 +301,9 @@ class Search extends Component {
         }
         case "collections": {
             let user_collections = this.props.search.searchResults.collections ? this.props.search.searchResults.collections : null
-
+            var params = new URLSearchParams(this.props.location.search)
+            var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
+    
             if (user_collections) {
                 let showLoadMoreCollections = (this.props.search.searchOffset < user_collections.num_results)
 
