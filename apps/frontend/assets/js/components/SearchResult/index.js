@@ -134,16 +134,6 @@ class SearchResult extends Component {
                     <a className="save" data-context="L" onClick={this.onSave}>
                         <span className="flag">{this.state.saveit}</span>
                     </a>
-                    <a className="save url" target="_blank" href={data.catalog_url} >
-                        <span className="flag">View resource</span>
-                    </a>
-
-                    <button className="cite save" onClick={() => this.props.dispatch(openModal({
-                        id: uuidv4(),
-                        type: "custom",
-                        panel: "search",
-                        content: <Citation data={data} />
-                    }))}><span className="flag action-modal">cite</span></button> 
                 </div>
             </div>
         )
