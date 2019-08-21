@@ -302,7 +302,7 @@ const collections = (state = initialState, action) => {
         let orig_collections = state.collections
 
         // Confirms that the move has not happened in your brower already
-        if (orig_collections[action.payload.old_index].data.id == action.payload.collection_id) {
+        if (orig_collections[action.payload.old_index].data.collection.id == action.payload.collection_id) {
             const collection_to_move = orig_collections[action.payload.old_index]
 
             orig_collections.splice(action.payload.old_index, 1)
