@@ -40,29 +40,6 @@ export const getDashboard = (user, socket) => {
             })
         })
 
-        dashboard_channel.on("move_collection", payload => {
-            dispatch({
-                type: Constants.MOVE_COLLECTION,
-                payload: {
-                    collection_id: payload.collection_id, 
-                    new_index: payload.new_index,
-                    old_index: payload.old_index
-                }
-           })
-        })
-
-        dashboard_channel.on("move_resource", payload => {
-            dispatch({
-                type: Constants.MOVE_RESOURCE,
-                payload: {
-                    source_collection_id: parseInt(payload.source_collection_id),
-                    target_collection_id: parseInt(payload.target_collection_id),
-                    resource_id: parseInt(payload.resource_id),
-                    index: parseInt(payload.target_index)
-                }
-            })
-        })
-
         dashboard_channel.on("clone_collection", payload => {
             dispatch(
                 connectCollection(socket, payload)
