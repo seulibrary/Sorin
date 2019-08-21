@@ -21,9 +21,9 @@ export const getDashboard = (user, socket) => {
             dispatch({
                 type: Constants.MOVE_COLLECTION,
                 payload: {
-                    collection_id: payload.collection_id, 
-                    new_index: payload.new_index,
-                    old_index: payload.old_index
+                    collection_id: parseInt(payload.collection_id), 
+                    new_index: parseInt(payload.new_index),
+                    old_index: parseInt(payload.old_index)
                 }
            })
         })
