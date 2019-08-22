@@ -91,6 +91,15 @@ defmodule ApiWeb.CollectionChannel do
             published: published})
     end
 
+    if payload["collection"]["notes"] do
+      Notes.update_note_by_id(
+        payload["collection"]["notes"]["id"],
+        payload["collection"]["notes"]["body"]
+      )
+    end
+
+    broadcast!(socket, "updated_collection", payload)
+    
     if payload["currentCollectionNote"] && payload["currentCollectionNote"] != "" do
       case Notes.create_note(%{collection_id: payload["collection"]["id"], body: payload["currentCollectionNote"]}) do
         {:ok, note} ->
@@ -106,14 +115,6 @@ defmodule ApiWeb.CollectionChannel do
       end
     end
 
-    if payload["collection"]["notes"] do
-      Notes.update_note_by_id(
-        payload["collection"]["notes"]["id"],
-        payload["collection"]["notes"]["body"]
-      )
-    end
-
-    broadcast!(socket, "updated_collection", payload)
     {:noreply, socket}
   end
 
@@ -219,6 +220,15 @@ defmodule ApiWeb.CollectionChannel do
 
         Resources.update_resource(resource, updates)
 
+        if payload["data"]["notes"] != "" && payload["data"]["notes"] != nil do
+          Notes.update_note_by_id(
+            payload["data"]["notes"]["id"],
+            payload["data"]["notes"]["body"]
+          )
+        end
+
+        broadcast!(socket, "updated_resource", payload)
+
         if payload["data"]["currentCollectionNote"] &&
              payload["data"]["currentCollectionNote"] != nil do
           case Notes.create_note(%{resource_id: payload["data"]["id"], body: payload["data"]["currentCollectionNote"]}) do
@@ -238,14 +248,6 @@ defmodule ApiWeb.CollectionChannel do
           end
         end
 
-        if payload["data"]["notes"] != "" && payload["data"]["notes"] != nil do
-          Notes.update_note_by_id(
-            payload["data"]["notes"]["id"],
-            payload["data"]["notes"]["body"]
-          )
-        end
-
-        broadcast!(socket, "updated_resource", payload)
         {:noreply, socket}
     end
   end
