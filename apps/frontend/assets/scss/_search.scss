@@ -179,7 +179,13 @@
 			}
 
 			.callNumber {
-				color: $goGreen;
+				&.available {
+					color: $goGreen;
+				}
+				
+				&.unavailable {
+					color: $textGrey;
+				}
 			}
 
 			.accordion {
