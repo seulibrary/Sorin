@@ -114,9 +114,9 @@ class SearchResult extends Component {
 
                         <span>{data.is_part_of}</span>
                         
-                        { data.call_number && data.availability_status == "available" && <span className="callNumber">{data.call_number} - Available for checkout</span> }
+                        { data.call_number && data.availability_status == "available" && <span className="callNumber available">{data.call_number} - Available for checkout</span> }
                         
-                        { data.call_number && data.availability_status == "unavailable" && <span className="callNumber">{data.call_number} - Currently unavailable</span> }
+                        { data.call_number && data.availability_status == "unavailable" && <span className="callNumber unavailable">{data.call_number} - Currently unavailable</span> }
 
                         {data.description ? <Accordion title="More Info" titleClass={"more-info"}>
                             <div>
