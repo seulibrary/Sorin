@@ -246,6 +246,10 @@ class Search extends Component {
                         {searchresults.results.map((data, index) => {
                             let index_offset = index + offset
 
+                            if (_.isEmpty(data)) {
+                                return null
+                            }
+                            
                             return (
                                 <SearchResult key={"search-result-" + index_offset} data={data} index={index_offset} />
                             )
