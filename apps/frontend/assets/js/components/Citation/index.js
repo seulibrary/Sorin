@@ -53,12 +53,12 @@ export default class Citation extends Component {
             return this.setState({
                 copyValue: mla
             })
-        case "chicago":
-            chi = this.buildCHI()
+        // case "chicago":
+        //     chi = this.buildCHI()
 
-            return this.setState({
-                copyValue: chi
-            })
+        //     return this.setState({
+        //         copyValue: chi
+        //     })
         default:
             return "error"
         }
@@ -205,7 +205,7 @@ export default class Citation extends Component {
                     <label>Format:</label>
                     <select value={this.state.citation} onChange={this.handleChange}>
                         <option value="apa">APA</option>
-                        <option value="chicago">Chicago</option>
+                        {/* <option value="chicago">Chicago</option> */}
                         <option value="mla">MLA</option>
                     </select>
                 </div>
