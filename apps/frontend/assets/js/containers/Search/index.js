@@ -13,10 +13,7 @@ import {search,
 import Constants from "../../constants"
 import ErrorBoundary from "../Errors"
 import SearchFilter from "../../components/SearchFilter"
-import { openModal } from "../../actions/modal"
-import { uuidv4 } from "../../utils"
-
-import { Link } from "react-router-dom"
+import SearchFilterButton from "../../components/SearchFilter/searchFilterButton"
 
 class Search extends Component {
     componentDidMount() {
@@ -353,6 +350,8 @@ class Search extends Component {
                 <form id="search-field" onSubmit={this.handleSubmit}>
                     <input type="text"  id="search-main" placeholder="Search Library Item or User" onChange={this.handleSearch} value={this.props.search.query} />
                     
+                    <SearchFilterButton />
+
                     <select 
                         id="search-dropdown" 
                         value={this.props.searchFilters.searchFilters.preSearchType}
