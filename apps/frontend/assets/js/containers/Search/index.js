@@ -13,10 +13,7 @@ import {search,
 import Constants from "../../constants"
 import ErrorBoundary from "../Errors"
 import SearchFilter from "../../components/SearchFilter"
-import { openModal } from "../../actions/modal"
-import { uuidv4 } from "../../utils"
-
-import { Link } from "react-router-dom"
+import SearchFilterButton from "../../components/SearchFilter/searchFilterButton"
 
 class Search extends Component {
     componentDidMount() {
@@ -125,6 +122,7 @@ class Search extends Component {
     }
 
     handleSearchReset = () => {
+        this.props.history.push("/search")
         this.props.dispatch(searchReset())
     }
 
@@ -353,6 +351,8 @@ class Search extends Component {
                 <form id="search-field" onSubmit={this.handleSubmit}>
                     <input type="text"  id="search-main" placeholder="Search Library Item or User" onChange={this.handleSearch} value={this.props.search.query} />
                     
+                    <SearchFilterButton />
+
                     <select 
                         id="search-dropdown" 
                         value={this.props.searchFilters.searchFilters.preSearchType}
@@ -364,14 +364,14 @@ class Search extends Component {
                     </select>
 
                     <input type="submit" id="search-submit-btn" onClick={this.handleSubmit} />
-                    
-                    <div id="reset-search">
-                        <span onClick={this.handleSearchReset}>Reset Search</span>
-                    </div>
-
+                
                     <SearchFilter onSumbit={this.handleSubmit} />
                 </form>
                 
+                <div id="reset-search">
+                    <span onClick={this.handleSearchReset}>Reset Search</span>
+                </div>
+
                 <div className="results-tab">
                     <span 
                         onClick={() => this.handleSearchView("catalog")} 

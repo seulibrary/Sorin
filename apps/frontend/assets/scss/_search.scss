@@ -14,34 +14,38 @@
 
 	form {
 		position: relative;
-
+		background-color: $lightBlue;
+		display: block;
+		margin: 0 auto;
+		width: 100%;
+		
 		#search-main {
 			background-color: $lightBlue;
 			border: none;
-			display: block;
+			// display: block;
 			font-size: 1.5em;
-			margin: 0 auto;
+			// margin: 0 auto;
 			padding: 2% 48px 2% 2%;
 			width: 100%;
 			padding-right: 300px;
 
 			@media (min-width: $mobile-landscape-width) and (max-width: $tablet-width) {
 				font-size: 1em;
-				background-size: 20px;
+				// background-size: 20px;
 				padding-right: 220px;
 			}
 
 			@media (max-width: $mobile-landscape-width) {
 				padding-right: 60px;
 				font-size: 1em;
-				background-size: 20px;
+				// background-size: 20px;
 			}
 		}
 
 		#search-submit-btn {
 			background-color: transparent;
-			background: url(../images/icon-mag.svg) 50% center no-repeat;
-			-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/img/magnifying-glass.svg', sizingMethod='scale')";
+			background: url(/images/icon-mag.svg) 50% center no-repeat;
+			-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/images/icon-mag.svg', sizingMethod='scale')";
 			border: 0;
 			font-size: 1.5em;
 			text-indent: -999999px;
@@ -66,7 +70,7 @@
 
 		#search-dropdown {
 			position: absolute;
-			top: 0px;
+			top: 0;
 			right: 80px;
 			background-color: transparent;
 			border: none;
@@ -75,7 +79,7 @@
 			appearance: none;
 			-webkit-appearance: none;
 			-moz-appearance: none;
-			background: url(../images/down-arrow.png) right center no-repeat;
+			background: url(/images/down-arrow.png) right center no-repeat;
 
 			@media (min-width: $topMinWidth)and (max-width: $tablet-width) {
 				font-size: 1em;
