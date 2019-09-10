@@ -122,6 +122,7 @@ class Search extends Component {
     }
 
     handleSearchReset = () => {
+        this.props.history.push("/search")
         this.props.dispatch(searchReset())
     }
 
@@ -363,14 +364,14 @@ class Search extends Component {
                     </select>
 
                     <input type="submit" id="search-submit-btn" onClick={this.handleSubmit} />
-                    
-                    <div id="reset-search">
-                        <span onClick={this.handleSearchReset}>Reset Search</span>
-                    </div>
-
+                
                     <SearchFilter onSumbit={this.handleSubmit} />
                 </form>
                 
+                <div id="reset-search">
+                    <span onClick={this.handleSearchReset}>Reset Search</span>
+                </div>
+
                 <div className="results-tab">
                     <span 
                         onClick={() => this.handleSearchView("catalog")} 
