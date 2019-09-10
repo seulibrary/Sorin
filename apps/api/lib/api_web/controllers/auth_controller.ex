@@ -43,9 +43,9 @@ defmodule ApiWeb.AuthController do
 
           # update auth token if needed
           Api.GoogleToken.save_auth_token(user, conn.assigns.ueberauth_auth.extra.raw_info.token)
-          
-          url = ((url_state |> Jason.decode!)["url"]) || "/"
 
+          url = if url_state == nil, do: "/", else: ((url_state |> Jason.decode!)["url"])
+          
           conn
           |> put_session(:user_id, user_id_token)
           |> configure_session(renew: true)
