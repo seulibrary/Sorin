@@ -92,7 +92,11 @@ export const setQuery = (payload) => {
 export const searchReset = () => {
     return (dispatch) => {
         dispatch({
-            type: Constants.SEARCH_HARD_RESET,
+            type: Constants.SEARCH_HARD_RESET
+        })
+        
+        dispatch({
+            type: Constants.SEARCH_FILTERS_HARD_RESET
         })
     }
 }
