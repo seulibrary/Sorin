@@ -18,7 +18,6 @@ class SearchFilterButton extends Component {
         if (!this.props.extensions.hasOwnProperty("searchFilterButton")) {
             this.props.extensions.files.map(el => {
                 if (el.path === "searchFilterButton") { 
-                    console.log("hello there.")
                     this.props.dispatch(addComponentsToArea({searchFilterButton: [el]}))
                 }
             })
