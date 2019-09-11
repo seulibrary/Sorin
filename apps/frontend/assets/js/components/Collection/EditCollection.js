@@ -274,10 +274,10 @@ class EditCollection extends Component {
                                         <Citation data={data.collection.resources} />
                                     </Accordion>
 
-                                    {data.collection.provenance ? (
-                                        <Accordion title="View Provenance">
+                                    {data.collection.import_stamp ? (
+                                        <Accordion title="View History">
                                             <div>
-                                                <p>{data.collection.provenance}</p>
+                                                <p>{data.collection.import_stamp}</p>
                                             </div>
                                         </Accordion>
                                     ) : ""
