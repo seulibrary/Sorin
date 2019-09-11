@@ -3,7 +3,7 @@ defmodule Core.Collections.Collection do
   import Ecto.Changeset
 
   schema "collections" do
-    field :chain_of_cust, {:array, :string}
+    field :chain_of_cust, {:array, :string}, default: []
     field :clones_count, :integer, default: 0
     field :imports_count, :integer, default: 0
     field :import_stamp, :string # To record timestamp and creator on import

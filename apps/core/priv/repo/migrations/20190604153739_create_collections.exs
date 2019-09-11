@@ -3,7 +3,7 @@ defmodule Core.Repo.Migrations.CreateCollections do
 
   def change do
     create table(:collections) do
-      add :chain_of_cust, {:array, :text}
+      add :chain_of_cust, {:array, :text}, default: []
       add :clones_count, :integer, default: 0
       add :imports_count, :integer, default: 0
       add :import_stamp, :text # Used when a collection is imported
