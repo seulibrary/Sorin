@@ -11,7 +11,8 @@ import { openModal, closeModal } from "../../actions/modal"
 import {
     addCollectionTag,
     deleteCollectionTag,
-    updateCollectionNote
+    updateCollectionNote,
+    shareCollection
 } from "../../actions/collections"
 import { 
     uploadFile, 
@@ -195,6 +196,15 @@ class EditCollection extends Component {
         )
 
         this.props.dispatch(googleExport(collectionData.channel, collectionData))
+    }
+
+    shareCollection = () => {
+
+        this.props.dispatch(shareCollection(collection_id, user_id))
+    }
+
+    findUser = () => {
+        
     }
 
     render() {
