@@ -45,12 +45,22 @@ const collections = (state = initialState, action) => {
             ...state,
             collections: state.collections.map(
                 (collection) => {
-                    if (collection.data.collection.id === action.payload.id) {
+                    if (collection.data.collection.id === action.payload.collection.id) {
+                        if (collection.data.id === action.payload.id) {
+                            return {
+                                ...collection,
+                                data: {
+                                    ...collection.data,
+                                    ...action.payload
+                                }
+                            }
+                        }
+
                         return {
                             ...collection,
                             data: {
                                 ...collection.data,
-                                ...action.payload
+                                collection: {...action.payload.collection}
                             }
                         }
                     } else {
