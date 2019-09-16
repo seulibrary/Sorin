@@ -351,20 +351,17 @@ defmodule Core.Accounts do
 
     # Decrement the clones_count field on all cloned collections before they
     # are removed.
-    clones =
-      from(cu in CollectionUser,
-	left_join: c in Collection,
-	on: cu.collection_id == c.id,
-	where: cu.user_id == ^user.id,
-	where: cu.write_access == false,
-	select: c
-      )
-      |> Repo.all
-
-    case clones do
-      [] -> :ok
-      _ -> Repo.update_all(clones, inc: [clones_count: -1])
-    end
+    from(cu in CollectionUser,
+      left_join: c in Collection,
+      on: cu.collection_id == c.id,
+      where: cu.user_id == ^user.id,
+      where: cu.write_access == false,
+      select: c
+    )
+    |> Repo.all()
+    |> Enum.map(
+      &Collections.update_collection(&1,
+	%{clones_count: (&1.clones_count - 1)}))
 
     # Delete user account, which deletes all CollectionsUsers records for it
     # and nilifies all creator_id fields for it.
