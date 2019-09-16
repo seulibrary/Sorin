@@ -226,9 +226,12 @@ defmodule Core.Accounts do
       do: update_by_email(x, y)
 
     {:ok,
-     {:added, Enum.count(added_users), added_users},
-     {:removed, Enum.count(removed_users), removed_users},
-     {:updated, Enum.count(updated_users), updated_users}
+     %{added_users: added_users},
+     %{removed_users: removed_users},
+     %{updated_users: updated_users},
+     total_added_users: Enum.count(added_users),
+     total_removed_users: Enum.count(removed_users),
+     total_updated_users: Enum.count(updated_users),
     }
   end
 
