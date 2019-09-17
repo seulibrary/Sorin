@@ -57,7 +57,7 @@ defmodule ApiWeb.CollectionView do
             inserted_at: collection.inserted_at |> NaiveDateTime.to_string,
             notes: notes,
             permalink: collection.permalink,
-            # provenance: collection.provenance,
+            import_stamp: collection.import_stamp,
             published: collection.published,
             resources: resources,
             tags: collection.tags,
