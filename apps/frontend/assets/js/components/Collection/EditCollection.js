@@ -41,6 +41,7 @@ class EditCollection extends Component {
                 id: uuidv4,
                 type: "confirmation",
                 panel: "collection",
+                onCancel: () => {},
                 onConfirm: () => {
                     this.props.dispatch({
                         type: Constants.EDIT_COLLECTION_PUBLISH,
@@ -178,6 +179,7 @@ class EditCollection extends Component {
                 id: deleteModalId,
                 type: "confirmation",
                 panel: "collection",
+                onCancel: () => {},
                 onConfirm: () => {
                     this.confirmDeleteCollection(collectionData)
                 },

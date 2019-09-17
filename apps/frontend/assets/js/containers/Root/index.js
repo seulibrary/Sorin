@@ -34,8 +34,7 @@ class Root extends Component {
                 onConfirm: () => {
                     window.location.href = "/auth/google"
                 },
-                onCancel: () => {
-                },
+                onCancel: () => {},
                 text: "Please sign in to access collections."
             })
         )

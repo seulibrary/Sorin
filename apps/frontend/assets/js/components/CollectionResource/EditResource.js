@@ -129,6 +129,7 @@ class EditResource extends Component {
                 id: deleteModalId,
                 type: "confirmation",
                 panel: "collection",
+                onCancel: () => {},
                 onConfirm: () => {
                     this.confirmDeleteResource()
                 },

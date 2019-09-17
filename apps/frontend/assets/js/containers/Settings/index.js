@@ -49,6 +49,7 @@ class Settings extends Component {
             openModal({
                 id: uuidv4,
                 type: "confirmation",
+                onCancel: () => {},
                 onConfirm: () => {
                     this.deleteToken(this.props.session.channel, token)
                 },
