@@ -45,12 +45,22 @@ const collections = (state = initialState, action) => {
             ...state,
             collections: state.collections.map(
                 (collection) => {
-                    if (collection.data.collection.id === action.payload.id) {
+                    if (collection.data.collection.id === action.payload.collection.id) {
+                        if (collection.data.id === action.payload.id) {
+                            return {
+                                ...collection,
+                                data: {
+                                    ...collection.data,
+                                    ...action.payload
+                                }
+                            }
+                        }
+
                         return {
                             ...collection,
                             data: {
                                 ...collection.data,
-                                ...action.payload
+                                collection: {...action.payload.collection}
                             }
                         }
                     } else {
@@ -302,7 +312,7 @@ const collections = (state = initialState, action) => {
         let orig_collections = state.collections
 
         // Confirms that the move has not happened in your brower already
-        if (orig_collections[action.payload.old_index].data.id == action.payload.collection_id) {
+        if (orig_collections[action.payload.old_index].data.collection.id == action.payload.collection_id) {
             const collection_to_move = orig_collections[action.payload.old_index]
 
             orig_collections.splice(action.payload.old_index, 1)

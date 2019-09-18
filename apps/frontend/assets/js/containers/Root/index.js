@@ -25,14 +25,17 @@ class Root extends Component {
 
     loginBlocked = (e) => {
         e.preventDefault()
-        
-        let login_state = "?state=" + JSON.stringify({url: "/collections"})
 
         this.props.dispatch(
             openModal({
                 id: uuidv4,
-                type: "alert",
-                text: <div>You need to <a href={"/auth/google" + login_state}>login</a> to access collections.</div>
+                type: "confirmation",
+                buttonText: ["Sign in", "Cancel"],
+                onConfirm: () => {
+                    window.location.href = "/auth/google"
+                },
+                onCancel: () => {},
+                text: "Please sign in to access collections."
             })
         )
 

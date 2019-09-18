@@ -41,6 +41,7 @@ class EditCollection extends Component {
                 id: uuidv4,
                 type: "confirmation",
                 panel: "collection",
+                onCancel: () => {},
                 onConfirm: () => {
                     this.props.dispatch({
                         type: Constants.EDIT_COLLECTION_PUBLISH,
@@ -147,7 +148,7 @@ class EditCollection extends Component {
         let collectionData = this.props.collections.collections.find(
             collection => collection.data.collection.id === this.props.id
         )
-console.log(collectionData.data.collection.resources)
+
         collectionData.channel.push("edit_collection", collectionData.data)
 
         this.props.dispatch({
@@ -178,6 +179,7 @@ console.log(collectionData.data.collection.resources)
                 id: deleteModalId,
                 type: "confirmation",
                 panel: "collection",
+                onCancel: () => {},
                 onConfirm: () => {
                     this.confirmDeleteCollection(collectionData)
                 },
@@ -274,10 +276,10 @@ console.log(collectionData.data.collection.resources)
                                         <Citation data={data.collection.resources} />
                                     </Accordion>
 
-                                    {data.collection.provenance ? (
-                                        <Accordion title="View Provenance">
+                                    {data.collection.import_stamp ? (
+                                        <Accordion title="View History">
                                             <div>
-                                                <p>{data.collection.provenance}</p>
+                                                <p>{data.collection.import_stamp}</p>
                                             </div>
                                         </Accordion>
                                     ) : ""

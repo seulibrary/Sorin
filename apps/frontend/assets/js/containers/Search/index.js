@@ -13,10 +13,7 @@ import {search,
 import Constants from "../../constants"
 import ErrorBoundary from "../Errors"
 import SearchFilter from "../../components/SearchFilter"
-import { openModal } from "../../actions/modal"
-import { uuidv4 } from "../../utils"
-
-import { Link } from "react-router-dom"
+import SearchFilterButton from "../../components/SearchFilter/searchFilterButton"
 
 class Search extends Component {
     componentDidMount() {
@@ -125,6 +122,7 @@ class Search extends Component {
     }
 
     handleSearchReset = () => {
+        this.props.history.push("/search")
         this.props.dispatch(searchReset())
     }
 
@@ -246,6 +244,10 @@ class Search extends Component {
                         {searchresults.results.map((data, index) => {
                             let index_offset = index + offset
 
+                            if (_.isEmpty(data)) {
+                                return null
+                            }
+                            
                             return (
                                 <SearchResult key={"search-result-" + index_offset} data={data} index={index_offset} />
                             )
@@ -265,7 +267,9 @@ class Search extends Component {
 
             if (users) {
                 let showLoadMoreUsers = (this.props.search.searchOffset < users.num_results)
-
+                var params = new URLSearchParams(this.props.location.search)
+                var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
+        
                 if (users.num_results === 0){
                     return (
                         <div>Sorry, no results found.</div>
@@ -299,7 +303,9 @@ class Search extends Component {
         }
         case "collections": {
             let user_collections = this.props.search.searchResults.collections ? this.props.search.searchResults.collections : null
-
+            var params = new URLSearchParams(this.props.location.search)
+            var offset = params.get("offset") ? parseInt(params.get("offset")) : 0
+    
             if (user_collections) {
                 let showLoadMoreCollections = (this.props.search.searchOffset < user_collections.num_results)
 
@@ -345,6 +351,8 @@ class Search extends Component {
                 <form id="search-field" onSubmit={this.handleSubmit}>
                     <input type="text"  id="search-main" placeholder="Search Library Item or User" onChange={this.handleSearch} value={this.props.search.query} />
                     
+                    <SearchFilterButton />
+
                     <select 
                         id="search-dropdown" 
                         value={this.props.searchFilters.searchFilters.preSearchType}
@@ -356,14 +364,14 @@ class Search extends Component {
                     </select>
 
                     <input type="submit" id="search-submit-btn" onClick={this.handleSubmit} />
-                    
-                    <div id="reset-search">
-                        <span onClick={this.handleSearchReset}>Reset Search</span>
-                    </div>
-
+                
                     <SearchFilter onSumbit={this.handleSubmit} />
                 </form>
                 
+                <div id="reset-search">
+                    <span onClick={this.handleSearchReset}>Reset Search</span>
+                </div>
+
                 <div className="results-tab">
                     <span 
                         onClick={() => this.handleSearchView("catalog")} 
