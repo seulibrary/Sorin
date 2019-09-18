@@ -50,12 +50,45 @@ defmodule ApiWeb.DashboardChannel do
 
   def handle_in("move_resource", payload, socket) do
     if can_edit_collection?(socket.assigns.user_id, payload["source_collection_id"]) || ( can_move_collection?(socket.assigns.user_id, payload["source_collection_id"]) && can_move_collection?(socket.assigns.user_id, payload["target_collection_id"])) do
-      Resources.move_resource_by_id(
+      resource = Resources.move_resource_by_id(
         payload["resource_id"],
         payload["target_collection_id"],
         payload["target_index"]
       )
-      broadcast!(socket, "move_resource", payload)
+      
+      # broadcast!(socket, "move_resource", payload)
+
+      if payload["target_collection_id"] == payload["source_collection_id"] do
+        FrontendWeb.Endpoint.broadcast_from!(
+          self(),
+          "collection:#{payload["target_collection_id"]}",
+          "move_resource", 
+          payload  
+        )
+      else
+        FrontendWeb.Endpoint.broadcast_from!(
+          self(),
+          "collection:#{payload["source_collection_id"]}",
+          "remove_resource",
+          %{
+            collection_id: payload["source_collection_id"], 
+            resource_id: payload["resource_id"]
+          }
+        )
+
+        FrontendWeb.Endpoint.broadcast!(
+          "collection:#{payload["target_collection_id"]}",
+          "add_resource_by_index", 
+          %{
+            resource_id: payload["resource_id"],
+            target_collection_id: payload["target_collection_id"], 
+            source_collection_id: payload["source_collection_id"],
+            target_index: payload["target_index"],
+            data: ApiWeb.CollectionView.render("resource.json", %{collection: resource})
+          }
+        )
+      end
+
       {:reply, {:ok, %{msg: "Resource moved."}}, socket}
     else
       {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
