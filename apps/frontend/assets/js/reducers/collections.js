@@ -1,5 +1,6 @@
 import Constants from "../constants"
 import { setPresence, presenceDiff } from '../actions/collections'
+import { DH_UNABLE_TO_CHECK_GENERATOR } from "constants"
 
 const initialState = {
     collections: [],
@@ -329,6 +330,7 @@ const collections = (state = initialState, action) => {
         }
 
     case Constants.ADD_RESOURCE:
+        console.log("add resource")
         return {
             ...state,
             collections: state.collections.map(
@@ -353,6 +355,132 @@ const collections = (state = initialState, action) => {
                     }
                 }
             )
+        }
+
+    case Constants.ADD_RESOURCE_BY_INDEX:
+        // check the exhisting state and see if it matches what is being requested. If so, don't do it.
+        if (state.collections.some(
+            (collection) => {
+                return collection.data.collection.resources.some(
+                    (r, i) => {
+                        return collection.data.collection.id == action.payload.target_collection_id && r.id === action.payload.resource_id &&
+                        i === action.payload.target_index
+                    })
+            }
+        )) {
+            return {
+                ...state
+            }
+        }
+        
+        return {
+            ...state,
+            collections: state.collections.map(
+                (collection, index) => {
+                    if (collection.data.collection.id === action.payload.target_collection_id) {
+                        let newResource = action.payload.data
+                        
+                        return {
+                            ...collection,
+                            data: {
+                                ...collection.data,
+                                collection: {
+                                    ...collection.data.collection,
+                                    
+                                    resources: insert(collection.data.collection.resources, action.payload.target_index, newResource)
+                                }
+                            }
+                        }
+                    } else {
+                        return collection
+                    }
+                }
+            )
+        }
+    case Constants.MOVE_RESOURCE:
+        let orig_state = state.collections
+        
+        // Ger original resource that is being moved
+        let originalResource = orig_state.map(
+            (collection, index) => {
+                if (collection.data.collection.id === action.payload.source_collection_id) {
+                    return collection.data.collection.resources.filter(resource => resource.id === action.payload.resource_id)
+                }
+            }
+        )
+
+        // clean up the results
+        let filteredOR = originalResource.filter(n => {
+            return n != undefined
+        })
+
+        if (!Array.isArray(filteredOR[0]) || !filteredOR[0].length) {
+            // array does not exist, is not an array, or is empty
+            // ⇒ do not attempt to process any further
+            return {
+                ...state
+            }
+        }
+
+        // if the move has already happened (i.e. this reducer has happened before the state was updated by the server.) don't do it.
+        if (orig_state.some(
+            (collection) => {
+                collection.data.collection.id === action.payload.source_collection_id &&
+                collection.data.collection.resources.some(
+                    (r, i) => {
+                        r.id === action.payload.resource_id &&
+                        i === action.payload.target_index
+                    })
+            }
+        )) {
+            return {
+                ...state
+            }
+        }
+
+        // remove resource from collection
+        let collectionsFilter = orig_state.map(
+            (collection, index) => {
+                if (collection.data.collection.id === action.payload.source_collection_id) {
+                    return {
+                        ...collection,
+                        data: {
+                            ...collection.data,
+                            collection: {
+                                ...collection.data.collection,
+                                resources: collection.data.collection.resources.filter(resource => resource.id !== action.payload.resource_id)
+                            }
+                        }
+                    }
+                } else {
+                    return collection
+                }
+            }
+        )
+        
+        // add resource into collection
+        let collectionsAdd = collectionsFilter.map(
+            (collection, index) => {
+                if (collection.data.collection.id === action.payload.target_collection_id) {
+                    return {
+                        ...collection,
+                        data: {
+                            ...collection.data,
+                            collection: {
+                                ...collection.data.collection,
+                                resources: insert(collection.data.collection.resources, action.payload.target_index, filteredOR[0][0])
+                            }
+                        }
+                    }
+                } else {
+                    return collection
+                }
+            }
+        )
+
+        return {
+            ...state,
+            collections: collectionsAdd
         }
     case Constants.EDIT_RESOURCE:
         return {
@@ -384,75 +512,7 @@ const collections = (state = initialState, action) => {
                 }
             )
         }
-    case Constants.MOVE_RESOURCE:
-        let orig_state = state.collections
-
-        // Ger original resource that is being moved
-        let originalResource = orig_state.map(
-            (collection, index) => {
-                if (collection.data.collection.id === action.payload.source_collection_id) {
-                    return collection.data.collection.resources.filter(resource => resource.id === action.payload.resource_id)
-                }
-            }
-        )
-
-        // clean up the results
-        let filteredOR = originalResource.filter(n => {
-            return n != undefined
-        })
-
-        if (!Array.isArray(filteredOR[0]) || !filteredOR[0].length) {
-            // array does not exist, is not an array, or is empty
-            // ⇒ do not attempt to process any further
-            return {
-                ...state
-            }
-        }
-
-        // remove resource from collection
-        let collectionsFilter = orig_state.map(
-            (collection, index) => {
-                if (collection.data.collection.id === action.payload.source_collection_id) {
-                    return {
-                        ...collection,
-                        data: {
-                            ...collection.data,
-                            collection: {
-                                ...collection.data.collection,
-                                resources: collection.data.collection.resources.filter(resource => resource.id !== action.payload.resource_id)
-                            }
-                        }
-                    }
-                } else {
-                    return collection
-                }
-            }
-        )
-
-        // add resource into collection
-        let collectionsAdd = collectionsFilter.map(
-            (collection, index) => {
-                if (collection.data.collection.id === action.payload.target_collection_id) {
-                    return {
-                        ...collection,
-                        data: {
-                            ...collection.data,
-                            collection: {
-                                ...collection.data.collection,
-                                resources: insert(collection.data.collection.resources, action.payload.index, filteredOR[0][0])
-                            }
-                        }
-                    }
-                } else {
-                    return collection
-                }
-            }
-        )
-
-        return {
-            ...state,
-            collections: collectionsAdd
-        }
+    
     case Constants.REMOVE_RESOURCE:
         return {
             ...state,
