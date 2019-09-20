@@ -17,7 +17,17 @@ export default class Citation extends Component {
 
     componentDidMount() {
         // set default value for citation as apa
-        this.setState(this.state.copyValue ? this.state.copyValue : this.whichCitation("apa"))
+        this.whichCitation("apa")
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.data != this.props.data) {
+            this.setState({
+                data: this.props.data
+            })
+
+            this.whichCitation("apa")
+        }
     }
 
     handleChange = (e) => {
