@@ -66,6 +66,44 @@ defmodule Core.CollectionsUsers do
   end
 
   @doc """
+  High-level function for approving or rejecting a shared collection.
+
+  Takes a valid CollectionsUsers id as an integer, and a boolean for whether
+  the share is approved or not.
+
+  If the share is approved, its collections_users pending_approval field is
+  set to false, its write_access field is set to true, and the user's
+  fullname is added to the list of write_users on the collection.
+
+  If the share is rejected, its collections_users record is removed.
+
+  ## Examples
+
+  iex> resolve_share_by_col_user_id(col_user_id, true)
+  {:ok, %CollectionsUsers{}}
+
+  iex> resolve_share_by_col_user_id(col_user_id, false)
+  :ok
+
+  """
+  def resolve_share_by_col_user_id(col_user_id, true) do
+    col_user = get_collection_user!(col_user_id)
+
+    update_collection_user(col_user, %{
+	  pending_approval: false,
+	  write_access: true})
+
+    Collections.add_write_user(col_user.collection_id, col_user.user_id)
+
+    get_collection_user!(col_user_id)
+  end
+
+  def resolve_share_by_col_user_id(col_user_id, false) do
+    get_collection_user!(col_user_id)
+    |> delete_collection_user
+  end
+
+  @doc """
   High-level function for removing a given collection from a given user's
   collections and re-indexing their remaining collections.
 
