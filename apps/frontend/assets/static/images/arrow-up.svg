@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="27px" viewBox="0 0 43 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>arrow</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Sorin-2019" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="Desktop-HD-Search-Copy" transform="translate(-214.000000, -289.000000)" stroke="#4E8496" stroke-width="5">
+            <g id="pop-up-item-attachements" transform="translate(152.000000, 253.000000)">
+                <g id="arrow" transform="translate(65.000000, 39.000000)">
+                    <path d="M0.5,20.5 L18.5,0.5" id="Line-5"></path>
+                    <path d="M18.5,20.5 L36.5,0.5" id="Line-5" transform="translate(27.500000, 10.500000) scale(-1, 1) translate(-27.500000, -10.500000) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
