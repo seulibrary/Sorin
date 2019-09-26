@@ -80,11 +80,11 @@ defmodule Core.CollectionsUsers do
 
   ## Examples
 
-  iex> resolve_share_by_col_user_id(col_user_id, true)
-  {:ok, %CollectionsUsers{}}
+      iex> resolve_share_by_col_user_id(col_user_id, true)
+      {:ok, %CollectionsUsers{}}
 
-  iex> resolve_share_by_col_user_id(col_user_id, false)
-  :ok
+      iex> resolve_share_by_col_user_id(col_user_id, false)
+      :ok
 
   """
   def resolve_share_by_col_user_id(col_user_id, true) do
@@ -104,12 +104,30 @@ defmodule Core.CollectionsUsers do
     |> delete_collection_user
   end
 
+  @doc """
+  This convenience function lists the fullnames of all users who have
+  been invited to share a given collection, but who have not yet approved
+  the share.
+
+  Takes a CollectionsUsers struct.
+
+  Returns a list of fullnames.
+
+  ## Examples
+
+      iex> get_pending_shares(%CollectionUser{})
+      ["Solo, H.", "Skywalker, L."]
+
+      iex> get_pending_shares([No pending])
+      []
+
+  """
   def get_pending_shares(col_user) do
     from(cu in CollectionUser,
       left_join: u in Accounts.User,
       on: cu.user_id == u.id,
-      where: cu.collection_id == ^col_user.collection_id and
-      cu.pending_approval == true,
+      where: cu.collection_id == ^col_user.collection_id
+      and cu.pending_approval == true,
       select: u.fullname
     )
     |> Repo.all()
