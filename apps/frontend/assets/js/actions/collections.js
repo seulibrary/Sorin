@@ -239,6 +239,15 @@ const _actions = (channel) => {
                 type: Constants.FILE_RESET_STATUS
             })
         })
+        
+        channel.on("accept_shared_collection", payload => {
+            console.log("accecpted", payload)
+        })
+
+
+        channel.on("update_write_users", payload => {
+            console.log("write users", payload)
+        })
     }
 }
 
@@ -390,4 +399,19 @@ export const updateResourceNote = (channel, collection_id, resource_id, note_id,
             note: content
         })
     }
+}
+
+export const shareCollection = (dashboard_channel, collection_id, user_email) => {
+    dashboard_channel.push("share_collection", {
+        collection_id: parseInt(collection_id),
+        user_email: user_email
+    })
+}
+
+export const resolveCollectionShare = (channel, col_user_id, col_id, accept) => {
+    channel.push("resolve_shared_collection", {
+        collection_user_id: parseInt(col_user_id),
+        collection_id: parseInt(col_id),
+        accept: accept
+    })
 }
