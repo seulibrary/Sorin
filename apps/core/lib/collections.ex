@@ -333,12 +333,12 @@ defmodule Core.Collections do
       })
 
     case new_col_user do
-      {:ok, _} ->
-        "Collection shared and is now pending user's approval."
+      {:ok, collectionUser} ->
+        {:ok, collectionUser |> Repo.preload(:collection)}
 
       _ ->
-        "Error: User has cloned this collection and must remove the clone to " <>
-          "become an author."
+        {:error, "Error: User has cloned this collection and must remove the clone to " <>
+        "become an author." }
     end
   end
 
