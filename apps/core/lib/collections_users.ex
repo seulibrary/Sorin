@@ -7,6 +7,7 @@ defmodule Core.CollectionsUsers do
   alias Core.Repo
 
   alias Core.{
+    Accounts,
     Collections,
     CollectionsUsers.CollectionUser,
     Files
@@ -101,6 +102,17 @@ defmodule Core.CollectionsUsers do
   def resolve_share_by_col_user_id(col_user_id, false) do
     get_collection_user!(col_user_id)
     |> delete_collection_user
+  end
+
+  def get_pending_shares(col_user) do
+    from(cu in CollectionUser,
+      left_join: u in Accounts.User,
+      on: cu.user_id == u.id,
+      where: cu.collection_id == ^col_user.collection_id and
+      cu.pending_approval == true,
+      select: u.fullname
+    )
+    |> Repo.all()
   end
 
   @doc """
