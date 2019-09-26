@@ -5,8 +5,24 @@ import { EditCollection } from "../Collection"
 import { Resource, NewResource } from "../CollectionResource"
 import { openModal } from "../../actions/modal"
 import { uuidv4 } from "../../utils"
-
+import {resolveCollectionShare} from "../../actions/collections"
 class Collection extends Component {
+    acceptShare = () => {
+        let collectionData = this.props.collections.collections.find(
+            (collection) => collection.data.collection.id === this.props.id
+        )
+        
+        this.props.dispatch(resolveCollectionShare(collectionData.channel, collectionData.id, this.props.id, true))
+    }
+
+    denyShare = () => {
+        let collectionData = this.props.collections.collections.find(
+            (collection) => collection.data.collection.id === this.props.id
+        )
+            
+        this.props.dispatch(resolveCollectionShare(collectionData.channel, collectionData.id, this.props.id, false))
+    }
+
     render() {
         const editModalId = uuidv4()
         const newModalId = uuidv4()
@@ -19,6 +35,7 @@ class Collection extends Component {
         let collectionStyle = {
             backgroundColor: collectionData.data.color || ""
         }
+        let pendingShare = (collectionData.data.cloned_from == null && collectionData.data.pending_approval == true && collectionData.data.write_access == false)
 
         return (
             <Draggable draggableId={"collection-" + this.props.id} index={this.props.index} isDragDisabled={this.props.index === 0}>
@@ -36,10 +53,24 @@ class Collection extends Component {
                             
                             {collectionData.data.collection.files.length > 0 ? <span className="attach"></span> : ""}
                             {collectionData.data.collection.published ? <span className="flag">public</span> : ""}
-                            {collectionData.data.write_access ? "" : <span className="flag" style={cloneStyle}>Cloned</span>}
+                            {collectionData.data.cloned_from == null ? "" : <span className="flag" style={cloneStyle}>Cloned</span>}
+                            
+
+
+                            {(collectionData.data.cloned_from == null && collectionData.data.pending_approval == true && collectionData.data.write_access == false) && <span className="flag" style={cloneStyle}>Pending share</span>}
+
+                            {( collectionData.data.cloned_from == null && collectionData.data.pending_approval == false && collectionData.data.write_access == true && collectionData.data.collection.write_users.length > 1) && <span className="flag" style={cloneStyle}>Shared</span>}
 
                             <h3 className="group-title" {...provided.dragHandleProps} className="title">                    {collectionData.data.collection.title}
                             </h3>
+
+                            {pendingShare &&
+                            <div>
+                                This collection has been shared with you. Do you wish to colaborate?
+                                <span onClick={this.acceptShare}>Accpect</span>
+                                <span onClick={this.denyShare}>Deny</span>
+                            </div>
+                            }
 
                             <Droppable droppableId={"droppable-" + collectionData.data.collection.id} type="resource" isDropDisabled={!collectionData.data.write_access}>
                                 {provided => (
@@ -88,7 +119,7 @@ export default connect(
     function mapStateToProps(state) {
         return {
             modals: state.modals,
-            collections: state.collections,
+            collections: state.collections
         }
     },
     function mapDispatchToProps(dispatch) {
