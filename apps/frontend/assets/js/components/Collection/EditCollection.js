@@ -27,6 +27,10 @@ import { siteUrl, uuidv4 } from "../../utils"
 class EditCollection extends Component {
     constructor(props) {
         super(props)
+
+        this.state = {
+            contributor: ""
+        }
     }
 
     onTitleChange = (e) => {
@@ -65,6 +69,7 @@ class EditCollection extends Component {
                 ))
     }
 
+    
     onTagsChange = (tags, changed) => {
         let addOrDelete = tags.indexOf(changed[0])
 
@@ -198,9 +203,9 @@ class EditCollection extends Component {
         this.props.dispatch(googleExport(collectionData.channel, collectionData))
     }
 
-    shareCollection = () => {
-
-        this.props.dispatch(shareCollection(collection_id, user_id))
+    shareThisCollection = () => {
+        let email = "test@email.com"
+        this.props.dispatch(shareCollection(this.props.session.dashboardChannel, this.props.id, email))
     }
 
     findUser = () => {
@@ -283,6 +288,19 @@ class EditCollection extends Component {
                                     }
                                 </div>
                             )}
+
+                            <Accordion title="Collaboration">
+                                <label>Add Contirbutor</label> 
+                                <input type="text" />
+                                <button onClick={this.shareThisCollection}>Add</button>
+                                <ul>
+                                    {data.collection.write_users.map((user, i) => {
+                                        return <li key={"colab-user-"+i+data.id}>{user}</li>
+                                    })}
+                                </ul>
+
+                            </Accordion>
+                            
                         </div>
 
                         <div className="window-right">
