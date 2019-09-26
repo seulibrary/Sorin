@@ -22,22 +22,26 @@ defmodule ApiWeb.CollectionChannel do
         Logger.info "> Connect to channel collection:" <> collection_id
 
         send(self(), :after_join)
+        
+        socket = 
+          socket
+          |> assign(:can_move, can_move_collection?(socket.assigns.user_id, collection_id))
+          |> assign(:can_edit, can_edit_collection?(socket.assigns.user_id, collection_id))
 
         {:ok, socket}
       {:error, msg} ->
         Logger.error "> Error Connecting to channel collection:" <> collection_id
+        
         {:reply, {:error, %{msg: msg}}, socket}
     end
   end
 
   def handle_info(:after_join, socket) do
-    # adding test data in the map. Could add in extra data like user name?
     collection_id = String.split(socket.topic, ":") |> List.last
 
     {:ok, _} = Presence.track(socket, :users, %{
           name: socket.assigns.user.fullname,
-          collection_id: collection_id,
-          # can_edit_collection: can_edit_collection?(socket.assigns.user_id, collection_id),
+          editing: false,
           online_at: inspect(System.system_time(:second))
                               })
 
@@ -52,6 +56,7 @@ defmodule ApiWeb.CollectionChannel do
 
   def handle_in("edit_collection", payload, socket) do
     Logger.info "> Edit Collection"
+    
 
     case can_move_collection(socket.assigns.user_id, payload["collection"]["id"]) do
       {:ok, collectionUser} ->
@@ -401,6 +406,50 @@ defmodule ApiWeb.CollectionChannel do
 
     push(socket, "end_google_export", %{})
     {:reply, {:ok, %{msg: "File exported."}}, socket}
+  end
+  
+  def handle_in("resolve_shared_collection", %{"collection_user_id" => col_user_id, "collection_id" => col_id, "accept" => true}, socket) do
+    cu = Core.CollectionsUsers.resolve_share_by_col_user_id(col_user_id, true)
+    
+    socket =
+    socket
+    |> assign(:can_edit, true)
+
+    FrontendWeb.Endpoint.broadcast!(
+      "collection:#{col_id}",
+      "accept_shared_collection",
+      "data goes here"
+     )
+  
+     users = Core.CollectionsUsers.get_pending_shares(cu)
+
+    push(socket, "update_write_users", %{users: users})
+
+    {:noreply, socket}
+  end
+
+  def handle_in("resolve_shared_collection", %{"collection_user_id" => col_user_id, "collection_id" => col_id, "accept" => false}, socket) do
+
+    collection_user = Core.CollectionsUsers.get_collection_user!(col_user_id)
+    users = Core.CollectionsUsers.get_pending_shares(collection_user)
+
+    Core.CollectionsUsers.resolve_share_by_col_user_id(col_user_id, false)
+
+    FrontendWeb.Endpoint.broadcast!(
+                   "collection:#{col_id}",
+                    "remove_collection",
+                    %{collection_id: col_id}
+                  )
+    
+    push(socket, "update_write_users", %{users: users})
+
+    {:noreply, socket}
+  end
+
+  def handle_in("update_write_users", payload, socket) do
+    # Update all users about the new write access for the collection
+    broadcast!(socket, "update_write_users", payload)
+    {:noreply, socket}
   end
 
   def terminate(reason, socket) do
