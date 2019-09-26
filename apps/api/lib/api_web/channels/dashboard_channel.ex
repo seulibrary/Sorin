@@ -56,8 +56,6 @@ defmodule ApiWeb.DashboardChannel do
         payload["target_index"]
       )
       
-      # broadcast!(socket, "move_resource", payload)
-
       if payload["target_collection_id"] == payload["source_collection_id"] do
         FrontendWeb.Endpoint.broadcast_from!(
           self(),
@@ -124,6 +122,7 @@ defmodule ApiWeb.DashboardChannel do
           )
 
           broadcast!(socket, "remove_collection", payload)
+          
           {:noreply, socket}
         false -> 
           {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
@@ -133,18 +132,62 @@ defmodule ApiWeb.DashboardChannel do
     end
   end
 
-  def handle_in("share_collection", _payload, socket) do
-    # Does user exist?
-    #Share success?
-
-    #Collections.share_collection(payload["collection_id"], payload["user_email"])
-    {:noreply, socket}
+  def handle_in("share_collection", payload, socket) do
+    if can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+      case user_exists?(payload["user_email"]) do
+        {:ok, user} ->
+          case user_has_collection?(user, payload["collection_id"]) do
+            :ok ->
+              case Collections.share_collection(payload["collection_id"], user.id) do
+                {:ok, collectionUser} -> 
+                  Logger.info "> Collection Shared"
+                  FrontendWeb.Endpoint.broadcast!(
+                   "dashboard:#{user.id}",
+                    "add_collection_to_dashboard",
+                    ApiWeb.CollectionView.render("dashboardCollection.json", collection: collectionUser)
+                  )
+                  
+                  {:reply, {:ok, %{msg: "Collection shared."}}, socket}
+                {:error, msg} -> 
+                  {:reply, {:error, %{msg: msg}}, socket}
+              end             
+            :error ->
+              {:reply, 
+                {:error, 
+                  %{msg: "User is already a collaborator for collection." <>
+                  " If you do not see the user listed, they may not have accepted" <>
+                  " the share yet."}}, socket}
+          end
+        {:error, msg} ->
+          {:reply, {:error, msg}, socket}
+      end
+    else
+      {:reply, {:error, %{msg: "Invalid Permissions."}}, socket}
+    end
   end
 
-  def handle_in("approve_collection", _payload, socket) do
-    # Update collection to pending false
-    {:noreply, socket}
+  defp user_exists?(email) do
+    case Core.Accounts.get_user_by_email!(email) do  
+      %Accounts.User{} = user -> 
+        {:ok, user}
+      _ -> 
+        {:error, %{msg: "User not found."}}
+    end
   end
+
+  defp user_has_collection?(user, collection_id) do
+    col_user = Core.CollectionsUsers.CollectionUser 
+      |> Core.Repo.get_by(
+        %{collection_id: collection_id, 
+        user_id: user.id})
+    case col_user do
+      %Core.CollectionsUsers.CollectionUser{} ->
+        :error
+      _ ->
+        :ok
+    end
+  end
+
 
   def handle_in("clone_collection", payload, socket) do
     collection =
