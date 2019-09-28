@@ -173,18 +173,10 @@ const _actions = (channel) => {
             })
         })
 
-        channel.on("edit_collection_notes", payload => {
+        channel.on("update_collection_notes", payload => {
             dispatch({
-                type: Constants.EDIT_COLLECTION_NOTES,
-                payload: payload
-            })
-        })
-
-        channel.on("add_collection_note", payload => {
-            dispatch({
-                type: Constants.ADD_COLLECTION_NOTE,
-                collection_id: payload.collection_id,
-                payload: payload.payload
+                type: Constants.UPDATE_COLLECTION_NOTES,
+                ...payload
             })
         })
 
@@ -216,12 +208,10 @@ const _actions = (channel) => {
             })
         })
 
-        channel.on("add_resource_note", payload => {
+        channel.on("update_resource_notes", payload => {
             dispatch({
-                type: Constants.ADD_RESOURCE_NOTE,
-                collection_id: payload.collection_id,
-                resource_id: payload.resource_id,
-                payload: payload.payload
+                type: Constants.UPDATE_RESOURCE_NOTES,
+                ...payload
             })
         })
 
@@ -262,18 +252,22 @@ export const createCollection = (channel, title) => {
     })
 }
 
-export const saveResourceToCookie = (resource, login_state) => {
-    window.localStorage.setItem(resource.title + "_sorin_resource", JSON.stringify(resource))
-    window.location.href = "/auth/google?state=" + encodeURIComponent(login_state)
-}
+export const updateCollectionNote = (channel, collection_id, note_id, content) => {
+    return (dispatch) => {
+        let id = note_id == "" || note_id == null ? null : note_id
 
-export const checkForResourceCookies = (channel, collection_id) => {
-    _.forIn(window.localStorage, (value, objKey) => {
-        if (true === _.endsWith(objKey, '_sorin_resource')) {
-            createResource(channel, collection_id, JSON.parse(window.localStorage.getItem(objKey)))
-        }
-    });
-    window.localStorage.clear()
+        channel.push("update_collection_notes", {
+            collection_id: parseInt(collection_id),
+            note_id: id,
+            note: content
+        })
+
+        dispatch({
+            type: Constants.UPDATE_COLLECTION_NOTES,
+            collection_id: collection_id,
+            note: {body: content, id: note_id}
+        })
+    }
 }
 
 export const moveCollection = (channel, collection_id, new_index, old_index) => {
@@ -293,50 +287,7 @@ export const moveCollection = (channel, collection_id, new_index, old_index) => 
                 old_index: parseInt(old_index)
             }
         })
-
     }
-}
-
-export const moveResource = (channel, resource_id, source_collection_id, target_collection_id, target_index) => {
-    return (dispatch) => {
-        channel.push("move_resource", {
-            resource_id: parseInt(resource_id),
-            source_collection_id: parseInt(source_collection_id),
-            target_collection_id: parseInt(target_collection_id),
-            target_index: parseInt(target_index)
-        })
-
-        dispatch({
-            type: Constants.MOVE_RESOURCE,
-            payload: {
-                source_collection_id: parseInt(source_collection_id),
-                target_collection_id: parseInt(target_collection_id),
-                resource_id: parseInt(resource_id),
-                index: parseInt(target_index)
-            }
-        })
-    }
-}
-
-export const createResource = (channel, collection_id, data) => {
-    channel.push("create_resource", {
-        collection_id: parseInt(collection_id),
-        data: data
-    })
-}
-
-export const editResource = (channel, collection_id, data) => {
-    channel.push("edit_resource", {
-        collection_id: parseInt(collection_id),
-        data: data
-    })
-}
-
-export const removeResource = (channel, collection_id, resource_id) => {
-    channel.push("remove_resource", {
-        collection_id: parseInt(collection_id),
-        resource_id: parseInt(resource_id)
-    })
 }
 
 export const cloneCollection = (channel, collection_id) => {
@@ -367,4 +318,80 @@ export const deleteCollectionTag = (channel, collection_id, tag) => {
         collection_id: parseInt(collection_id),
         tag: tag
     })
+}
+
+export const saveResourceToCookie = (resource, login_state) => {
+    window.localStorage.setItem(resource.title + "_sorin_resource", JSON.stringify(resource))
+    window.location.href = "/auth/google?state=" + encodeURIComponent(login_state)
+}
+
+export const checkForResourceCookies = (channel, collection_id) => {
+    _.forIn(window.localStorage, (value, objKey) => {
+        if (true === _.endsWith(objKey, '_sorin_resource')) {
+            createResource(channel, collection_id, JSON.parse(window.localStorage.getItem(objKey)))
+        }
+    });
+    window.localStorage.clear()
+}
+
+export const createResource = (channel, collection_id, data) => {
+    channel.push("create_resource", {
+        collection_id: parseInt(collection_id),
+        data: data
+    })
+}
+
+export const editResource = (channel, collection_id, data) => {
+    channel.push("edit_resource", {
+        collection_id: parseInt(collection_id),
+        data: data
+    })
+}
+
+export const moveResource = (channel, resource_id, source_collection_id, target_collection_id, target_index) => {
+    return (dispatch) => {
+        channel.push("move_resource", {
+            resource_id: parseInt(resource_id),
+            source_collection_id: parseInt(source_collection_id),
+            target_collection_id: parseInt(target_collection_id),
+            target_index: parseInt(target_index)
+        })
+
+        dispatch({
+            type: Constants.MOVE_RESOURCE,
+            payload: {
+                source_collection_id: parseInt(source_collection_id),
+                target_collection_id: parseInt(target_collection_id),
+                resource_id: parseInt(resource_id),
+                index: parseInt(target_index)
+            }
+        })
+    }
+}
+
+export const removeResource = (channel, collection_id, resource_id) => {
+    channel.push("remove_resource", {
+        collection_id: parseInt(collection_id),
+        resource_id: parseInt(resource_id)
+    })
+}
+
+export const updateResourceNote = (channel, collection_id, resource_id, note_id, content) => {
+    return (dispatch) => {
+        let id = note_id == "" || note_id == null ? null : note_id
+
+        channel.push("update_resource_notes", {
+            collection_id: parseInt(collection_id),
+            resource_id: parseInt(resource_id),
+            note_id: id,
+            note: content
+        })
+
+        dispatch({
+            type: Constants.UPDATE_RESOURCE_NOTES,
+            collection_id: collection_id,
+            resource_id: parseInt(resource_id),
+            note: {body: content, id: note_id}
+        })
+    }
 }
