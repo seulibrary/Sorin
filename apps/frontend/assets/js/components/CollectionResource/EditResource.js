@@ -2,7 +2,11 @@ import React, { Component } from "react"
 import { connect } from "react-redux"
 import Citation from "../Citation"
 import Accordion from "../Accordion"
-import { removeResource, editResource } from "../../actions/collections"
+import { 
+    removeResource, 
+    editResource, 
+    updateResourceNote 
+} from "../../actions/collections"
 import Dropzone from "react-dropzone"
 import Loader from "../Loader"
 import Form from "../Form"
@@ -96,24 +100,14 @@ class EditResource extends Component {
     }
 
     onNoteChange = (id, content) => {
-        if (!id) {
-            this.props.dispatch({
-                type: Constants.ADD_CURRENT_RESOURCE_NOTE,
-                collection_id: this.props.parent,
-                resource_id: this.props.id,
-                payload: content
-            })
-        }
-
-        if (id) {
-            this.props.dispatch({
-                type: Constants.EDIT_RESOURCE_NOTES,
-                collection_id: this.props.parent,
-                resource_id: this.props.id,
-                note_id: id,
-                payload: content
-            })
-        }
+        this.props.dispatch(
+            updateResourceNote(
+                this.props.channel,
+                this.props.parent,
+                this.props.id,
+                id,
+                content
+            ))
     }
 
     handleResourceDelete = e => {
@@ -176,12 +170,6 @@ class EditResource extends Component {
                     resourceData
                 )
             }
-            // clear out temp note field.
-            this.props.dispatch({
-                type: Constants.CLEAR_CURRENT_RESOURCE_NOTE,
-                collection_id: this.props.parent,
-                resource_id: this.props.id
-            })
         }
     }
 

@@ -10,7 +10,8 @@ import { connect } from "react-redux"
 import { openModal, closeModal } from "../../actions/modal"
 import {
     addCollectionTag,
-    deleteCollectionTag
+    deleteCollectionTag,
+    updateCollectionNote
 } from "../../actions/collections"
 import { 
     uploadFile, 
@@ -54,22 +55,13 @@ class EditCollection extends Component {
     }
 
     onNoteChange = (id, content) => {
-        if (!id) {
-            this.props.dispatch({
-                type: Constants.ADD_CURRENT_COLLECTION_NOTE,
-                collection_id: this.props.id,
-                payload: content
-            })
-        }
-
-        if (id) {
-            this.props.dispatch({
-                type: Constants.EDIT_COLLECTION_NOTES,
-                collection_id: this.props.id,
-                note_id: id,
-                payload: content
-            })
-        }
+        this.props.dispatch(
+            updateCollectionNote(
+                this.props.channel, 
+                this.props.id, 
+                id, 
+                content
+                ))
     }
 
     onTagsChange = (tags, changed) => {
@@ -150,11 +142,6 @@ class EditCollection extends Component {
         )
 
         collectionData.channel.push("edit_collection", collectionData.data)
-
-        this.props.dispatch({
-            type: Constants.CLEAR_CURRENT_COLLECTION_NOTE,
-            collection_id: this.props.id
-        })
     }
 
     handleDeleteCollection = e => {
@@ -212,7 +199,7 @@ class EditCollection extends Component {
 
     render() {
         let collectionData = this.props.collections.collections.find(
-            collection => collection.data.collection.id === this.props.id
+            (collection) => collection.data.collection.id === this.props.id
         )
         let data = collectionData.data
         let showFiles = data.collection.hasOwnProperty("files")

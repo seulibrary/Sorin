@@ -217,14 +217,12 @@ const collections = (state = initialState, action) => {
             )
         }
 
-    case Constants.EDIT_COLLECTION_NOTES:
+    case Constants.UPDATE_COLLECTION_NOTES:
         return {
             ...state,
             collections: state.collections.map(
                 (collection, index) => {
                     if (collection.data.collection.id === action.collection_id) {
-                        let notes = collection.data.collection.notes
-
                         return {
                             ...collection,
                             data: {
@@ -232,73 +230,9 @@ const collections = (state = initialState, action) => {
                                 collection: {
                                     ...collection.data.collection,
                                     notes: {
-                                        ...collection.data.collection.notes,
-                                        body: action.payload
+                                        ...action.note
                                     }
                                 }
-                            }
-                        }
-                    } else {
-                        return collection
-                    }
-                }
-            )
-        }
-
-    case Constants.ADD_COLLECTION_NOTE:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-                    if (collection.data.collection.id === action.collection_id) {
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                collection: {
-                                    ...collection.data.collection,
-                                    notes: action.payload
-                                }
-                            }
-                        }
-                    } else {
-                        return collection
-                    }
-                }
-            )
-        }
-
-    case Constants.ADD_CURRENT_COLLECTION_NOTE:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-                    if (collection.data.collection.id === action.collection_id) {
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                currentCollectionNote: action.payload
-                            }
-                        }
-                    } else {
-                        return collection
-                    }
-                }
-            )
-        }
-
-    case Constants.CLEAR_CURRENT_COLLECTION_NOTE:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-                    if (collection.data.collection.id === action.collection_id) {
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                currentCollectionNote: ""
                             }
                         }
                     } else {
@@ -578,145 +512,41 @@ const collections = (state = initialState, action) => {
             )
         }
 
-    case Constants.EDIT_RESOURCE_NOTES:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-                    if (collection.data.collection.id === action.collection_id) {
-                        let resources = collection.data.collection.resources.map((resc, index) => {
-                            if (resc.id === action.resource_id) {
-                                return {
-                                    ...resc,
-                                    notes: {
-                                        ...resc.notes,
-                                        body: action.payload
+    case Constants.UPDATE_RESOURCE_NOTES:
+            return {
+                ...state,
+                collections: state.collections.map(
+                    (collection, index) => {
+                        if (collection.data.collection.id === action.collection_id) {
+                            return {
+                                ...collection,
+                                data: {
+                                    ...collection.data,
+                                    collection: {
+                                        ...collection.data.collection,
+                                        resources: collection.data.collection.resources.map((resc, index) => {
+                                            if (resc.id === action.resource_id) {
+                                                return {
+                                                    ...resc,
+                                                    notes: {
+                                                        ...action.note
+                                                    }
+                                                }
+                                            } else {
+                                                return resc
+                                            }
+                                        })
                                     }
                                 }
-                            } else {
-                                return resc
                             }
-                        })
-
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                collection: {
-                                    ...collection.data.collection,
-                                    resources: resources
-                                }
-                            }
+                            
+                        } else {
+                            return collection
                         }
-                    } else {
-                        return collection
                     }
-                }
-            )
-        }
-
-    case Constants.ADD_RESOURCE_NOTE:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-
-                    if (collection.data.collection.id === action.collection_id) {
-                        let resources = collection.data.collection.resources.map((resc, index) => {
-                            if (resc.id === action.resource_id) {
-                                return {
-                                    ...resc,
-                                    notes: action.payload
-                                }
-                            } else {
-                                return resc
-                            }
-                        })
-
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                collection: {
-                                    ...collection.data.collection,
-                                    resources: resources
-                                }
-                            }
-                        }
-                    } else {
-                        return collection
-                    }
-                }
-            )
-        }
-
-    case Constants.ADD_CURRENT_RESOURCE_NOTE:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-                    if (collection.data.collection.id === action.collection_id) {
-                        let resources = collection.data.collection.resources.map((resc, index) => {
-                            if (resc.id === action.resource_id) {
-                                return {
-                                    ...resc,
-                                    currentCollectionNote: action.payload
-                                }
-                            } else {
-                                return resc
-                            }
-                        })
-
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                collection: {
-                                    ...collection.data.collection,
-                                    resources: resources
-                                }
-                            }
-                        }
-                    } else {
-                        return collection
-                    }
-                }
-            )
-        }
-
-    case Constants.CLEAR_CURRENT_RESOURCE_NOTE:
-        return {
-            ...state,
-            collections: state.collections.map(
-                (collection, index) => {
-                    if (collection.data.collection.id === action.collection_id) {
-                        let resources = collection.data.collection.resources.map((resc, index) => {
-                            if (resc.id === action.resource_id) {
-                                return {
-                                    ...resc,
-                                    currentCollectionNote: ""
-                                }
-                            } else {
-                                return resc
-                            }
-                        })
-
-                        return {
-                            ...collection,
-                            data: {
-                                ...collection.data,
-                                collection: {
-                                    ...collection.data.collection,
-                                    resources: resources
-                                }
-                            }
-                        }
-                    } else {
-                        return collection
-                    }
-                }
-            )
-        }
+                )
+            }
+        
 
     case Constants.FILE_UPLOAD:
         if (action.payload.resource_id) {
