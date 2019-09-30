@@ -256,16 +256,16 @@ export const updateCollectionNote = (channel, collection_id, note_id, content) =
     return (dispatch) => {
         let id = note_id == "" || note_id == null ? null : note_id
 
-        channel.push("update_collection_notes", {
-            collection_id: parseInt(collection_id),
-            note_id: id,
-            note: content
-        })
-
         dispatch({
             type: Constants.UPDATE_COLLECTION_NOTES,
             collection_id: collection_id,
             note: {body: content, id: note_id}
+        })
+
+        channel.push("update_collection_notes", {
+            collection_id: parseInt(collection_id),
+            note_id: id,
+            note: content
         })
     }
 }
@@ -380,18 +380,18 @@ export const updateResourceNote = (channel, collection_id, resource_id, note_id,
     return (dispatch) => {
         let id = note_id == "" || note_id == null ? null : note_id
 
-        channel.push("update_resource_notes", {
-            collection_id: parseInt(collection_id),
-            resource_id: parseInt(resource_id),
-            note_id: id,
-            note: content
-        })
-
         dispatch({
             type: Constants.UPDATE_RESOURCE_NOTES,
             collection_id: collection_id,
             resource_id: parseInt(resource_id),
             note: {body: content, id: note_id}
+        })
+        
+        channel.push("update_resource_notes", {
+            collection_id: parseInt(collection_id),
+            resource_id: parseInt(resource_id),
+            note_id: id,
+            note: content
         })
     }
 }
