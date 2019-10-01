@@ -196,7 +196,6 @@ const _actions = (channel) => {
             })
         })
 
-        
         channel.on("move_resource", payload => {
             dispatch({
                 type: Constants.MOVE_RESOURCE,
@@ -365,10 +364,10 @@ export const moveResource = (channel, resource_id, source_collection_id, target_
         dispatch({
             type: Constants.MOVE_RESOURCE,
             payload: {
+                resource_id: parseInt(resource_id),
                 source_collection_id: parseInt(source_collection_id),
                 target_collection_id: parseInt(target_collection_id),
-                resource_id: parseInt(resource_id),
-                index: parseInt(target_index)
+                target_index: parseInt(target_index)
             }
         })
     }
