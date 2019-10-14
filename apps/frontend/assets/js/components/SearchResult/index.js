@@ -14,7 +14,7 @@ class SearchResult extends Component {
         super(props)
 
         this.state = {
-            saveit: <span>save to<br/> collections</span>,
+            saveit: <span>save to collections</span>,
             clicked: ""
         }
     }

@@ -234,7 +234,7 @@ class EditCollection extends Component {
 
                             {this.props.index != 0 && (
                                 <div>
-                                    <label>Title</label>
+                                    <label>Collection Title</label>
 
                                     {data.write_access ? (
                                         <input

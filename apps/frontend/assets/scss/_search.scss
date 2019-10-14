@@ -288,6 +288,13 @@
 
 			.actions {	
 				text-align: right;
+				margin-left: 1em;
+
+				@media (max-width: $botMinWidth) {
+					width: 100%;
+					padding-top: 1em;
+					margin-left: 0em;
+				}
 
 				.save {
 					cursor: pointer;
@@ -314,6 +321,9 @@
 
 					span {
 						color: white;
+						max-width: 120px;
+						display: block;
+						margin: auto;
 					}
 					
 					&:hover {

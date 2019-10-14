@@ -76,7 +76,7 @@ class ViewResource extends Component {
 
 	    resetSaveItState = () => {
 	        this.setState({
-	            saveit: <span>save to<br/> collections</span>
+	            saveit: <span>save to collections</span>
 	        })
 	    }
 	
@@ -170,7 +170,14 @@ class ViewResource extends Component {
                         <label>
                             
                             
-                            {data.type}
+                            {data.type} 
+
+
+                            {data.call_number && (
+
+                            <span class="callNumber available green">  - Munday Library Stacks {data.call_number} - {data.availability_status}</span>
+
+                            )}
 {/*                             
                             {data.catalog_url && (
                                 <a
@@ -187,8 +194,19 @@ class ViewResource extends Component {
                         </label>
                       
                         <h2 className={"full-width resource-title"}>
-                            {data.title} <span>({data.date})</span>
+                            {data.title} <span><i>({data.date})</i></span>
                         </h2>
+                        {data.is_part_of && (
+                      
+                      <p><i>
+                  
+                      
+                      {data.is_part_of}
+                      
+                      </i></p>
+
+                  
+                    )}
                         
                         {data.creator && (
                       
@@ -201,10 +219,16 @@ class ViewResource extends Component {
                             
                             {data.creator.map((c, index) => (
                                 <li key={index}>
-                                    <span>
+                                    
+
+                                    <a 
+                                    href= {"/search?query=" + c  }
+
+                                    ///search?query=Martin%2C+Kirsten&filters=%5Bsearch_by=creator%26item_type=all%26sort_by=rank%5D
+                                    >
                                         
                                         {c}
-                                    </span>
+                                    </a>
                                     
                                 </li>
                             ))}
@@ -215,41 +239,30 @@ class ViewResource extends Component {
                       
                         )}
 
-                        
-                      
-                       {data.description && (
-                      
-	                    <div>
-	                    <h4 className="more-info">Publication:</h4>
-	                    
-	                    {data.publisher}
-	                    
-	                    
-	                    </div>
-                      
-                        )}
-
-                       
-                       
                        
                         {data.description && (
                       
 	                    <div>
-	                    <h4 className="more-info">Description:</h4>
-	                    
-	                    {data.description}
-	                    
-	                    
+	                        <h4 className="more-info">Description:</h4>
+	                        {data.description}
 	                    </div>
                       
                         )}
-                        
-                        
+
+                        {data.publisher && (
+                                    
+                        <div>
+                            <h4 className="more-info">Publication:</h4>
+                            {data.publisher}
+                        </div>
+                    
+                        )}
+
                         
                         {data.subject && (
                       
 	                    <div>
-	                    <h4 className="more-info">Subject:</h4>
+	                        <h4 className="more-info">Subject:</h4>
 	                    
                         
                         
@@ -259,7 +272,9 @@ class ViewResource extends Component {
                             {subjects.map((f, index) => (
                                 <li key={index}>
                                     <a 
-                                    href= {"/search?query=" + f }
+                                    href= {"/search?query=" + f + "&filters=[search_by=sub]"}
+
+                                    ///search?query=Martin%2C+Kirsten&filters=%5Bsearch_by=creator%26item_type=all%26sort_by=rank%5D
                                     >
                                         
                                         {f}
@@ -273,6 +288,44 @@ class ViewResource extends Component {
 	                    </div>
                       
                         )}
+
+
+                            {data.format && (
+                                    
+                                    <div>
+                                        <p><b >FORMAT: </b>
+                                        
+                                        {data.format}
+                                        
+                                        </p>
+                                    </div>
+                                
+                                    )}
+
+                                    {data.language && (
+                                    
+                                    <div>
+                                        <p><b >LANGUAGE: </b>
+                                        
+                                        {data.language}
+                                        
+                                        </p>
+                                    </div>
+                                
+                                    )}
+
+                                        {data.doi && (
+                                    
+                                    <div>
+                                    <p><b >DOI: </b>
+                                    
+                                    {data.doi}
+                                    
+                                    </p>
+                                    </div>
+                                
+                                    )}
+
 
                         {data.identifier && (
                              <Accordion

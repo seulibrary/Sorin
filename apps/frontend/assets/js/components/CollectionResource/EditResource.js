@@ -198,7 +198,7 @@ class EditResource extends Component {
             collection => collection.data.collection.id === this.props.parent
         )
         let data = {}
-
+        
         if (this.props.hasOwnProperty("data")) {
             data = this.props.data
         } else {
@@ -211,7 +211,7 @@ class EditResource extends Component {
                 ? { readOnly: true }
                 : {}
         let showFiles = this.props.showFiles === false ? false : true
-  
+        console.log(data);
         return (
             <Form
                 submit={this.handleSubmit}
@@ -244,7 +244,7 @@ class EditResource extends Component {
                                 className={"mobile-only resource-box-icon icon " + data.type}
                             />
                             
-                            Title
+                            Item Title
                             
                             {data.catalog_url && (
                                 <a
@@ -273,9 +273,19 @@ class EditResource extends Component {
                             />
                             :
                             <span className={"full-width resource-title"}>
-                                {data.title}
+                                {data.title}<i>({data.date})</i>
                             </span>
                         }
+                        
+
+                        {data.is_part_of ? (
+                      
+                      <p><i>{data.is_part_of}</i></p>
+                      ) : (
+
+                        <p><i>{data.date}</i></p>
+
+                      )}
 
                         <label>Notes</label>
 
@@ -287,14 +297,74 @@ class EditResource extends Component {
                             writeAccess={this.props.canEdit}
                         />
 
-                        {data.description && (
+                        
                             <Accordion
-                                title={"Description"}
+                                title={"Item Info"}
                                 titleClass={"more-info"}
                             >
-                                <div>{data.description}</div>
+                                {data.creator && (
+                      
+                      <div>
+                      <h4 className="more-info">Author(s):</h4>
+                      
+
+                      
+                      <ul className={"subjects"}>
+                          
+                          {data.creator.map((c, index) => (
+                              <li key={index}>
+                                  
+
+                                  <a 
+                                  href= {"/search?query=" + c}
+
+                                  ///search?query=Martin%2C+Kirsten&filters=%5Bsearch_by=creator%26item_type=all%26sort_by=rank%5D
+                                  >
+                                      
+                                      {c}
+                                  </a>
+                                  
+                              </li>
+                          ))}
+                      </ul>
+                      
+                      
+                      </div>
+                    
+                      )}
+
+
+                     
+                     
+                      {data.description && (
+                    
+                      <div>
+                      <h4 className="more-info">Description:</h4>
+                      
+                      {data.description}
+                      
+                      
+                      </div>
+                    
+                      )}
+
+                      {data.publisher && (
+                                  
+                      <div>
+                      <h4 className="more-info">Publication:</h4>
+                      
+                      {data.publisher}
+                      
+                      
+                      </div>
+                  
+                      )}
+
+
+
+
                             </Accordion>
-                        )}
+                       
 
                         {data.identifier && (
                             <Accordion

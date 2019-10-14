@@ -262,6 +262,8 @@
 				font-size: 1.5em;
 				margin-bottom: .5em;
 				font-weight: 700;
+				border-bottom: 1px solid $teal;
+    			padding-bottom: .5em;
 
 				@media (max-width: $tablet-width) {
 					font-size: 1em;
@@ -304,6 +306,7 @@
 				padding: 1em 1em 3em 1em;
 				border-right: 1px solid #ccc;
 				min-height: 240px;
+				padding-bottom: 4em;
 
 				.resource-box-title {
 					color: $teal;

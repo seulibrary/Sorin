@@ -31,7 +31,7 @@
 		left: 0;
 		right: 0;
 		margin: 0 auto;
-		top: 0;
+		//padding-bottom: 4em;
 
 		@include box-shadow(0, 0, 10px, 0, $boxShadowColor);
 
@@ -61,7 +61,7 @@
 			text-transform: uppercase;
 			color: $teal;
 			font-size: 1em;
-			font-weight: 700;
+			font-weight: 600;
 			margin: 1em 0;
 			display: block;
 		}
@@ -69,9 +69,14 @@
 		.more-info{
 			text-transform: uppercase;
 			font-size: 1em;
-			font-weight: 700;
+			font-weight: 600;
 			margin-bottom: 0;
 			display: block;
+		}
+
+		.green{
+			color: $goGreen;
+			font-weight: 400;
 		}
 		
 		
@@ -126,6 +131,17 @@
 
 			margin: 1em auto 0em;
 
+		}
+
+		li{
+			display: block;
+			a{
+				color: $teal;
+				&:hover{
+					color: $topBlue;
+				}
+			}
+			
 		}
 	}
 }
