@@ -4,7 +4,8 @@ import Citation from "../Citation"
 import { CirclePicker } from "react-color"
 import Dropzone from "react-dropzone"
 import Loader from "../Loader"
-import RichTextEditor from "../RichTextEditor"
+// import RichTextEditor from "../RichTextEditor"
+import CollabEditor from "../RichTextEditor/collabeditor"
 import Tags from "../Tags"
 import { connect } from "react-redux"
 import { openModal, closeModal } from "../../actions/modal"
@@ -24,6 +25,7 @@ import { googleExport } from "../../actions/export"
 import Constants from "../../constants"
 import { siteUrl, uuidv4 } from "../../utils"
 
+const j = require('jsondiffpatch')
 class EditCollection extends Component {
     constructor(props) {
         super(props)
@@ -214,8 +216,9 @@ class EditCollection extends Component {
 
     render() {
         let collectionData = this.props.collections.collections.find(
-            (collection) => collection.data.collection.id === this.props.id
+            collection => collection.data.collection.id === this.props.id
         )
+        
         let data = collectionData.data
         let showFiles = data.collection.hasOwnProperty("files")
 
@@ -253,18 +256,24 @@ class EditCollection extends Component {
                             )}
 
                             <label>Notes</label>
-
-                            <RichTextEditor
+                            <CollabEditor 
+                                collectionChannel={collectionData.channel} 
+                                writeAccess={data.write_access}
+                                id={data.collection.notes != null ? data.collection.notes.id : ""}
+                                onChange={this.onNoteChange}
+                                data={data.collection.notes != null ? data.collection.notes.body  : ""} />
+                            {/* <RichTextEditor
                                 key={data.collection.notes != null ? data.collection.notes.id : ""}
                                 id={data.collection.notes != null ? data.collection.notes.id : ""}
                                 onChange={this.onNoteChange}
+                                collectionIndex={this.props.index}
                                 data={
                                 data.collection.notes != null
                                 ? data.collection.notes.body
                                 : ""
                                 }
                                 writeAccess={data.write_access}
-                            />
+                            /> */}
 
                             {this.props.index != 0 && (
                                 <div>
