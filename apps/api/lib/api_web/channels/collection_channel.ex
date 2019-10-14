@@ -89,32 +89,17 @@ defmodule ApiWeb.CollectionChannel do
           %{
             title: title,
             published: published})
+     
+        if payload["collection"]["notes"] != "" && payload["collection"]["notes"] != nil do
+          Notes.update_note_by_id(
+            payload["collection"]["notes"]["id"],
+            payload["collection"]["notes"]["body"]
+          )
+        end
     end
-
-    if payload["collection"]["notes"] do
-      Notes.update_note_by_id(
-        payload["collection"]["notes"]["id"],
-        payload["collection"]["notes"]["body"]
-      )
-    end
-
-    broadcast!(socket, "updated_collection", payload)
     
-    if payload["currentCollectionNote"] && payload["currentCollectionNote"] != "" do
-      case Notes.create_note(%{collection_id: payload["collection"]["id"], body: payload["currentCollectionNote"]}) do
-        {:ok, note} ->
-          broadcast!(socket, "add_collection_note", %{
-                collection_id: payload["collection"]["id"],
-                payload: %{
-                  id: note.id,
-                  body: payload["currentCollectionNote"],
-                  updated_at: note.updated_at
-                }})
-          {:error, _} ->
-            {:error, "Note not created"}
-      end
-    end
-
+    broadcast!(socket, "updated_collection", payload)
+  
     {:noreply, socket}
   end
 
@@ -159,6 +144,35 @@ defmodule ApiWeb.CollectionChannel do
 
         {:noreply, socket}
     end
+  end
+
+  def handle_in("update_collection_notes", %{"collection_id" => col_id, "note" => note, "note_id" => nil} = payload, socket) do
+    IO.inspect "nil note"
+    
+    case Notes.create_note(%{collection_id: col_id, body: note}) do
+      {:ok, createdNote} ->
+        broadcast!(socket, "update_collection_notes", %{
+          collection_id: col_id,
+          note: %{
+            id: createdNote.id,
+            body: note
+          }})
+      {:error, _} ->
+        {:error, "Note not created"}
+    end 
+    {:noreply, socket}
+  end
+
+  def handle_in("update_collection_notes", %{"collection_id" => col_id, "note" => note, "note_id" => note_id} = payload, socket) do
+    
+    broadcast!(socket, "update_collection_notes", %{
+      collection_id: col_id,
+      note: %{
+        id: note_id,
+        body: note
+      }})
+
+    {:noreply, socket}
   end
 
   def handle_in("create_resource", payload, socket) do
@@ -229,27 +243,40 @@ defmodule ApiWeb.CollectionChannel do
 
         broadcast!(socket, "updated_resource", payload)
 
-        if payload["data"]["currentCollectionNote"] &&
-             payload["data"]["currentCollectionNote"] != nil do
-          case Notes.create_note(%{resource_id: payload["data"]["id"], body: payload["data"]["currentCollectionNote"]}) do
-            {:ok, note} ->
-              broadcast!(socket, "add_resource_note", %{
-                collection_id: payload["collection_id"],
-                resource_id: payload["data"]["id"],
-                payload: %{
-                  id: note.id,
-                  body: payload["data"]["currentCollectionNote"],
-                  updated_at: note.updated_at
-                }
-              })
-
-            {:error, _} ->
-              {:error, %{msg: "Note not created"}}
-          end
-        end
-
         {:noreply, socket}
     end
+  end
+
+
+  def handle_in("update_resource_notes", %{"collection_id" => col_id, "resource_id" => resource_id, "note" => note, "note_id" => nil} = payload, socket) do
+    IO.inspect "nil note"
+    
+    case Notes.create_note(%{resource_id: resource_id, body: note}) do
+      {:ok, createdNote} ->
+        broadcast!(socket, "update_resource_notes", %{
+          collection_id: col_id,
+          resource_id: resource_id,
+          note: %{
+            id: createdNote.id,
+            body: note
+          }})
+      {:error, _} ->
+        {:error, "Note not created"}
+    end 
+    {:noreply, socket}
+  end
+
+  def handle_in("update_resource_notes", %{"collection_id" => col_id, "resource_id" => resource_id, "note" => note, "note_id" => note_id} = payload, socket) do
+    
+    broadcast!(socket, "update_resource_notes", %{
+      collection_id: col_id,
+      resource_id: resource_id,
+      note: %{
+        id: note_id,
+        body: note
+      }})
+
+    {:noreply, socket}
   end
 
   def handle_in("upload_file", payload, socket) do

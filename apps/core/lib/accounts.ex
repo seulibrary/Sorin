@@ -226,9 +226,12 @@ defmodule Core.Accounts do
       do: update_by_email(x, y)
 
     {:ok,
-     {:added, Enum.count(added_users), added_users},
-     {:removed, Enum.count(removed_users), removed_users},
-     {:updated, Enum.count(updated_users), updated_users}
+     %{added_users: added_users},
+     %{removed_users: removed_users},
+     %{updated_users: updated_users},
+     total_added_users: Enum.count(added_users),
+     total_removed_users: Enum.count(removed_users),
+     total_updated_users: Enum.count(updated_users),
     }
   end
 
@@ -351,20 +354,17 @@ defmodule Core.Accounts do
 
     # Decrement the clones_count field on all cloned collections before they
     # are removed.
-    clones =
-      from(cu in CollectionUser,
-	left_join: c in Collection,
-	on: cu.collection_id == c.id,
-	where: cu.user_id == ^user.id,
-	where: cu.write_access == false,
-	select: c
-      )
-      |> Repo.all
-
-    case clones do
-      [] -> :ok
-      _ -> Repo.update_all(clones, inc: [clones_count: -1])
-    end
+    from(cu in CollectionUser,
+      left_join: c in Collection,
+      on: cu.collection_id == c.id,
+      where: cu.user_id == ^user.id,
+      where: cu.write_access == false,
+      select: c
+    )
+    |> Repo.all()
+    |> Enum.map(
+      &Collections.update_collection(&1,
+	%{clones_count: (&1.clones_count - 1)}))
 
     # Delete user account, which deletes all CollectionsUsers records for it
     # and nilifies all creator_id fields for it.
