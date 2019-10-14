@@ -13,7 +13,6 @@ defmodule ApiWeb.DashboardChannel do
     Resources
   }
 
-
   def join("dashboard:" <> _dashboard_id, _params, socket) do
     if socket.assigns.user_id do
       dashboard = Accounts.get_dashboard(socket.assigns.user_id)
@@ -29,7 +28,6 @@ defmodule ApiWeb.DashboardChannel do
     broadcast!(socket, "get_collection", payload)
     {:noreply, socket}
   end
-
 
   def handle_in("move_collection", payload, socket) do
     if !is_inbox(socket.assigns.user_id, payload["collection_id"]) && payload["new_index"] != 0 do
@@ -187,7 +185,6 @@ defmodule ApiWeb.DashboardChannel do
         :ok
     end
   end
-
 
   def handle_in("clone_collection", payload, socket) do
     collection =

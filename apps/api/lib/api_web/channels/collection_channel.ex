@@ -56,7 +56,6 @@ defmodule ApiWeb.CollectionChannel do
 
   def handle_in("edit_collection", payload, socket) do
     Logger.info "> Edit Collection"
-    
 
     case can_move_collection(socket.assigns.user_id, payload["collection"]["id"]) do
       {:ok, collectionUser} ->
@@ -109,7 +108,7 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("add_collection_tag", payload, socket) do
-    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+    case socket.assigns[:can_edit] do
       false ->
         {:reply, {:error, %{msg: "Permissions lacking"}}, socket}
 
@@ -132,7 +131,7 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("remove_collection_tag", payload, socket) do
-    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+    case socket.assigns[:can_edit] do
       false ->
         {:reply, {:error, %{msg: "Permissions lacking"}}, socket}
 
@@ -152,8 +151,6 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("update_collection_notes", %{"collection_id" => col_id, "note" => note, "note_id" => nil} = payload, socket) do
-    IO.inspect "nil note"
-    
     case Notes.create_note(%{collection_id: col_id, body: note}) do
       {:ok, createdNote} ->
         broadcast!(socket, "update_collection_notes", %{
@@ -169,7 +166,6 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("update_collection_notes", %{"collection_id" => col_id, "note" => note, "note_id" => note_id} = payload, socket) do
-    
     broadcast!(socket, "update_collection_notes", %{
       collection_id: col_id,
       note: %{
@@ -181,7 +177,7 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("create_resource", payload, socket) do
-    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+    case socket.assigns[:can_edit] do
       false ->
         {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
 
@@ -206,7 +202,7 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("remove_resource", payload, socket) do
-    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+    case socket.assigns[:can_edit] do
       false ->
         {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
 
@@ -221,7 +217,7 @@ defmodule ApiWeb.CollectionChannel do
   end
 
   def handle_in("edit_resource", payload, socket) do
-    case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
+    case socket.assigns[:can_edit] do
       false ->
         {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
 
@@ -254,7 +250,6 @@ defmodule ApiWeb.CollectionChannel do
 
 
   def handle_in("update_resource_notes", %{"collection_id" => col_id, "resource_id" => resource_id, "note" => note, "note_id" => nil} = payload, socket) do
-    IO.inspect "nil note"
     
     case Notes.create_note(%{resource_id: resource_id, body: note}) do
       {:ok, createdNote} ->
@@ -449,6 +444,11 @@ defmodule ApiWeb.CollectionChannel do
   def handle_in("update_write_users", payload, socket) do
     # Update all users about the new write access for the collection
     broadcast!(socket, "update_write_users", payload)
+    {:noreply, socket}
+  end
+
+  def handle_in("update_note", payload, socket) do
+    broadcast!(socket, "update_note", payload)
     {:noreply, socket}
   end
 
