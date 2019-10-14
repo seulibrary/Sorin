@@ -29,6 +29,7 @@ class Collection extends Component {
         let collectionData = this.props.collections.collections.find(
             (collection) => collection.data.collection.id === this.props.id
         )
+        
         let cloneStyle = {
             backgroundColor: "rgb(29, 68, 116)"
         }
@@ -48,7 +49,7 @@ class Collection extends Component {
                                 id: editModalId,
                                 type: "custom",
                                 panel: "collection",
-                                content: <EditCollection index={this.props.index} id={collectionData.data.collection.id} channel={this.props.channel} modalId={editModalId} />,
+                                content: <EditCollection index={this.props.index} id={collectionData.data.collection.id} channel={this.props.channel} modalId={editModalId} data={collectionData} />,
                             }))}>...</button>
                             
                             {collectionData.data.collection.files.length > 0 ? <span className="attach"></span> : ""}
