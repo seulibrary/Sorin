@@ -8,6 +8,7 @@ import { openModal } from "../../actions/modal"
 import { moveCollection, moveResource } from "../../actions/collections"
 import { uuidv4 } from "../../utils"
 import { Collection, NewCollectionForm } from "../../components/Collection"
+import { clearSaveNotification } from "../../actions/notifications"
 
 class Collections extends Component {
     constructor(props) {
@@ -22,6 +23,7 @@ class Collections extends Component {
     componentDidMount() {
         this.updateWindowDimensions()
         window.addEventListener("resize", this.updateWindowDimensions)
+        this.props.dispatch(clearSaveNotification())
     }
     
     componentWillUnmount() {
