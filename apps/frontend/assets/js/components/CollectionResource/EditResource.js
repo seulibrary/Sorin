@@ -20,6 +20,7 @@ import {
 } from "../../actions/files"
 import { openModal, closeModal } from "../../actions/modal"
 import Constants from "../../constants"
+import IntervalSave from "../../utils/intervalSave"
 
 class EditResource extends Component {
     constructor(props) {
@@ -173,6 +174,30 @@ class EditResource extends Component {
         }
     }
 
+    saveResource = () => {
+        // check state to make sure we don't try to edit something we are deleting
+        if (this.state.deleting === false) {
+            if (this.props.canEdit != false) {
+                let resourceData
+
+                this.props.collections.collections.map(collection => {
+                    if (collection.data.collection.id === this.props.parent) {
+                        resourceData = collection.data.collection.resources.find(
+                            resource => resource.id === this.props.id
+                        )
+                    }
+                })
+
+                // save data
+                editResource(
+                    this.props.channel,
+                    this.props.parent,
+                    resourceData
+                )
+            }
+        }
+    }
+
     handleSubmit = () => {
         if (this.props.canEdit != false) {
             this.props.dispatch(closeModal({
@@ -180,6 +205,7 @@ class EditResource extends Component {
             }))
         }
     }
+    
 
     render() {        
         let collectionData = this.props.collections.collections.find(
@@ -206,6 +232,10 @@ class EditResource extends Component {
                 className="resource-form"
                 ref={this.resourceRef}
             >
+                    {/* Only run the interval save on collections the user has write access to */}
+                    { this.props.canEdit ? (
+                        <IntervalSave save={this.saveResource} />
+                    ) : "" }
                 <div className="container">
                     <div className="resource-column-left">
                         <div
