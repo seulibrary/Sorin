@@ -8,7 +8,7 @@ defmodule ApiWeb.V1.CollectionController do
 
   def show(conn, %{"id" => id} = _params) do
     case List.first(Collections.get_permalink_view(id)) do
-      nil -> 
+      nil ->
         conn
         |> put_status(404)
         |> put_view(ErrorView)
@@ -45,6 +45,7 @@ defmodule ApiWeb.V1.CollectionController do
         |> put_status(:created)
         |> put_view(CollectionView)
         |> render("dashboardCollection.json", collection: collection)
+
       _ ->
         conn
         |> put_status(500)

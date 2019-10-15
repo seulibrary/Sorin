@@ -13,14 +13,16 @@ defmodule ApiWeb.SearchView do
   def render("collections.json", %{results: results}) do
     %{
       num_results: results.num_results,
-      results: render_many(results.results, ApiWeb.CollectionView, "collection.json", as: :collection) 
+      results:
+        render_many(results.results, ApiWeb.CollectionView, "collection.json", as: :collection)
     }
   end
 
   def render("users.json", %{results: results}) do
     %{
       num_results: results.num_results,
-      results: render_many(results.results, ApiWeb.CollectionView, "collection.json", as: :collection) 
+      results:
+        render_many(results.results, ApiWeb.CollectionView, "collection.json", as: :collection)
     }
   end
 

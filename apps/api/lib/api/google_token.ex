@@ -14,13 +14,13 @@ defmodule Api.GoogleToken do
     token = AuthTokens.get_login_token_by_user_id(user.id)
 
     if token do
-      Logger.info "> User Login #{user.email}"
-      updated_token = update_token(token, auth_token |> Map.from_struct)
+      Logger.info("> User Login #{user.email}")
+      updated_token = update_token(token, auth_token |> Map.from_struct())
       update_user_auth_token(token, updated_token)
     else
-      Logger.info "> New User Login #{user.email}"
+      Logger.info("> New User Login #{user.email}")
 
-      create_user_auth_token(user, auth_token |> Map.from_struct)
+      create_user_auth_token(user, auth_token |> Map.from_struct())
     end
   end
 
@@ -39,10 +39,9 @@ defmodule Api.GoogleToken do
   """
   def revoke_token(access_token) do
     "https://accounts.google.com/o/oauth2/revoke?token=#{access_token}"
-    |> HTTPoison.post(
-      "", [
-        {"Content-type", "application/x-www-form-urlencoded"}
-      ])
+    |> HTTPoison.post("", [
+      {"Content-type", "application/x-www-form-urlencoded"}
+    ])
     |> handle_request()
   end
 
@@ -61,23 +60,29 @@ defmodule Api.GoogleToken do
   defp refresh_token(user) do
     token = AuthTokens.get_login_token_by_user_id(user.id)
 
-    response = "https://www.googleapis.com/oauth2/v4/token?" <>
-      "client_id=" <> Application.get_env(:ueberauth, Ueberauth.Strategy.Google.OAuth)[:client_id] <>
-      "&client_secret=" <> Application.get_env(:ueberauth, Ueberauth.Strategy.Google.OAuth)[:client_secret] <>
-      "&refresh_token=" <> token.token["refresh_token"] <>
-      "&grant_type=refresh_token"
-      |> HTTPoison.post("",  [])
+    response =
+      ("https://www.googleapis.com/oauth2/v4/token?" <>
+         "client_id=" <>
+         Application.get_env(:ueberauth, Ueberauth.Strategy.Google.OAuth)[:client_id] <>
+         "&client_secret=" <>
+         Application.get_env(:ueberauth, Ueberauth.Strategy.Google.OAuth)[:client_secret] <>
+         "&refresh_token=" <>
+         token.token["refresh_token"] <>
+         "&grant_type=refresh_token")
+      |> HTTPoison.post("", [])
 
     case handle_request(response) do
       {:ok, body} ->
-        Logger.info "> User #{user.email} token refresh"
+        Logger.info("> User #{user.email} token refresh")
 
-        updated_token = token.token
-        |> update_refresh_token(body)
+        updated_token =
+          token.token
+          |> update_refresh_token(body)
 
         {:ok, update_user_auth_token(user, updated_token)}
+
       {:error, body} ->
-        Logger.info"> Token Not Refeshed #{user.auth_tokn} #{IO.inspect body}"
+        Logger.info("> Token Not Refeshed #{user.auth_tokn} #{IO.inspect(body)}")
 
         {:error, body}
     end
@@ -93,7 +98,10 @@ defmodule Api.GoogleToken do
   defp update_refresh_token(auth_token, refreshedToken) do
     auth_token.token
     |> update_token_field("access_token", refreshedToken["access_token"])
-    |> update_token_field("expires_at", refreshedToken["expires_in"] + (DateTime.utc_now |> DateTime.to_unix))
+    |> update_token_field(
+      "expires_at",
+      refreshedToken["expires_in"] + (DateTime.utc_now() |> DateTime.to_unix())
+    )
   end
 
   defp update_token_field(auth_token, _field, nil), do: auth_token
@@ -107,21 +115,24 @@ defmodule Api.GoogleToken do
 
     case check_expiration(auth_token.token["expires_at"]) do
       :expired ->
-        Logger.info "> Refresh token"
+        Logger.info("> Refresh token")
 
         case refresh_token(user) do
-          {:ok, token} -> 
+          {:ok, token} ->
             {:ok, token["access_token"]}
-          {:error, msg} -> {:error, %{msg: msg}}
+
+          {:error, msg} ->
+            {:error, %{msg: msg}}
         end
+
       _ ->
-        Logger.info "> Get user token."
+        Logger.info("> Get user token.")
         {:ok, auth_token.token["access_token"]}
     end
   end
 
   defp check_expiration(expiration) do
-    if DateTime.utc_now |> DateTime.to_unix > expiration, do: :expired
+    if DateTime.utc_now() |> DateTime.to_unix() > expiration, do: :expired
   end
 
   defp handle_request({:ok, %{status_code: 200, body: body}}) do
@@ -133,7 +144,7 @@ defmodule Api.GoogleToken do
   end
 
   defp handle_request(_params) do
-    Logger.error "> Something Bad Happened."
+    Logger.error("> Something Bad Happened.")
     {:error, "ERROR ERROR ERROR"}
   end
 end

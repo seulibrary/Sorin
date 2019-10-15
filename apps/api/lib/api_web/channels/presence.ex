@@ -68,10 +68,9 @@ defmodule ApiWeb.Presence do
   information, while maintaining the required `:metas` field from the
   original presence data.
   """
-  use Phoenix.Presence, otp_app: :api,
+  use Phoenix.Presence,
+    otp_app: :api,
     pubsub_server: Api.PubSub
-
-
 
   #  @doc
   """
@@ -79,20 +78,20 @@ defmodule ApiWeb.Presence do
   we only return the count of open sockets.
   This map is what will be returned to the frontend.
   """
-# def fetch(_topic, entries) do
-#   %{
-#     "users" => entries |> Map.keys() |> 
-#     "viewers" => %{"count" => count_presences(entries, "viewers")},
-#     "users" => %{"count" => count_presences(entries, "users")}
-#   }
-# end
-#
-# defp count_presences(entries, key) do
-#   case get_in(entries, [key, :metas]) do
-#     nil -> 0
-#     metas -> length(metas)
-#   end
-# end
-#
 
+  # def fetch(_topic, entries) do
+  #   %{
+  #     "users" => entries |> Map.keys() |> 
+  #     "viewers" => %{"count" => count_presences(entries, "viewers")},
+  #     "users" => %{"count" => count_presences(entries, "users")}
+  #   }
+  # end
+  #
+  # defp count_presences(entries, key) do
+  #   case get_in(entries, [key, :metas]) do
+  #     nil -> 0
+  #     metas -> length(metas)
+  #   end
+  # end
+  #
 end

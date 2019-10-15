@@ -63,9 +63,10 @@ defmodule ApiWeb.Utils do
   end
 
   def sanitize_for_poison(collection) do
-    map = collection
+    map =
+      collection
       |> Map.from_struct()
-      |> Map.drop([:__meta__, :__struct__, :__cardinality__, :__field__,  :__owner__])
+      |> Map.drop([:__meta__, :__struct__, :__cardinality__, :__field__, :__owner__])
 
     :maps.filter(fn _, value -> Ecto.assoc_loaded?(value) end, map)
   end
@@ -79,12 +80,13 @@ defmodule ApiWeb.Utils do
         (true || false)
   """
   def is_inbox(user_id, collection_id) do
-    index = Core.CollectionsUsers.CollectionUser
-    |> Core.Repo.get_by!(
-      collection_id: collection_id,
-      user_id: user_id
-    )
-    |> Map.get(:index)
+    index =
+      Core.CollectionsUsers.CollectionUser
+      |> Core.Repo.get_by!(
+        collection_id: collection_id,
+        user_id: user_id
+      )
+      |> Map.get(:index)
 
     case index do
       0 -> true
@@ -94,11 +96,12 @@ defmodule ApiWeb.Utils do
 
   def can_edit_collection(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
-    |> Core.Repo.get_by(
-      collection_id: collection_id,
-      user_id: user_id,
-      write_access: true)
-    |> Core.Repo.preload(:collection) do
+         |> Core.Repo.get_by(
+           collection_id: collection_id,
+           user_id: user_id,
+           write_access: true
+         )
+         |> Core.Repo.preload(:collection) do
       user when is_nil(user) -> {:error, "User does not have permission"}
       collection -> {:ok, collection}
     end
@@ -106,11 +109,11 @@ defmodule ApiWeb.Utils do
 
   def can_edit_collection?(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
-    |> Core.Repo.get_by(
-      collection_id: collection_id,
-    user_id: user_id,
-    write_access: true
-    ) do
+         |> Core.Repo.get_by(
+           collection_id: collection_id,
+           user_id: user_id,
+           write_access: true
+         ) do
       _user when is_nil(_user) -> false
       collection -> true
     end
@@ -118,10 +121,11 @@ defmodule ApiWeb.Utils do
 
   def can_move_collection(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
-    |> Core.Repo.get_by!(
-      collection_id: collection_id,
-      user_id: user_id)
-    |> Core.Repo.preload(:collection) do
+         |> Core.Repo.get_by!(
+           collection_id: collection_id,
+           user_id: user_id
+         )
+         |> Core.Repo.preload(:collection) do
       _users when is_nil(_users) -> {:error, "User does not have permission"}
       collectionUser -> {:ok, collectionUser}
     end
@@ -129,10 +133,10 @@ defmodule ApiWeb.Utils do
 
   def can_move_collection?(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
-    |> Core.Repo.get_by!(
-      collection_id: collection_id, 
-      user_id: user_id
-    ) do
+         |> Core.Repo.get_by!(
+           collection_id: collection_id,
+           user_id: user_id
+         ) do
       _users when is_nil(_users) -> false
       _ -> true
     end

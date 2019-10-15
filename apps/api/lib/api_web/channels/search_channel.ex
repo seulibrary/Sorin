@@ -29,7 +29,6 @@ defmodule ApiWeb.SearchChannel do
         },
         socket
       ) do
-
     case Search.all(query, limit, offset, filters) do
       {:ok, search} ->
         broadcast!(
@@ -37,6 +36,7 @@ defmodule ApiWeb.SearchChannel do
           "search",
           ApiWeb.SearchView.render("index.json", %{search: search})
         )
+
         {:noreply, socket}
 
       {:error, _} ->
@@ -45,41 +45,48 @@ defmodule ApiWeb.SearchChannel do
   end
 
   def handle_in(
-    "load_more_catalog_results",
-    params,
-    socket
-  ) do
-    results = Search.search_catalogs(params["query"], params["limit"], params["offset"], params["filters"])
+        "load_more_catalog_results",
+        params,
+        socket
+      ) do
+    results =
+      Search.search_catalogs(
+        params["query"],
+        params["limit"],
+        params["offset"],
+        params["filters"]
+      )
 
     broadcast!(
       socket,
       "load_more_catalog_results",
       ApiWeb.SearchView.render("catalogs.json", %{results: results})
-      )
+    )
+
     {:noreply, socket}
   end
 
   def handle_in(
-    "load_more_user_results",
-    params,
-    socket
-  ) do
-    results = Search.search_users(params["query"], params["limit"], params["offset"]) 
+        "load_more_user_results",
+        params,
+        socket
+      ) do
+    results = Search.search_users(params["query"], params["limit"], params["offset"])
 
     broadcast!(
       socket,
       "load_more_user_results",
       ApiWeb.SearchView.render("users.json", %{results: results})
     )
+
     {:noreply, socket}
   end
 
-
   def handle_in(
-    "load_more_collection_results",
-    params,
-    socket
-  ) do
+        "load_more_collection_results",
+        params,
+        socket
+      ) do
     results = Search.search_collections(params["query"], params["limit"], params["offset"])
 
     broadcast!(
@@ -87,11 +94,15 @@ defmodule ApiWeb.SearchChannel do
       "load_more_collection_results",
       ApiWeb.SearchView.render("collections.json", %{results: results})
     )
+
     {:noreply, socket}
   end
 
   def terminate(reason, socket) do
-    Logger.info"> leave - user_id: #{socket.assigns.user_id}, #{socket.topic}, #{inspect reason}"
+    Logger.info(
+      "> leave - user_id: #{socket.assigns.user_id}, #{socket.topic}, #{inspect(reason)}"
+    )
+
     :ok
   end
 end

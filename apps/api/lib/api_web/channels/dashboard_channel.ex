@@ -1,6 +1,6 @@
 defmodule ApiWeb.DashboardChannel do
   use ApiWeb, :channel
- # use Phoenix.Socket, log: :debug
+  # use Phoenix.Socket, log: :debug
 
   require Logger
 
@@ -12,7 +12,6 @@ defmodule ApiWeb.DashboardChannel do
     CollectionsUsers,
     Resources
   }
-
 
   def join("dashboard:" <> _dashboard_id, _params, socket) do
     if socket.assigns.user_id do
@@ -30,7 +29,6 @@ defmodule ApiWeb.DashboardChannel do
     {:noreply, socket}
   end
 
-
   def handle_in("move_collection", payload, socket) do
     if !is_inbox(socket.assigns.user_id, payload["collection_id"]) && payload["new_index"] != 0 do
       case can_move_collection?(socket.assigns.user_id, payload["collection_id"]) do
@@ -40,8 +38,10 @@ defmodule ApiWeb.DashboardChannel do
             socket.assigns.user_id,
             payload["new_index"]
           )
+
           broadcast!(socket, "move_collection", payload)
           {:reply, {:ok, %{msg: "Collection moved."}}, socket}
+
         false ->
           {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
       end
@@ -49,12 +49,15 @@ defmodule ApiWeb.DashboardChannel do
   end
 
   def handle_in("move_resource", payload, socket) do
-    if can_edit_collection?(socket.assigns.user_id, payload["source_collection_id"]) || ( can_move_collection?(socket.assigns.user_id, payload["source_collection_id"]) && can_move_collection?(socket.assigns.user_id, payload["target_collection_id"])) do
+    if can_edit_collection?(socket.assigns.user_id, payload["source_collection_id"]) ||
+         (can_move_collection?(socket.assigns.user_id, payload["source_collection_id"]) &&
+            can_move_collection?(socket.assigns.user_id, payload["target_collection_id"])) do
       Resources.move_resource_by_id(
         payload["resource_id"],
         payload["target_collection_id"],
         payload["target_index"]
       )
+
       broadcast!(socket, "move_resource", payload)
       {:reply, {:ok, %{msg: "Resource moved."}}, socket}
     else
@@ -65,7 +68,7 @@ defmodule ApiWeb.DashboardChannel do
   def handle_in("create_collection", %{"title" => title}, socket) do
     if socket.assigns.user_id do
       case Collections.new_collection(socket.assigns.user_id, title) do
-          %CollectionsUsers.CollectionUser{} = collection ->
+        %CollectionsUsers.CollectionUser{} = collection ->
           broadcast!(
             socket,
             "add_collection_to_dashboard",
@@ -73,6 +76,7 @@ defmodule ApiWeb.DashboardChannel do
           )
 
           {:noreply, socket}
+
         _ ->
           {:reply, {:error, %{msg: "Collection not created."}}, socket}
       end
@@ -84,7 +88,7 @@ defmodule ApiWeb.DashboardChannel do
   def handle_in("remove_collection", payload, socket) do
     if !is_inbox(socket.assigns.user_id, payload["collection_id"]) do
       case can_move_collection?(socket.assigns.user_id, payload["collection_id"]) do
-        true -> 
+        true ->
           Collections.remove_collection(
             payload["collection_id"],
             socket.assigns.user_id
@@ -92,7 +96,8 @@ defmodule ApiWeb.DashboardChannel do
 
           broadcast!(socket, "remove_collection", payload)
           {:noreply, socket}
-        false -> 
+
+        false ->
           {:reply, {:error, %{msg: "Invalid Permissions"}}, socket}
       end
     else
@@ -102,9 +107,9 @@ defmodule ApiWeb.DashboardChannel do
 
   def handle_in("share_collection", _payload, socket) do
     # Does user exist?
-    #Share success?
+    # Share success?
 
-    #Collections.share_collection(payload["collection_id"], payload["user_email"])
+    # Collections.share_collection(payload["collection_id"], payload["user_email"])
     {:noreply, socket}
   end
 
@@ -124,6 +129,7 @@ defmodule ApiWeb.DashboardChannel do
     case collection do
       :error ->
         {:reply, {:error, %{msg: "Collection was not cloned"}}, socket}
+
       _ ->
         broadcast!(
           socket,

@@ -19,17 +19,21 @@ defmodule ApiWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  
+
   def connect(%{"token" => user_id_token} = _params, socket) do
     case Phoenix.Token.verify(socket, "user_id", user_id_token, max_age: 86400) do
       {:ok, id} ->
-        {:ok, socket
-              |> assign(:user_id, id)
-              |> assign(:user, Core.Accounts.get_user!(id))}
-      {:error, :expired} -> 
-        {:ok, socket
-              |> assign(:user_id, nil)
-              |> assign(:user, nil)}
+        {:ok,
+         socket
+         |> assign(:user_id, id)
+         |> assign(:user, Core.Accounts.get_user!(id))}
+
+      {:error, :expired} ->
+        {:ok,
+         socket
+         |> assign(:user_id, nil)
+         |> assign(:user, nil)}
+
       {:error, _} ->
         :error
     end

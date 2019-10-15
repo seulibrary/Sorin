@@ -39,12 +39,10 @@ defmodule ApiWeb.UserChannel do
   def handle_in("logout", _params, socket) do
     push(socket, "logged_out", %{})
 
-    {:stop,
-    :normal,
-    socket
-    |> assign(:user_id, nil)
-    |> assign(:user, nil)
-    }
+    {:stop, :normal,
+     socket
+     |> assign(:user_id, nil)
+     |> assign(:user, nil)}
   end
 
   def handle_in("get_tokens", _params, socket) do
@@ -53,8 +51,9 @@ defmodule ApiWeb.UserChannel do
       "token_list",
       ApiWeb.TokenView.render(
         "tokens.json",
-        %{data: Core.AuthTokens.get_auth_tokens_by_user_id(
-          socket.assigns.user_id, "api")}))
+        %{data: Core.AuthTokens.get_auth_tokens_by_user_id(socket.assigns.user_id, "api")}
+      )
+    )
 
     {:noreply, socket}
   end
@@ -67,15 +66,17 @@ defmodule ApiWeb.UserChannel do
 
     {:noreply, socket}
   end
-  
+
   def handle_in("create_token", params, socket) do
     token = Phoenix.Token.sign(socket, "user_id", socket.assigns.user_id)
 
-    with {:ok, authtoken} <- Core.AuthTokens.create_auth_token(%{
-                  token: %{key: token},
-                  label: params["label"],
-                  user_id: socket.assigns.user_id,
-                  type: "api"}) do
+    with {:ok, authtoken} <-
+           Core.AuthTokens.create_auth_token(%{
+             token: %{key: token},
+             label: params["label"],
+             user_id: socket.assigns.user_id,
+             type: "api"
+           }) do
       push(socket, "created_token", ApiWeb.TokenView.render("token.json", data: authtoken))
     end
 
@@ -83,7 +84,10 @@ defmodule ApiWeb.UserChannel do
   end
 
   def terminate(reason, socket) do
-    Logger.info"> leave - user_id: #{socket.assigns.user_id}, #{socket.topic}, #{inspect reason}"
+    Logger.info(
+      "> leave - user_id: #{socket.assigns.user_id}, #{socket.topic}, #{inspect(reason)}"
+    )
+
     :ok
   end
 end
