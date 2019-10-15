@@ -9,6 +9,7 @@ import { Redirect } from 'react-router'
 import {withRouter} from 'react-router-dom'
 import ErrorBoundary from "../../containers/Errors"
 import ViewResource from './resource'
+import { addSaveNotification } from "../../actions/notifications"
 class SearchResult extends Component {
     constructor(props) {
         super(props)
@@ -61,6 +62,7 @@ class SearchResult extends Component {
     
                 if (inbox.length > 0) {
                     createResource(inbox[0].channel, this.props.session.inbox_id, this.props.data)
+                    this.props.dispatch(addSaveNotification())
                 } else {
                     this.setState({
                         saveit: "Not Saved!",
@@ -73,7 +75,7 @@ class SearchResult extends Component {
 
     resetSaveItState = () => {
         this.setState({
-            saveit: <span>save to<br/> collections</span>
+            saveit: <span>save to collections</span>
         })
     }
 
