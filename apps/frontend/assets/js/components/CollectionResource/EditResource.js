@@ -199,7 +199,7 @@ class EditResource extends Component {
                 ? { readOnly: true }
                 : {}
         let showFiles = this.props.showFiles === false ? false : true
-        console.log(data);
+
         return (
             <Form
                 submit={this.handleSubmit}
@@ -265,15 +265,11 @@ class EditResource extends Component {
                             </span>
                         }
                         
-
                         {data.is_part_of ? (
-                      
-                      <p><i>{data.is_part_of}</i></p>
-                      ) : (
-
-                        <p><i>{data.date}</i></p>
-
-                      )}
+                            <p><i>{data.is_part_of}</i></p>
+                        ) : (
+                            <p><i>{data.date}</i></p>
+                        )}
 
                         <label>Notes</label>
 
@@ -285,73 +281,41 @@ class EditResource extends Component {
                             writeAccess={this.props.canEdit}
                         />
 
-                        
-                            <Accordion
-                                title={"Item Info"}
-                                titleClass={"more-info"}
-                            >
-                                {data.creator && (
-                      
-                      <div>
-                      <h4 className="more-info">Author(s):</h4>
-                      
+                        <Accordion
+                            title={"Item Info"}
+                            titleClass={"more-info"}
+                        >
+                            {data.creator && (
+                                <div>
+                                    <h4 className="more-info">Author(s):</h4>
+                                    <ul className={"subjects"}>
+                                        {data.creator.map((subject, index) => (
+                                            <li key={"subjects-" + subject + "-" + index}>
+                                                <a href= {"/search?query=" + subject}>
+                                                    {subject}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
 
-                      
-                      <ul className={"subjects"}>
-                          
-                          {data.creator.map((c, index) => (
-                              <li key={index}>
-                                  
+                            {data.description && (
+                                <div>
+                                    <h4 className="more-info">Description:</h4>
+                            
+                                    {data.description}
+                                </div>
+                            )}
 
-                                  <a 
-                                  href= {"/search?query=" + c}
-
-                                  ///search?query=Martin%2C+Kirsten&filters=%5Bsearch_by=creator%26item_type=all%26sort_by=rank%5D
-                                  >
-                                      
-                                      {c}
-                                  </a>
-                                  
-                              </li>
-                          ))}
-                      </ul>
-                      
-                      
-                      </div>
-                    
-                      )}
-
-
-                     
-                     
-                      {data.description && (
-                    
-                      <div>
-                      <h4 className="more-info">Description:</h4>
-                      
-                      {data.description}
-                      
-                      
-                      </div>
-                    
-                      )}
-
-                      {data.publisher && (
-                                  
-                      <div>
-                      <h4 className="more-info">Publication:</h4>
-                      
-                      {data.publisher}
-                      
-                      
-                      </div>
-                  
-                      )}
-
-
-
-
-                            </Accordion>
+                            {data.publisher && (          
+                                <div>
+                                    <h4 className="more-info">Publication:</h4>
+                            
+                                    {data.publisher}
+                                </div>
+                            )}
+                        </Accordion>
                        
 
                         {data.identifier && (
@@ -375,7 +339,6 @@ class EditResource extends Component {
                                 title={"Item URL"}
                                 titleClass={"more-info"}
                             >
-                           
                                 <input
                                     type="text"
                                     className="full-width"
@@ -402,8 +365,8 @@ class EditResource extends Component {
                                         {data.files.length == 0 && !this.props.files.uploadingFile && this.props.canEdit ? (
                                             <Dropzone maxSize={200000000} multiple={false} onDrop={this.onDrop} className={"file-drop"}>
                                                 <p>
-                                            Try dropping a file here, or click to select a file to
-                                            upload. (Max size: 200mb)
+                                                    Try dropping a file here, or click to select a file to
+                                                    upload. (Max size: 200mb)
                                                 </p>
                                             </Dropzone>
                                         ) : ""}
