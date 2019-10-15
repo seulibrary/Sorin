@@ -6,6 +6,7 @@ import Tags from "../Tags"
 import { cloneCollection, importCollection } from "../../actions/collections"
 import InnerResource from "../CollectionResource/InnerResource"
 import { downloadFile } from "../../actions/files"
+import { addSaveNotification } from "../../actions/notifications"
 
 class CollectionResult extends Component {
     constructor(props) {
@@ -26,6 +27,7 @@ handleClone = (e) => {
         })
 
         cloneCollection(this.props.session.dashboardChannel, this.props.data.id)
+        this.props.dispatch(addSaveNotification())
     }
 }
 
@@ -38,6 +40,7 @@ handleImport = (e) => {
         })
 
         importCollection(this.props.session.dashboardChannel, this.props.data.id)
+        this.props.dispatch(addSaveNotification())
     }
 }
 
