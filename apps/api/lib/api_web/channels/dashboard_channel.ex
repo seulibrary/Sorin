@@ -4,6 +4,8 @@ defmodule ApiWeb.DashboardChannel do
     By connecting to it we can move collections (change Index), Move resources between collections, Create, Delete, Share, Clone, and Import Collections.
 
     On first connection, it retreives all collections that belong in the dashboard. Once it's retrieved the frontend connects to each collection individually.
+
+    In most cases, the handle_in's call Core functions. And respond to the FE with the appropriate response. The most logic that should happen is with the Auth. Which is determined by checking for the user_id in the assigns. 
   """
 
   use ApiWeb, :channel
@@ -84,6 +86,9 @@ defmodule ApiWeb.DashboardChannel do
     end
   end
 
+  @doc """
+  Create and append collection on to dashboard.
+  """
   def handle_in("create_collection", %{"title" => title}, socket) do
     if socket.assigns.user_id do
       case Collections.new_collection(socket.assigns.user_id, title) do
@@ -104,6 +109,9 @@ defmodule ApiWeb.DashboardChannel do
     end
   end
 
+  @doc """
+  Remove colleciton from dashboard and delete it from DB.
+  """
   def handle_in("remove_collection", payload, socket) do
     if !is_inbox(socket.assigns.user_id, payload["collection_id"]) do
       case can_move_collection?(socket.assigns.user_id, payload["collection_id"]) do
@@ -124,6 +132,9 @@ defmodule ApiWeb.DashboardChannel do
     end
   end
 
+  @doc """
+  Unused. Just a placeholder for sharing.
+  """
   def handle_in("share_collection", _payload, socket) do
     # Does user exist?
     # Share success?
@@ -131,12 +142,18 @@ defmodule ApiWeb.DashboardChannel do
     # Collections.share_collection(payload["collection_id"], payload["user_email"])
     {:noreply, socket}
   end
-
+  
+  @doc """
+  Unused. Just a placeholder for sharing.
+  """
   def handle_in("approve_collection", _payload, socket) do
     # Update collection to pending false
     {:noreply, socket}
   end
 
+  @doc """
+  Clone collection and append it to the users dashbaord.
+  """
   def handle_in("clone_collection", payload, socket) do
     collection =
       try do
@@ -160,6 +177,9 @@ defmodule ApiWeb.DashboardChannel do
     end
   end
 
+  @doc """
+  Import collection and append it to the users dashbaord.
+  """
   def handle_in("import_collection", payload, socket) do
     collection =
       try do
