@@ -1,4 +1,11 @@
 defmodule ApiWeb.DashboardChannel do
+  @moduledoc """
+    The DashboardChannel should be seen as a wrapper for ALL collections a user is currently looking at. 
+    By connecting to it we can move collections (change Index), Move resources between collections, Create, Delete, Share, Clone, and Import Collections.
+
+    On first connection, it retreives all collections that belong in the dashboard. Once it's retrieved the frontend connects to each collection individually.
+  """
+
   use ApiWeb, :channel
   # use Phoenix.Socket, log: :debug
 
@@ -13,6 +20,9 @@ defmodule ApiWeb.DashboardChannel do
     Resources
   }
 
+  @doc """
+  Join the dashboard channel. The _dashboard_id is the user id passed in.
+  """
   def join("dashboard:" <> _dashboard_id, _params, socket) do
     if socket.assigns.user_id do
       dashboard = Accounts.get_dashboard(socket.assigns.user_id)
@@ -23,12 +33,18 @@ defmodule ApiWeb.DashboardChannel do
     end
   end
 
+  @doc """
+  Currently not used. But, could be used to sync collections when a user has multiple browsers open.
+  """
   def handle_in("get_collection", payload, socket) do
     # used to keep real time renders in sync if user has multiple browsers open
     broadcast!(socket, "get_collection", payload)
     {:noreply, socket}
   end
 
+  @doc """
+  Move a collection and change it's index.
+  """
   def handle_in("move_collection", payload, socket) do
     if !is_inbox(socket.assigns.user_id, payload["collection_id"]) && payload["new_index"] != 0 do
       case can_move_collection?(socket.assigns.user_id, payload["collection_id"]) do
@@ -48,6 +64,9 @@ defmodule ApiWeb.DashboardChannel do
     end
   end
 
+  @doc """
+  Move resource. Either changing it's index, or change what colelction it belongs to.
+  """
   def handle_in("move_resource", payload, socket) do
     if can_edit_collection?(socket.assigns.user_id, payload["source_collection_id"]) ||
          (can_move_collection?(socket.assigns.user_id, payload["source_collection_id"]) &&
