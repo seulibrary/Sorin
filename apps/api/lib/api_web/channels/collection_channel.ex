@@ -1,4 +1,8 @@
 defmodule ApiWeb.CollectionChannel do
+  @moduledoc """
+  CollecitonChannel
+  Each collection that a user has in their dashboard has it's own channel.
+  """
   use ApiWeb, :channel
 
   require Logger
@@ -16,6 +20,9 @@ defmodule ApiWeb.CollectionChannel do
 
   alias ApiWeb.Presence
 
+  @doc """
+  Join the channel. The collection_id is the DB id of the collection. Not the CollectionUser_id
+  """
   def join("collection:" <> collection_id, _params, socket) do
     case can_move_collection(socket.assigns.user_id, collection_id) do
       {:ok, _} ->
@@ -31,6 +38,11 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  After join, is part of the presence module. 
+  Each collection tracks who is connected to the collection at a given time.
+  This can be used for collaborative editing. 
+  """
   def handle_info(:after_join, socket) do
     # adding test data in the map. Could add in extra data like user name?
     collection_id = String.split(socket.topic, ":") |> List.last()
@@ -47,11 +59,16 @@ defmodule ApiWeb.CollectionChannel do
 
     {:noreply, socket}
   end
-
+  
   defp push_presence_state(socket) do
     push(socket, "presence_state", Presence.list(socket))
   end
 
+  @doc """
+  The catch all for editing a collection.
+
+  On edit_collection event, the data is looked at and saved where needed. It combines multiple Core functions to edit things like collection color, notes, title, if it's published, etc. This should not be used as the main go to for saving a colleciton. Each action should be split off and called individually like tags. This is where the notes are saved.
+  """
   def handle_in("edit_collection", payload, socket) do
     Logger.info("> Edit Collection")
 
@@ -105,6 +122,9 @@ defmodule ApiWeb.CollectionChannel do
     {:noreply, socket}
   end
 
+  @doc """
+  Create and add collection tag.
+  """
   def handle_in("add_collection_tag", payload, socket) do
     case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
       false ->
@@ -129,6 +149,9 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  Remove collection tag.
+  """
   def handle_in("remove_collection_tag", payload, socket) do
     case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
       false ->
@@ -149,6 +172,10 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  Create collection note.
+  This handle event is triggered when a note is being created. It passes back all the data including a note_id.
+  """
   def handle_in(
         "update_collection_notes",
         %{"collection_id" => col_id, "note" => note, "note_id" => nil} = payload,
@@ -173,6 +200,11 @@ defmodule ApiWeb.CollectionChannel do
     {:noreply, socket}
   end
 
+  @doc """
+  Update collection note across the channel
+  
+  This pushes changes out to all connected channels.
+  """
   def handle_in(
         "update_collection_notes",
         %{"collection_id" => col_id, "note" => note, "note_id" => note_id} = payload,
@@ -189,6 +221,11 @@ defmodule ApiWeb.CollectionChannel do
     {:noreply, socket}
   end
 
+  @doc """
+  Create Resource
+  
+  Creates resource and returns the resource ID for further updates.
+  """
   def handle_in("create_resource", payload, socket) do
     case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
       false ->
@@ -214,6 +251,11 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  Remove Resource
+
+  Remove resource by ID.
+  """
   def handle_in("remove_resource", payload, socket) do
     case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
       false ->
@@ -229,6 +271,11 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  Edit Resource
+
+  Similar to edit_collection. It saves urls, titles, and notes.
+  """
   def handle_in("edit_resource", payload, socket) do
     case can_edit_collection?(socket.assigns.user_id, payload["collection_id"]) do
       false ->
@@ -261,6 +308,11 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  Create resource note.
+  
+  This handle event is triggered when a note is being created. It passes back all the data including a note_id.
+  """
   def handle_in(
         "update_resource_notes",
         %{
@@ -291,6 +343,11 @@ defmodule ApiWeb.CollectionChannel do
     {:noreply, socket}
   end
 
+  @doc """
+  Update resrouce note
+
+  This broadcasts the change so any connected collection should receive the changes.
+  """
   def handle_in(
         "update_resource_notes",
         %{
@@ -313,6 +370,11 @@ defmodule ApiWeb.CollectionChannel do
     {:noreply, socket}
   end
 
+  @doc """
+  Upload a file
+
+  The same handle is called for resources and collections. There is a case based on type that switches if it's for a resource or collection.
+  """
   def handle_in("upload_file", payload, socket) do
     broadcast!(socket, "start_upload_file", %{})
 
@@ -380,6 +442,11 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  Deletes file
+
+  Same event for collection and resources
+  """
   def handle_in("delete_file", payload, socket) do
     case Files.get_file_by_uuid(payload["file_id"]) do
       file when is_nil(file) ->
@@ -400,6 +467,10 @@ defmodule ApiWeb.CollectionChannel do
     end
   end
 
+  @doc """
+  Google export. Renders and collection view into a phoenix view so it can be exported as plain html into google docs.
+  Most of the grunt work is done in the Google Auth module.
+  """
   def handle_in("google_export", payload, socket) do
     push(socket, "start_google_export", %{})
 
