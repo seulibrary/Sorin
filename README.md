@@ -16,11 +16,11 @@ Sorin is in active development, and though it has been in production use at St. 
 
 [Introductory video](https://youtu.be/aVIIiqC5JXU)
 
-Sorin is a single-page application that presents users with tabs to access two interfaces: **Search**, and **My Collections**.
+Sorin is a single-page application that presents users with tabs to access two interfaces: **Search**, and **Collections**.
 
-The **Search** interface has a simple search bar that can be customised with Sorin *extensions* to search any catalog or service with an API, with optional filtering, such as by title or subject. Search results offer traditional search/browse affordances, including citation generation, catalog description fields, and access to the resource itself, either directly or at the originating catalog (access details and functionality will vary according to the catalog being queried, and is customizable). Sorin's key new feature is a button labeled *Save it!*, which saves the resource to a collection under **My Collections** called "Inbox."
+The **Search** interface has a simple search bar that can be customised with Sorin *extensions* to search any catalog or service with an API, with optional filtering, such as by title or subject. Search results offer traditional search/browse affordances, including citation generation, catalog description fields, and access to the resource itself, either directly or at the originating catalog (access details and functionality will vary according to the catalog being queried, and is customizable). Sorin's key new feature is a button labeled *Save it!*, which saves the resource to a collection under **Collections** called "Inbox."
 
-In the **My Collections** interface, users will find one default collection--the "Inbox" that all resources saved from **Search** end up in. Users can make any number of additional custom collections, and the collections can be entitled, tagged, color coded, and rearranged according to preference.
+In the **Collections** interface, users will find one default collection--the "Inbox" that all resources saved from **Search** end up in. Users can make any number of additional custom collections, and the collections can be entitled, tagged, color coded, and rearranged according to preference.
 
 Formatted notes, file attachments, and tags can be added to both resources and whole collections. Citations can be accessed for individual resources, or for all of the resources in a given collection. 
 
@@ -45,7 +45,7 @@ The following features are on the roadmap:
 
 * Co-authorship of collections, where arbitrary numbers of users can own and edit a collection together
 * A REST API
-* Collection *archiving*, keeping the collection available but not visible in **My Collections**
+* Collection *archiving*, keeping the collection available but not visible in **Collections**
 * Collection *grouping*, to ease the management of large numbers of collections
 * Integration, via extensions, with a growing ecosystem of external services, including search catalogs, collection export targets, and academic support platforms such as Canvas
 * Previews of embedded content (e.g., images and videos in note fields)
