@@ -6,6 +6,9 @@ import _ from "lodash"
 export const setPresence = createAction('PRESENCE/SET')
 export const presenceDiff = createAction('PRESENCE/DIFF')
 
+// Connect to the users dashboard, connect to each collection in the dashbaord. 
+// Setup up channel event listeners for various actions like editing.
+
 export const getDashboard = (user, socket) => {
     return (dispatch) => {
         const dashboard_channel = socket.channel(`dashboard:${user}`)
@@ -154,8 +157,12 @@ export const connectCollection = (socket, collection) => {
         dispatch(_actions(channel))
     }
 }
+
+// Current placeholder for presence tracking
 let presences = {}
 
+// List of listeners all collections need.
+// Only actions like moving, creating, and deleting are used here.
 const _actions = (channel) => {
     return (dispatch) => {
         
@@ -320,11 +327,13 @@ export const deleteCollectionTag = (channel, collection_id, tag) => {
     })
 }
 
+// On save, when not logged in. Save cookie.
 export const saveResourceToCookie = (resource, login_state) => {
     window.localStorage.setItem(resource.title + "_sorin_resource", JSON.stringify(resource))
     window.location.href = "/auth/google?state=" + encodeURIComponent(login_state)
 }
 
+// After login, check for any cookies, save them as a resource, then delete them.
 export const checkForResourceCookies = (channel, collection_id) => {
     _.forIn(window.localStorage, (value, objKey) => {
         if (true === _.endsWith(objKey, '_sorin_resource')) {

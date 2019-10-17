@@ -101,6 +101,7 @@ export const searchReset = () => {
     }
 }
 
+// Views are for the resutls tab (As of now: catalog, users, collections)
 export const switchView = (payload) => {
     if (payload.view) {
         return (dispatch) => {

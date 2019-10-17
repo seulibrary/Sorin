@@ -65,6 +65,7 @@ export function setCurrentUser() {
                 })
             })
 
+            // The following "on" listeners are used for the API part of the build. A user can create and maintain API tokens. Then, use those tokens as authentication to perform actions as that user. 
             userChannel.on("created_token", payload => {
                 dispatch({
                     type: Constants.CREATE_TOKEN,

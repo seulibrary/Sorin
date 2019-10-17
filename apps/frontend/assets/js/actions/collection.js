@@ -1,6 +1,8 @@
 import Constants from "../constants"
 import { apiUrl, parseJSON } from "../utils"
 
+// This is used for when looking at single collections via the permalink view.
+
 export const getCollection = (url) => (dispatch) => {
 
     dispatch({
