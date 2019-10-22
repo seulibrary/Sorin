@@ -6,6 +6,7 @@ import Tags from "../Tags"
 import { cloneCollection, importCollection } from "../../actions/collections"
 import InnerResource from "../CollectionResource/InnerResource"
 import { downloadFile } from "../../actions/files"
+import { addSaveNotification } from "../../actions/notifications"
 
 class CollectionResult extends Component {
     constructor(props) {
@@ -26,6 +27,7 @@ handleClone = (e) => {
         })
 
         cloneCollection(this.props.session.dashboardChannel, this.props.data.id)
+        this.props.dispatch(addSaveNotification())
     }
 }
 
@@ -38,13 +40,14 @@ handleImport = (e) => {
         })
 
         importCollection(this.props.session.dashboardChannel, this.props.data.id)
+        this.props.dispatch(addSaveNotification())
     }
 }
 
 downloadFile = e => {
     e.preventDefault()
 
-    downloadFile(e.currentTarget.dataset.id, this.props.settings.api_port)
+    downloadFile(e.currentTarget.dataset.id)
 }
 
 render() {
@@ -53,16 +56,6 @@ render() {
     return (
         <div className="result show">
             <span className="count">{this.props.index + 1}</span>
-            <div className="actions">
-                <a className="save" onClick={this.handleClone}>
-                    <span className="flag">{this.state.clone}</span>
-                </a>
-
-                <a className="save import" onClick={this.handleImport}>
-                    <span className="flag">{this.state.import}</span>
-                </a>
-            </div>
-
             <div className="info coll">
                 <h4>
                     {data.title}
@@ -78,6 +71,16 @@ render() {
                 {this.props.data.files.length > 0 ? <span className="attach"></span> : "" }
             </div>
 
+            <div className="actions">
+                <a className="save" onClick={this.handleClone}>
+                    <span className="flag">{this.state.clone}</span>
+                </a>
+
+                <a className="save import" onClick={this.handleImport}>
+                    <span className="flag">{this.state.import}</span>
+                </a>
+            </div>
+            
             <Accordion title={"Resources"} titleClass={"more-info"}>
                 <div className="resource-group">
                     {data.resources.map((resource, index) => {

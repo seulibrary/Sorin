@@ -37,11 +37,20 @@ header {
 			cursor: pointer;
 			display: block;
 			text-decoration: none;
+			transition:  .2s ease-in-out;
 
 			&.active {
 				cursor: default;
 				color: #9B9B9B;
 				background-color: #F4F4F4;
+				&:hover{
+					background-color: #F4F4F4;
+				}
+			}
+
+			&:hover{
+				background-color: $medGrey;
+				color: #9B9B9B;
 			}
 
 			@media (max-width: $tablet-width) {

@@ -31,7 +31,7 @@
 		left: 0;
 		right: 0;
 		margin: 0 auto;
-		top: 0;
+		//padding-bottom: 4em;
 
 		@include box-shadow(0, 0, 10px, 0, $boxShadowColor);
 
@@ -60,11 +60,26 @@
 		label {
 			text-transform: uppercase;
 			color: $teal;
-			font-size: 12px;
-			font-weight: 700;
+			font-size: 1em;
+			font-weight: 600;
 			margin: 1em 0;
 			display: block;
 		}
+		
+		.more-info{
+			text-transform: uppercase;
+			font-size: 1em;
+			font-weight: 600;
+			margin-bottom: 0;
+			display: block;
+		}
+
+		.green{
+			color: $goGreen;
+			font-weight: 400;
+		}
+		
+		
 
 		input {
 			display: block;
@@ -86,6 +101,47 @@
 
 		.btn {
 			@include button()
+		}
+
+		.green-bg{
+			background-color: $saveGreen;
+			color: white !important;
+			.flag{
+				color: white !important;
+			}
+		}
+
+		.arrow{
+			background-size: 37px;
+			width: 37px;
+			height: 25px;
+			display: block;
+			text-indent: -1000px;
+		}
+
+		.arrow-up{
+			background: url(../images/arrow-up.svg) center center no-repeat;
+			
+			margin: 2em auto 0em;
+			
+		}
+
+		.arrow-down{
+			background: url(../images/arrow-down.svg) center center no-repeat;
+
+			margin: 1em auto 0em;
+
+		}
+
+		li{
+			display: block;
+			a{
+				color: $teal;
+				&:hover{
+					color: $topBlue;
+				}
+			}
+			
 		}
 	}
 }

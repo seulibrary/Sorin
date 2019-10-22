@@ -7,13 +7,16 @@ import Accordion from "../Accordion"
 import { createResource, saveResourceToCookie } from "../../actions/collections"
 import { Redirect } from 'react-router'
 import {withRouter} from 'react-router-dom'
-
+import ErrorBoundary from "../../containers/Errors"
+import ViewResource from './resource'
+import { addSaveNotification } from "../../actions/notifications"
 class SearchResult extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            saveit: "save it!"
+            saveit: <span>save to collections</span>,
+            clicked: ""
         }
     }
 
@@ -21,7 +24,8 @@ class SearchResult extends Component {
         if (this.state.saveit != "saved!") {
             if (!this.props.session.currentUser) {
                 this.setState({
-                    saveit: "saving..."
+                    saveit: "saving...",
+                    clicked: " clicked"
                 })
                 // save item to local storage
                 this.props.dispatch(
@@ -46,7 +50,8 @@ class SearchResult extends Component {
                 )
             } else {
                 this.setState({
-                    saveit: "saved!"
+                    saveit: "saved!",
+                    clicked: " clicked"
                 })
                 
                 let inbox = this.props.collections.collections.map( collection => {
@@ -57,9 +62,11 @@ class SearchResult extends Component {
     
                 if (inbox.length > 0) {
                     createResource(inbox[0].channel, this.props.session.inbox_id, this.props.data)
+                    this.props.dispatch(addSaveNotification())
                 } else {
                     this.setState({
-                        saveit: "Not Saved!"
+                        saveit: "Not Saved!",
+                        clicked: " error"
                     })
                 }
             }    
@@ -68,7 +75,7 @@ class SearchResult extends Component {
 
     resetSaveItState = () => {
         this.setState({
-            saveit: "save it!"
+            saveit: <span>save to collections</span>
         })
     }
 
@@ -91,17 +98,31 @@ class SearchResult extends Component {
         this.checkInbox(this.props.data)
     }
 
+    openResource = () => {
+        this.props.dispatch(openModal(
+            {
+                id: uuidv4,
+                type: "custom",
+                panel: this.props.panel || "search",
+                content: 
+                    <ViewResource index={this.props.index} data={this.props.data}  />,
+
+                })
+            )
+    }
+
     render() {
         const data = this.props.data
         
         return (
             <div className="result show">
+                <ErrorBoundary>
                 <span className="count">{this.props.index + 1}</span>
                 <div className={"icon " + data.type}></div>
                 <div className="info">
                     <h5><span>{data.type}</span></h5>
                     <h4>
-                        <a target="_blank" href={data.catalog_url}>{data.title}</a>
+                        <a target="_blank" onClick={this.openResource}>{data.title}</a>
                         { data.date ? <i>({data.date})</i> : "" }
                     </h4>
                     <div className="contrib">
@@ -117,31 +138,15 @@ class SearchResult extends Component {
                         { data.call_number && data.availability_status == "available" && <span className="callNumber available">{data.call_number} - Available for checkout</span> }
                         
                         { data.call_number && data.availability_status == "unavailable" && <span className="callNumber unavailable">{data.call_number} - Currently unavailable</span> }
-
-                        {data.description ? <Accordion title="More Info" titleClass={"more-info"}>
-                            <div>
-                                <h5>Description</h5> 
-                                {data.description}
-                            </div>
-                        </Accordion> : "" }
                     </div>
                 </div>
 
                 <div className="actions">
-                    <a className="save" data-context="L" onClick={this.onSave}>
+                    <a className={"save" + this.state.clicked} data-context="L" onClick={this.onSave}>
                         <span className="flag">{this.state.saveit}</span>
                     </a>
-                    <a className="save url" target="_blank" href={data.catalog_url} >
-                        <span className="flag">View resource</span>
-                    </a>
-
-                    <button className="cite save" onClick={() => this.props.dispatch(openModal({
-                        id: uuidv4(),
-                        type: "custom",
-                        panel: "search",
-                        content: <Citation data={data} />
-                    }))}><span className="flag action-modal">cite</span></button> 
                 </div>
+                </ErrorBoundary>
             </div>
         )
     }

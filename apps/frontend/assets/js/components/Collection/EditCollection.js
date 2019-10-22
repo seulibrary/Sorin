@@ -22,6 +22,7 @@ import {
 import { googleExport } from "../../actions/export"
 import Constants from "../../constants"
 import { siteUrl, uuidv4 } from "../../utils"
+import IntervalSave from "../../utils/intervalSave"
 
 class EditCollection extends Component {
     constructor(props) {
@@ -137,6 +138,10 @@ class EditCollection extends Component {
     }
 
     componentWillUnmount() {
+        this.saveCollection()
+    }
+
+    saveCollection = () => {
         let collectionData = this.props.collections.collections.find(
             collection => collection.data.collection.id === this.props.id
         )
@@ -211,6 +216,11 @@ class EditCollection extends Component {
                     onSubmit={this.handleSubmit}
                     encType="multipart/form-data"
                 >
+                    {/* Only run the interval save on collections the user has write access to */}
+                    { data.write_access ? (
+                        <IntervalSave save={this.saveCollection} />
+                    ) : "" }
+                    
                     <div className="container">
                         <div className="window-left">
                             {this.props.index === 0 && (
@@ -221,7 +231,7 @@ class EditCollection extends Component {
 
                             {this.props.index != 0 && (
                                 <div>
-                                    <label>Title</label>
+                                    <label>Collection Title</label>
 
                                     {data.write_access ? (
                                         <input

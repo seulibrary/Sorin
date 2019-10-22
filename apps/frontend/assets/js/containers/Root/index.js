@@ -42,6 +42,26 @@ class Root extends Component {
         return false
     }
 
+    notificationCount = () => {
+        if (this.props.notifications.saveNotificationCount == 0) {
+            return 
+        }
+        
+        let notificationStyle = {
+            backgroundColor: "#f1714b",
+            borderRadius: ".8em",
+            color: "#ffffff",
+            display: "inline-block",
+            lineHeight: "1.6em",
+            textAlign: "center",
+            width: "1.6em"
+        }
+
+        return (
+            <span style={notificationStyle}>{this.props.notifications.saveNotificationCount}</span>
+        )
+    }
+
     render() {
         return (
             <main role="main" id="main">
@@ -57,7 +77,7 @@ class Root extends Component {
                         </li>
                         <li className="tab">
                             {this.props.session.currentUser ?
-                                <NavLink to="/collections" activeClassName="active">Collections</NavLink>
+                                <NavLink to="/collections" activeClassName="active">Collections {this.notificationCount()}</NavLink>
                                 :
                                 <NavLink to="/collections" onClick={this.loginBlocked} activeClassName="active">Collections</NavLink>
                             }
@@ -81,6 +101,7 @@ export default withRouter(connect(
         return {
             modals: state.modals,
             session: state.session,
+            notifications: state.notifications
         }
     },
     function mapDispatchToProps(dispatch) {

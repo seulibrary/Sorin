@@ -262,6 +262,8 @@
 				font-size: 1.5em;
 				margin-bottom: .5em;
 				font-weight: 700;
+				border-bottom: 1px solid $teal;
+    			padding-bottom: .5em;
 
 				@media (max-width: $tablet-width) {
 					font-size: 1em;
@@ -275,7 +277,7 @@
 				flex-shrink: 0;
 
 				.resource-box-icon {
-					margin: 32px auto 0;
+					margin: 1em auto;
 					background-size: 32px;
 					width: 40px;
 					height: 40px;
@@ -301,9 +303,10 @@
 			.resource-column-middle {
 				flex: 4;
 				vertical-align: top;
-				padding: 1em;
+				padding: 1em 1em 3em 1em;
 				border-right: 1px solid #ccc;
 				min-height: 240px;
+				padding-bottom: 4em;
 
 				.resource-box-title {
 					color: $teal;
@@ -314,6 +317,9 @@
 					width: 100%;
 					border: none;
 					padding-bottom: 0;
+					max-height: 500px;
+					overflow-y: scroll;
+					margin-bottom: 2em;
 
 					label {
 						vertical-align: middle;
@@ -345,7 +351,12 @@
 			.resource-column-right {
 				flex: 1;
 				vertical-align: top;
-				padding: 2em 1em;
+				padding: 3em 1em;
+
+				.btn{
+					margin-bottom: 1em;
+					color: white;
+				}
 
 				@media (max-width: $tablet-width) {
 					flex: none;

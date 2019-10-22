@@ -11,6 +11,7 @@ import files from "./files"
 import exportData from "./exportData"
 import extensions from "./extensions"
 import settings from "./settings"
+import notifications from "./notifications"
 
 export default combineReducers({
     session,
@@ -24,5 +25,6 @@ export default combineReducers({
     exportData,
     extensions,
     settings,
+    notifications,
     routing: routerReducer
 })

@@ -20,6 +20,7 @@ import {
 } from "../../actions/files"
 import { openModal, closeModal } from "../../actions/modal"
 import Constants from "../../constants"
+import IntervalSave from "../../utils/intervalSave"
 
 class EditResource extends Component {
     constructor(props) {
@@ -69,7 +70,7 @@ class EditResource extends Component {
 
     downloadFile = e => {
         e.preventDefault()
-        downloadFile(e.currentTarget.dataset.id, this.props.settings.api_port)
+        downloadFile(e.currentTarget.dataset.id)
     }
 
     removeFile = e => {
@@ -173,6 +174,30 @@ class EditResource extends Component {
         }
     }
 
+    saveResource = () => {
+        // check state to make sure we don't try to edit something we are deleting
+        if (this.state.deleting === false) {
+            if (this.props.canEdit != false) {
+                let resourceData
+
+                this.props.collections.collections.map(collection => {
+                    if (collection.data.collection.id === this.props.parent) {
+                        resourceData = collection.data.collection.resources.find(
+                            resource => resource.id === this.props.id
+                        )
+                    }
+                })
+
+                // save data
+                editResource(
+                    this.props.channel,
+                    this.props.parent,
+                    resourceData
+                )
+            }
+        }
+    }
+
     handleSubmit = () => {
         if (this.props.canEdit != false) {
             this.props.dispatch(closeModal({
@@ -180,13 +205,14 @@ class EditResource extends Component {
             }))
         }
     }
+    
 
     render() {        
         let collectionData = this.props.collections.collections.find(
             collection => collection.data.collection.id === this.props.parent
         )
         let data = {}
-
+        
         if (this.props.hasOwnProperty("data")) {
             data = this.props.data
         } else {
@@ -199,13 +225,17 @@ class EditResource extends Component {
                 ? { readOnly: true }
                 : {}
         let showFiles = this.props.showFiles === false ? false : true
-  
+
         return (
             <Form
                 submit={this.handleSubmit}
                 className="resource-form"
                 ref={this.resourceRef}
             >
+                    {/* Only run the interval save on collections the user has write access to */}
+                    { this.props.canEdit ? (
+                        <IntervalSave save={this.saveResource} />
+                    ) : "" }
                 <div className="container">
                     <div className="resource-column-left">
                         <div
@@ -232,7 +262,7 @@ class EditResource extends Component {
                                 className={"mobile-only resource-box-icon icon " + data.type}
                             />
                             
-                            Title
+                            Item Title
                             
                             {data.catalog_url && (
                                 <a
@@ -261,9 +291,15 @@ class EditResource extends Component {
                             />
                             :
                             <span className={"full-width resource-title"}>
-                                {data.title}
+                                {data.title}<i>({data.date})</i>
                             </span>
                         }
+                        
+                        {data.is_part_of ? (
+                            <p><i>{data.is_part_of}</i></p>
+                        ) : (
+                            <p><i>{data.date}</i></p>
+                        )}
 
                         <label>Notes</label>
 
@@ -275,14 +311,42 @@ class EditResource extends Component {
                             writeAccess={this.props.canEdit}
                         />
 
-                        {data.description && (
-                            <Accordion
-                                title={"Description"}
-                                titleClass={"more-info"}
-                            >
-                                <div>{data.description}</div>
-                            </Accordion>
-                        )}
+                        <Accordion
+                            title={"Item Info"}
+                            titleClass={"more-info"}
+                        >
+                            {data.creator && (
+                                <div>
+                                    <h4 className="more-info">Author(s):</h4>
+                                    <ul className={"subjects"}>
+                                        {data.creator.map((subject, index) => (
+                                            <li key={"subjects-" + subject + "-" + index}>
+                                                <a href= {"/search?query=" + subject}>
+                                                    {subject}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {data.description && (
+                                <div>
+                                    <h4 className="more-info">Description:</h4>
+                            
+                                    {data.description}
+                                </div>
+                            )}
+
+                            {data.publisher && (          
+                                <div>
+                                    <h4 className="more-info">Publication:</h4>
+                            
+                                    {data.publisher}
+                                </div>
+                            )}
+                        </Accordion>
+                       
 
                         {data.identifier && (
                             <Accordion
@@ -305,7 +369,6 @@ class EditResource extends Component {
                                 title={"Item URL"}
                                 titleClass={"more-info"}
                             >
-                           
                                 <input
                                     type="text"
                                     className="full-width"
@@ -332,8 +395,8 @@ class EditResource extends Component {
                                         {data.files.length == 0 && !this.props.files.uploadingFile && this.props.canEdit ? (
                                             <Dropzone maxSize={200000000} multiple={false} onDrop={this.onDrop} className={"file-drop"}>
                                                 <p>
-                                            Try dropping a file here, or click to select a file to
-                                            upload. (Max size: 200mb)
+                                                    Try dropping a file here, or click to select a file to
+                                                    upload. (Max size: 200mb)
                                                 </p>
                                             </Dropzone>
                                         ) : ""}
