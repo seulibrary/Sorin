@@ -1,5 +1,6 @@
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [Hello, world!](#hello-world)
   - [Before we begin](#before-we-begin)
   - [Technical notes to be aware of](#technical-notes-to-be-aware-of)
@@ -7,14 +8,29 @@
 - [Local installation for development](#local-installation-for-development)
   - [External dependencies](#external-dependencies)
   - [Internal dependencies](#internal-dependencies)
+  - [Setting up your local development instance](#setting-up-your-local-development-instance)
+  - [Seeding your local development database](#seeding-your-local-development-database)
+  - [Running the application](#running-the-application)
 - [Configuration and Customization](#configuration-and-customization)
+  - [1. sorin.exs](#1-sorinexs)
+  - [2. The database configuration files](#2-the-database-configuration-files)
+  - [3. seeds.exs](#3-seedsexs)
+  - [4. The API configuration files](#4-the-api-configuration-files)
+  - [5. The front end configuration files](#5-the-front-end-configuration-files)
 - [Creating production releases](#creating-production-releases)
+  - [1. Initialize Distillery](#1-initialize-distillery)
+  - [2. Configure your release](#2-configure-your-release)
+  - [3. Prepare and build the release](#3-prepare-and-build-the-release)
 - [Deploying](#deploying)
+  - [1. Set up the database](#1-set-up-the-database)
+  - [2. Deploy and start Sorin](#2-deploy-and-start-sorin)
 - [Adding users](#adding-users)
+  - [Structure of the csv file](#structure-of-the-csv-file)
+  - [Populating accounts from the csv file](#populating-accounts-from-the-csv-file)
 - [Extensions](#extensions)
-- [Appendix I - Setting up Google Auth](#appendix-i-setting-up-google-auth)
-- [Appendix II - Introduction to S3](#appendix-ii-introduction-to-s3)
-- [Appendix III - Theming with SorinTheme](#appendix-iii-theming-with-sorintheme)
+- [Appendix I - Setting up Google Auth](#appendix-i---setting-up-google-auth)
+- [Appendix II - Introduction to S3](#appendix-ii---introduction-to-s3)
+- [Appendix III - Theming with SorinTheme](#appendix-iii---theming-with-sorintheme)
 
 ## Hello, world!
 
@@ -206,13 +222,13 @@ config :frontend,
     app_name: "Sorin",  
     url: "https://your_url.edu",
     admin_email: "",
-    api_port: 8080}
+    api_url: "https://your_api_url.edu"}
 ```
 
 The `frontend` stanza's keys are a special case because, in order to be available to front end HTML and JavaScript, they must be contained in their own `settings` key. Within the `settings` area, however, all keys and values work normally.
 
 * `app_name` is where you can set a name for your instance that will show up in the browser interface's header and title bars. This can be left as-is, or, if you rename your instance, make sure to keep the name within double quotes.
-* `api_port` determines the port your Sorin server's REST API will be listening on. This can be left alone as long as the default port is available to you.
+* `api_url` determines the url your Sorin server's REST API will be listening on. 
 * `url` and `admin_email` are currently not actually used; they're held in place for future development.
 
 **worldcat**

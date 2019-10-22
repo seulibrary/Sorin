@@ -22,7 +22,7 @@ config :frontend,
     app_name: "Sorin",  
     url: "https://your_url.edu",
     admin_email: "",
-    api_port: 8080}
+    api_url: "https://your_url.edu:8080"}
 
 ### File storage
 access_key_id =
