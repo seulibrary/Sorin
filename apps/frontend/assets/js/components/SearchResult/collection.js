@@ -47,7 +47,7 @@ handleImport = (e) => {
 downloadFile = e => {
     e.preventDefault()
 
-    downloadFile(e.currentTarget.dataset.id, this.props.settings.api_port)
+    downloadFile(e.currentTarget.dataset.id)
 }
 
 render() {
