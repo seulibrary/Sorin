@@ -425,7 +425,8 @@
 
 		span {
 			cursor: pointer;
-			color: $darkGrey;
+			color: #444444;
+			font-weight: 600;
 		
 			&:hover {
 				color: $teal;
