@@ -35,7 +35,7 @@ defmodule ApiWeb.AuthController do
   end
 
   defp create(conn, changeset, url_state) do
-    case insert_or_update_user(changeset) do
+    case check_for_user(changeset) do
       {:ok, user} ->
         user_id_token = Phoenix.Token.sign(conn, "user_id", user.id)
 
