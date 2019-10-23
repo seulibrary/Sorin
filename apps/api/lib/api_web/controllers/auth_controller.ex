@@ -17,8 +17,7 @@ defmodule ApiWeb.AuthController do
     end
 
     def callback(%{assigns: %{ueberauth_auth: auth}} = conn, params) do
-      fullname = auth.info.first_name <> " " <> auth.info.last_name
-      user_params = %{fullname: fullname, email: auth.info.email}
+      user_params = %{email: auth.info.email}
       changeset = User.changeset(%User{}, user_params)
 
       create(conn, changeset, params["state"])
@@ -37,7 +36,7 @@ defmodule ApiWeb.AuthController do
     end
 
     defp create(conn, changeset, url_state) do
-      case insert_or_update_user(changeset) do
+      case check_for_user(changeset) do
         {:ok, user} ->
           user_id_token = Phoenix.Token.sign(conn, "user_id", user.id)
 
@@ -57,7 +56,7 @@ defmodule ApiWeb.AuthController do
       end
     end
 
-    defp insert_or_update_user(changeset) do
+    defp check_for_user(changeset) do
       case Repo.get_by(User, email: changeset.changes.email) do
         nil ->
           {:error, "You must be a member of the community to login."}
