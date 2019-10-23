@@ -51,10 +51,9 @@ class Root extends Component {
             backgroundColor: "#f1714b",
             borderRadius: ".8em",
             color: "#ffffff",
-            display: "inline-block",
-            lineHeight: "1.6em",
+            display: "inline-block",            
             textAlign: "center",
-            width: "1.6em"
+            width: "1.3em"
         }
 
         return (
