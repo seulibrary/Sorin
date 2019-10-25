@@ -86,7 +86,8 @@ class SearchResult extends Component {
                 resources.map( res => {
                     if (res.identifier === resource.identifier) {
                         this.setState({
-                            saveit: "saved!"
+                            saveit: "saved!",
+                            clicked: " clicked"
                         })
                     }
                 })
