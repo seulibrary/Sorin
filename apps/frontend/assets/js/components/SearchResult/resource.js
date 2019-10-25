@@ -84,6 +84,7 @@ class ViewResource extends Component {
         if (this.props.collections.collections.length > 0) {
             let resources = this.props.collections.collections[0].data.collection.resources // inbox resources
             if (resources.length > 0) {
+                
                 resources.map( res => {
                     if (res.identifier === resource.identifier) {
                         this.setState({
@@ -99,15 +100,17 @@ class ViewResource extends Component {
     componentDidMount() {
         this.setState({
             data: this.props.data,
-            currentIndex: this.props.index,
+            currentIndex: this.props.index + 1,
             hasCatalogResults: this.props.search.searchResults.catalogs.num_results > 0,
             resultLength: this.props.search.searchResults.catalogs.results.length
         })
+        
+        this.checkInbox(this.props.data)
     }
 
     nextResource = () => {
-        if (this.state.hasCatalogResults && this.props.index + 1 < this.state.resultLength) {
-            let nextResource = this.props.search.searchResults.catalogs.results[this.state.currentIndex + 1]
+        if (this.state.hasCatalogResults && this.state.currentIndex < this.state.resultLength) {
+            let nextResource = this.props.search.searchResults.catalogs.results[this.state.currentIndex]
             
             this.setState({
                 data: nextResource,
@@ -119,8 +122,8 @@ class ViewResource extends Component {
     }
 
     previousResource = () => {
-        if (this.state.hasCatalogResults && (this.state.currentIndex + 1) > 1) {
-            let prevResource = this.props.search.searchResults.catalogs.results[this.state.currentIndex - 1]
+        if (this.state.hasCatalogResults && this.state.currentIndex > 1) {
+            let prevResource = this.props.search.searchResults.catalogs.results[this.state.currentIndex - 2]
             
             this.setState({
                 data: prevResource,
@@ -131,6 +134,35 @@ class ViewResource extends Component {
         return
     }
 
+    isPrev = () => {
+        if (this.state.hasCatalogResults) {
+            if (this.state.currentIndex <= this.state.resultLength) {
+                if (this.state.currentIndex == 1) {
+                    return ""
+                }
+                
+                return " more"
+            }
+            return ""
+        }
+        return ""
+    }
+
+
+    isNext = () => {
+        if (this.state.hasCatalogResults) {
+            if (this.state.currentIndex <= this.state.resultLength) {
+                if (this.state.currentIndex == this.state.resultLength) {
+                    return ""    
+                }
+
+                return " more"
+            }
+            return ""
+        }
+        return ""
+    }
+
     render() {
         let data = this.state.data || this.props.data
         let subjects = data.subject ? data.subject[0].split(" ; ") : []
@@ -139,9 +171,9 @@ class ViewResource extends Component {
             <div  className="resource-form">
                 <div className="container">
                     <div className="resource-column-left">
-                        <span onClick={this.previousResource} className="arrow arrow-up">Prev</span>
+                        <span onClick={this.previousResource} className={"arrow arrow-up" + this.isPrev()}>Prev</span>
                         <div className={"resource-box-icon icon " + data.type} />
-                        <span onClick={this.nextResource} className="arrow arrow-down">Next</span>
+                        <span onClick={this.nextResource} className={"arrow arrow-down" + this.isNext()}>Next</span>
                     </div>
 
                     <div className="resource-column-middle">
@@ -149,7 +181,7 @@ class ViewResource extends Component {
                                 {data.type} 
 
                                 {data.call_number && (
-                                    <span class="callNumber available green">  - Munday Library Stacks {data.call_number} - {data.availability_status}</span>
+                                    <span className="callNumber available green">  - Munday Library Stacks {data.call_number} - {data.availability_status}</span>
                                 )}
                             </label>
                 
