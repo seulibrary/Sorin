@@ -27,6 +27,10 @@ import IntervalSave from "../../utils/intervalSave"
 class EditCollection extends Component {
     constructor(props) {
         super(props)
+
+        this.state = {
+            exportedToGoogle: false
+        }
     }
 
     onTitleChange = (e) => {
@@ -200,6 +204,9 @@ class EditCollection extends Component {
         )
 
         this.props.dispatch(googleExport(collectionData.channel, collectionData))
+        this.setState({
+            exportedToGoogle: true
+        })
     }
 
     render() {
@@ -347,9 +354,23 @@ class EditCollection extends Component {
                                     <label className="sub-title">Export Options</label>
                                     
                                     <div className="export">
+                                        
                                         { this.props.exportData.exporting ? 
                                           <Loader text={"Uploading File..."} isVisible={true} /> : 
-                                          <p onClick={this.exportToGoogle}>Save to Google Drive</p> }
+                                            <p>
+                                                    { this.state.exportedToGoogle && !this.props.exportData.exporting ? 
+                                            <a 
+                                                href="https://drive.google.com"
+                                                target="_blank"
+                                                className="saved"
+                                                style={{fontWeight: "bold"}}
+                                                rel="noopener">
+                                                    Saved! - 
+                                            </a> : 
+                                            "" }
+                                                <span onClick={this.exportToGoogle}>Save to Google Drive</span>
+                                            </p>
+                                          }
                                     </div>
                                 </Accordion>
                             )}
@@ -400,7 +421,7 @@ class EditCollection extends Component {
                                         {data.collection.files.map((f, index) => (
                                             <li key={index}>
                                                 <span
-                                                	  className="filename"
+                                                	className="filename"
                                                     title={f.size + " Bytes - Click to download attachment"}
                                                     onClick={this.downloadFile}
                                                     data-id={f.uuid}
