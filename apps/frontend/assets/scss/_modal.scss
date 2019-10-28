@@ -106,8 +106,13 @@
 		.green-bg{
 			background-color: $saveGreen;
 			color: white !important;
-			.flag{
+			
+			.flag {
 				color: white !important;
+			}
+			
+			&.clicked {
+				background-color: $teal;
 			}
 		}
 
@@ -117,20 +122,22 @@
 			height: 25px;
 			display: block;
 			text-indent: -1000px;
+			opacity: .1;
+
+			&.more {
+				opacity: 1;
+				cursor: pointer;
+			}
 		}
 
-		.arrow-up{
+		.arrow-up {
 			background: url(../images/arrow-up.svg) center center no-repeat;
-			
 			margin: 2em auto 0em;
-			
 		}
 
 		.arrow-down{
 			background: url(../images/arrow-down.svg) center center no-repeat;
-
 			margin: 1em auto 0em;
-
 		}
 
 		li{
