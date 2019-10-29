@@ -62,6 +62,10 @@ defmodule ApiWeb.Utils do
     false
   end
 
+  @doc """
+  returns sanitized map
+  It removes non-loaded associated references. 
+  """
   def sanitize_for_poison(collection) do
     map = collection
       |> Map.from_struct()
@@ -92,6 +96,11 @@ defmodule ApiWeb.Utils do
     end
   end
 
+  @doc """
+  Checks to see if a collection can be edited by the user.
+
+  Returns a CollectionUser
+  """
   def can_edit_collection(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by(
@@ -104,6 +113,11 @@ defmodule ApiWeb.Utils do
     end
   end
 
+  @doc """
+  Checks to see if a collection can be edited by the user.
+
+  Returns true or false
+  """
   def can_edit_collection?(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by(
@@ -116,6 +130,11 @@ defmodule ApiWeb.Utils do
     end
   end
 
+  @doc """
+  Checks to see if a user can change the index of a CollectionUser.
+  
+  Returns a CollectionUser
+  """
   def can_move_collection(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
@@ -127,6 +146,11 @@ defmodule ApiWeb.Utils do
     end
   end
 
+  @doc """
+  Checks to see if a user can change the index of a CollectionUser.
+  
+  Returns a true or false
+  """
   def can_move_collection?(user_id, collection_id) do
     case Core.CollectionsUsers.CollectionUser
     |> Core.Repo.get_by!(
